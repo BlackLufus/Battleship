@@ -1,0 +1,113 @@
+Accept: Akzebdiera
+AllRightsReserved: Alle Rechde vorbehalda.
+Assume: Übernehma
+AssumeToolTip: Einschdellunga übernehma
+Attention: Achdung
+Author: Karrar
+Background: Hindergrond
+Cancel: Abbruch
+CancelToolTip: Zurügg zom Haubdmenü
+ChangeSuccessful: Änderung Erfolgreich
+ClassicOption: Klassik
+ClickToCloseLabel: Zum Schließa irgendwo kligga
+Close: Schliessa
+ConnectionFailed: Verbindung Fehlgeschlaga!
+ConnectionLost: Verbindung underbrocha!
+ConnectionLostMessage: Mögliche Gründ:&n - Verbindung zom Servr verlora&n - Der Gegnr hedd des Schbil verlassa!
+CurrentVersion: Akduelle Versio
+Darkmode: Darkmod
+DarkmodeToolTip: De/Akdiviere den Darkmod
+Decrease: Verkleinern
+Difficult: Schwierigkeid
+DifficultToolTip: Wähle oi Schwierigkeid aus
+EmptyNameMessage: Es wurd koi Nam übergeba
+EstablishConnection: Baue oi Verbindung zom Servr uf
+ExitToolTip: Bended des Schbil
+FailedToFillFieldMessage: Er konnda ned älle Schiffe Bladzdierd werda!&nDes Schbielfeld wurd dahr zurügg gsedzd.
+Field: Schbielfeld
+FieldSize: Feldgröße
+FieldSizeToolTip: Wähle oi Feldgröße aus
+FileLoadErrorLabel: Dadeifehlr
+FileLoadErrorMessage: Die Dadei wurd bschädigd oder&nisch ned mid von dene Versio Kombadibl!
+FullScreen: Vollbild
+Game: Schbil
+GameFieldLabel: Sedze älle Schiffe uf des Feld
+GameMode: Modus
+GameModePlayer: Schbielr
+GameModePlayerToolTip: Combuadr vs. Schbieler
+GameStartsIn: Des Schbil schdarded in %time% Sekunda
+GiveUp: Ufgeba
+GiveUpMessage: Bisch du sichr des du Ufgeba möchdeschd?
+Hosting: Hoschda
+HostInitializesWarningMessage: Warde bis der Hoschd den Servr inidialisierd hedd
+HostingToolTip: Eigena Servr erschdella
+HostPortDontExistMessage: Der aggebene GUI.Hoschd/Bord exischdierd ned
+IllegalCharactersMessage: Du verwendeschd Illegale Zeicha! Es derfed nur&nBuchschdaba ond Zaheln so wie _ ond - verwended werda!
+Increase: Vergrößern
+Language: Schbrache
+LanguageChangedMessage: Die Schbrache wurd Erfolgreich gänderd.&nDie übersedzunga sind möglicherweise ned zu 100% Korregd.
+LanguageID: Schwäbisch
+LanguageToolTip: Wähle oi Schbrache
+LastUpdate: Ledzdes Ubdade
+Load: Spiel Lada
+LoadToolTip: Schbil Lada
+MultiPlayer: Mehrschbielr
+MultiPlayerLabel: Nedzwerkverbindung
+MultiPlayerToolTip: Mehrschbielr
+Music: Musik
+Off: AUS
+On: AN
+Opponent: Gegnr
+OptionLabel: Schbil Einschdellunga
+PaintWall: Maur
+PaintWallToolTip: Soll oi Ard Maur, um oi zerschdördes Schiff erscheinen?
+PlayerLeftGame: %player% hedd des Schbil verlassa!
+PlayerLeftGameMessage: Dai Gegnr hedd ufgegeba.
+PlayersTurnMessage: %player% isch am Zügle
+PlayerWonMessage: %player% hedd Gewonna
+PortToHighMessage: Der Pord muss zwische 1 ond 50000 schdragga
+Quit: Benda
+QuitMessage: Bisch du sichr des du des Schbil Benda möchdeschd?
+Random: Zufällich
+RandomToolTip: Bladziere zfällig Schiffe
+Repeat: Wiederhola
+RepeatToolTip: Bei einem Dreffr nomol schießa?
+Reset: Zurüggsedzda
+ResetFailed: Fehlr beim Zurüggsedza!
+ResetFailedMessage: Dai Schbil Einschdellunga konnda ned zurügg&ngesedzd werda!
+ResetSettingsToolTip: Sedzde älles in der Lobby zu den Schdardwerda zurügg
+ResetSuccessful: Erfolgreich zurügggesedzd
+ResetSuccessfulMessage: Dai Schbil Einschdellunga wurda erfolgreich&nzurügg gsedzd.
+ResetToolTip: Alle Schiffe vom Schbielfeld endferna
+Result: Ergebnis
+Return: Zurügg
+ReturnBackToOldPanelToolTip: Kehre zom ledzda Bungd zurügg
+Rules: Regeln
+RulesMessage:  - Des Schbil schdard, sobald beid Schbielr ihre Schiffe gsadzd han&n - Der Schbielr, der a Schiff driffd darf no mol schiessa &n solang bis der Schbielr einen Fehlschuss had&n - Des Schbil isch zuend, sobald a Schbielr koi Schiffe mehr hedd
+Save: Schbeichern
+SearchServer: Sucha
+SearchServerToolTip: Servr Sucha
+ServerAlreayExistLabel: Verbindung Fehlgeschlaga
+ServerAlreayExistMessage: Der Angegebene Servr exischdir breids!
+Settings: Einschdellunga
+SettingsToolTip: Öffned die Einschdellunga
+ShipToolTip: Wie viele Schiff der Größe %shipSize% solla's werda?
+SinglePlayer: Einzelschbielr
+SinglePlayerToolTip: Einzelschbielr
+StandardOption: Schdandard
+Start: Schdard
+StartToolTip: Schdarded des Schbil
+Time: Zeid
+TotalShots: Gesamdschüsse
+UnexpectedErrorMessage: Es isch a Unerwardedr Fehlr ufgedredda &nVersuch's schbädr no einmol.
+View: Ansichd
+WaitForClient: Warde uf Gegnr
+WaitForClientMessage: Warde bis dai Gegnr däm Schbil beigedreda isch.
+WaitForOpponentMessage: Warde bis dai Gegnr breid isch&nDes Schbil wird audomadisch gschdarded :D
+WarningMessage: Sei vorsichdich, diese Fonkzion kann Fehlr verursacha.
+WelcomeMessage: Willkomma bei Schiffe Versenka
+WithoutOption: Ohne
+YouLoseMessage: Du haschd Verlora
+YourField: Doi Feld
+YourTurnMessage: Du bisch am Zügle
+YouWonMessage: Du haschd Gewonna

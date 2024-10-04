@@ -1,0 +1,113 @@
+Accept: J'accepte
+AllRightsReserved: Tous les droits sont réservés.
+Assume: Présumer
+AssumeToolTip: Assumer les paramètres
+Attention: Attention
+Author: Auteur
+Background: Arrière-plan
+Cancel: Annuler
+CancelToolTip: Retour au menu principal
+ChangeSuccessful: Changement réussi
+ClassicOption: Classique
+ClickToCloseLabel: Cliquez n'importe où pour fermer
+Close: Fermer
+ConnectionFailed: La connexion a échoué!
+ConnectionLost: Connexion perdue!
+ConnectionLostMessage: Raisons possibles :&n - Perte de connexion au serveur&n - L'adversaire a quitté le jeu!
+CurrentVersion: Version actuelle
+Darkmode: Mode sombre
+DarkmodeToolTip: Désactiver/Activer le mode sombre
+Decrease: Diminuer
+Difficult: Difficile
+DifficultToolTip: Sélectionnez une difficulté
+EmptyNameMessage: Aucun nom n'a été donné
+EstablishConnection: Établir une connexion au serveur
+ExitToolTip: Quitter le jeu
+FailedToFillFieldMessage: Tous les navires ne pouvaient pas être placés !&nLe terrain de jeu était donc en retrait.
+Field: Terrain de jeu
+FieldSize: Taille du champ
+FieldSizeToolTip: Select a field size
+FileLoadErrorLabel: Erreur de fichier
+FileLoadErrorMessage: Le fichier a été endommagé ou n'est&npas compatible avec cette version !
+FullScreen: Plein écran
+Game: Jeu
+GameFieldLabel: Mettez tous les navires sur le terrain
+GameMode: Mode
+GameModePlayer: Player
+GameModePlayerToolTip: Ordinateur contre joueur
+GameStartsIn: Le jeu commence dans %time% Seconden
+GiveUp: Abandonner
+GiveUpMessage: Êtes-vous sûr de vouloir abandonner ?
+Hosting: Hébergement
+HostInitializesWarningMessage: Attendez que l'hôte initialise le serveur
+HostingToolTip: Créez votre propre serveur
+HostPortDontExistMessage: Le GUI.Host/Port spécifié n'existe pas
+IllegalCharactersMessage: Vous utilisez des caractères illégaux ! Seuls des lettres et des chiffres tels que _ et - peuvent être utilisés !
+Increase: Augmenter
+Language: Langue
+LanguageChangedMessage: La langue a été modifiée avec succès.&nLes traductions peuvent ne pas être correctes à 100 %.
+LanguageID: Français
+LanguageToolTip: Choisissez une langue
+LastUpdate: Dernière mise à jour
+Load: Chargement du jeu
+LoadToolTip: Chargement du jeu
+MultiPlayer: Multijoueur
+MultiPlayerLabel: Connexion réseau
+MultiPlayerToolTip: Multijoueur
+Music: Musique
+Off: DÉSACTIVÉ
+On: AU
+Opponent: Adversaire
+OptionLabel: Paramètres de jeu
+PaintWall: mur
+PaintWallToolTip: Sune sorte de mur devrait-il apparaître autour d'un navire détruit?
+PlayerLeftGame: %player% a quitté le jeu!
+PlayerLeftGameMessage: Votre adversaire a abandonné!
+PlayersTurnMessage: C'est le tour de %player%
+PlayerWonMessage: %player% a gagné la partie
+PortToHighMessage: Le port doit être compris entre 1 et 50000
+Quit: Quitter
+QuitMessage: Êtes-vous sûr de vouloir quitter le jeu ?
+Random: Aléatoire
+RandomToolTip: Placer les navires au hasard sur le terrain
+Repeat: Répéter
+RepeatToolTip: Tirez à nouveau si vous frappez ?
+Reset: Réinitialiser
+ResetFailed: Erreur de réinitialisation !
+ResetFailedMessage: Vos paramètres de jeu n'ont pas pu être réinitialisés !
+ResetSettingsToolTip: Réinitialiser toutes les valeurs du lobby aux valeurs de départ
+ResetSuccessful: Réinitialiser avec succès
+ResetSuccessfulMessage: Vos paramètres de jeu ont été&nréinitialisés avec succès.
+ResetToolTip: Tous les navires ont été retirés du terrain de jeu
+Result: Résultat
+Return: Revenir
+ReturnBackToOldPanelToolTip: Revenir au dernier point
+Rules: Des règles
+RulesMessage:  - Le jeu commence dès que les deux joueurs ont planté leurs vaisseaux&n - Le joueur qui touche un navire peut tirer à nouveau\jusqu'à ce que le joueur rate un tir&n - Le jeu est terminé dès qu'un joueur n'a plus de navires
+Save: Sauvegarder
+SearchServer: Rechercher
+SearchServerToolTip: Serveur de recherche
+ServerAlreayExistLabel: La connexion a échoué
+ServerAlreayExistMessage: Le serveur spécifié existe déjà !
+Settings: Paramètres
+SettingsToolTip: Ouvrir les paramètres
+ShipToolTip: Combien de navires de la taille %shipSize% devrait-il y avoir ?
+SinglePlayer: Joueur unique
+SinglePlayerToolTip: Joueur unique
+StandardOption: Défaut
+Start: Commencer
+StartToolTip: Commencer le jeu
+Time: Temps
+TotalShots: Nombre total de coups
+UnexpectedErrorMessage: Une erreur inattendue s'est produite.&nVeuillez réessayer plus tard.
+View: Vue
+WaitForClient: Attendre l'adversaire
+WaitForClientMessage: Attendez que votre adversaire soit entré dans le jeu.
+WaitForOpponentMessage: Attendez que votre adversaire soit prêt.&nLe jeu démarrera automatiquement. :RÉ
+WarningMessage: Attention, cette fonctionnalité peut provoquer des erreurs.
+WelcomeMessage: Bienvenue sur les navires qui coulent
+WithoutOption: Sans
+YouLoseMessage: Tu as perdu
+YourField: Votre domaine
+YourTurnMessage: C'est ton tour
+YouWonMessage: Tu as gagné

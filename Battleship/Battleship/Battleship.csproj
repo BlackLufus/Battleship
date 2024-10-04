@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Images\background2.jpg" />
+    <None Remove="Resources\Images\cruiser.png" />
+    <None Remove="Resources\Images\exitButton.png" />
+    <None Remove="Resources\Images\restricted.png" />
+    <None Remove="Resources\Images\settings2.png" />
+    <None Remove="Resources\Images\water-field.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\background2.jpg" />
+    <Resource Include="Resources\Images\exitButton.png" />
+    <Resource Include="Resources\Images\restricted.png" />
+    <Resource Include="Resources\Images\settings2.png" />
+    <Resource Include="Resources\Images\cruiser.png" />
+    <Resource Include="Resources\Images\water-field.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Playground\" />
+  </ItemGroup>
+
+</Project>

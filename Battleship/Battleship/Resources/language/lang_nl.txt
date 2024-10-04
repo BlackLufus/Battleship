@@ -1,0 +1,113 @@
+Accept: Aanvaarden
+AllRightsReserved: Alle rechten voorbehouden.
+Assume: Uitgaan van
+AssumeToolTip: Instellingen aannemen
+Attention: Aandacht
+Author: Schrijver
+Background: Achtergrond
+Cancel: Annuleren
+CancelToolTip: Terug naar het hoofdmenu
+ChangeSuccessful: Wijziging succesvol
+ClassicOption: Klassiek
+ClickToCloseLabel: Klik ergens om te sluiten
+Close: Sluiten
+ConnectionFailed: Verbinding mislukt!
+ConnectionLost: Connection lost
+ConnectionLostMessage: Mogelijke redenen:&n - Verbinding met de server verbroken&n - De tegenstander heeft het spel verlaten!
+CurrentVersion: Huidige versie
+Darkmode: Donkere modus
+DarkmodeToolTip: De/Activeer darkmode
+Decrease: Verminderen
+Difficult: Moeilijk
+DifficultToolTip: Kies een moeilijkheidsgraad
+EmptyNameMessage: Er is geen naam gegeven
+EstablishConnection: Breng een verbinding tot stand met de server
+ExitToolTip: Sluit het spel
+FailedToFillFieldMessage: Niet alle schepen konden geplaatst worden!&nHet speelveld werd dan ook teruggeschroefd.
+Field: Spelveld
+FieldSize: Veld grootte
+FieldSizeToolTip: Kies een veldgrootte
+FileLoadErrorLabel: Bestandsfout
+FileLoadErrorMessage: Het bestand is beschadigd of&is niet compatibel met deze versie!
+FullScreen: Volledig scherm
+Game: Spel
+GameFieldLabel: Zet alle schepen op het veld
+GameMode: Modus
+GameModePlayer: Speler
+GameModePlayerToolTip: Computer versus speler
+GameStartsIn: Het spel begint over %time% Seconden
+GiveUp: Geef op
+GiveUpMessage: Weet je zeker dat je wilt opgeven?
+Hosting: Hosting
+HostInitializesWarningMessage: Wacht tot de host de server initialiseert
+HostingToolTip: Maak je eigen server
+HostPortDontExistMessage: De opgegeven GUI.Host/Port bestaat niet
+IllegalCharactersMessage: U gebruikt illegale tekens! Alleen letters en cijfers&nzoals _ en - mogen worden gebruikt!
+Increase: Toename
+Language: Taal
+LanguageChangedMessage: De taal is succesvol gewijzigd.&nDe vertalingen zijn mogelijk niet 100% correct.
+LanguageID: Netherlands
+LanguageToolTip: Kies een taal
+LastUpdate: Laatste update
+Load: Spel laden
+LoadToolTip: Spel laden
+MultiPlayer: Multiplayer
+MultiPlayerLabel: Netwerkverbinding
+MultiPlayerToolTip: Multiplayer
+Music: Muziek
+Off: UIT
+On: AAN
+Opponent: Tegenstander
+OptionLabel: Spelinstellingen
+PaintWall: Muur
+PaintWallToolTip: Moet er een soort muur verschijnen rond een vernietigd schip?
+PlayerLeftGame: %player% heeft het spel verlaten!
+PlayerLeftGameMessage: Je tegenstander heeft het opgegeven!
+PlayersTurnMessage: Het is de trun van %player%
+PlayerWonMessage: %player% heeft gewonnen
+PortToHighMessage: De poort moet tussen 1 en 50000 . zijn
+Quit: Stoppen
+QuitMessage: Weet je zeker dat je het spel wilt sluiten?
+Random: Willekeurig
+RandomToolTip: Plaats de schepen willekeurig op het veld
+Repeat: Herhaling
+RepeatToolTip: Schiet opnieuw als je raakt?
+Reset: Resetten
+ResetFailed: Fout resetten!
+ResetFailedMessage: Je game-instellingen konden niet worden gereset!
+ResetSettingsToolTip: Reset alle waarden in de lobby naar de startwaarden.
+ResetSuccessful: Succesvol resetten
+ResetSuccessfulMessage: Je game-instellingen zijn&nsuccesvol gereset.
+ResetToolTip: Alle schepen zijn van het speelveld verwijderd.
+Result: Resultaat
+Return: Terugkeer
+ReturnBackToOldPanelToolTip: Terug naar het laatste punt last
+Rules: Reglement
+RulesMessage:  - Het spel begint zodra beide spelers hun schepen hebben geplant&n - De speler die een schip raakt, mag opnieuw schieten&ntotdat de speler een schot mist&n - Het spel is afgelopen zodra een speler geen schepen meer heeft
+Save: Sparen
+SearchServer: Zoeken
+SearchServerToolTip: Zoekserver
+ServerAlreayExistLabel: Verbinding mislukt
+ServerAlreayExistMessage: De opgegeven server bestaat al!
+Settings: Instellingen
+SettingsToolTip: Open de instellingen
+ShipToolTip: Hoeveel schepen met de afmeting %shipSize% moeten er zijn?
+SinglePlayer: Een speler
+SinglePlayerToolTip: Een speler
+StandardOption: Standaard
+Start: Beginnen
+StartToolTip: Start het spel
+Time: Tijd
+TotalShots: total schoten
+UnexpectedErrorMessage: Er is een onverwachte fout opgetreden.&nProbeer het later opnieuw.
+View: Visie
+WaitForClient: Wacht op tegenstander
+WaitForClientMessage: Wacht tot je tegenstander in het spel is.
+WaitForOpponentMessage: Wacht tot je tegenstander klaar is.&nHet spel start automatisch. :D
+WarningMessage: Wees voorzichtig, deze functie kan fouten veroorzaken.
+WelcomeMessage: Welkom bij zinkende schepen
+WithoutOption: Without
+YouLoseMessage: Je verloor
+YourField: Jouw veld
+YourTurnMessage: Het is jouw beurt
+YouWonMessage: Je Wob

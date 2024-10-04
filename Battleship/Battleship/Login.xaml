@@ -1,0 +1,37 @@
+﻿<Page x:Class="Battleship.Login"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Battleship"
+      mc:Ignorable="d" 
+      d:DesignHeight="550" d:DesignWidth="900"
+      Title="Login">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50px" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="50px" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="65" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="300"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Schiffe Versenken" FontSize="38" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Border Grid.Row="1" Background="#222222" CornerRadius="2" Margin="0 8 0 18" />
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="Wähle einen Nutzername" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#000" />
+                <TextBox Grid.Row="1" x:Name="usernameInput" FontSize="24" Width="240" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" LostFocus="usernameInput_LostFocus" />
+                <TextBox Grid.Row="1" x:Name="usernamePlaceholder" FontSize="24" Width="240" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Text="User_0000" GotFocus="usernamePlaceholder_GotFocus"  Foreground="Gray" />
+                <Button Grid.Row="2" Content="Bestätigen" FontSize="24" Width="240" HorizontalAlignment="Center" VerticalAlignment="Center" Click="applyButton_Click" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

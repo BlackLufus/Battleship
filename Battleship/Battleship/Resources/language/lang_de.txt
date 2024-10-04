@@ -1,0 +1,113 @@
+Accept: Akzeptieren
+AllRightsReserved: Alle Rechte vorbehalten.
+Assume: Übernehmen
+AssumeToolTip: Einstellungen übernehmen
+Attention: Achtung
+Author: Autor
+Background: Hintergrund
+Cancel: Abbruch
+CancelToolTip: Zurück zum Hauptmenü
+ChangeSuccessful: Änderung Erfolgreich
+ClassicOption: Klassik
+ClickToCloseLabel: Zum Schließen irgendwo klicken
+Close: Schliessen
+ConnectionFailed: Verbindung Fehlgeschlagen!
+ConnectionLost: Verbindung unterbrochen!
+ConnectionLostMessage: Mögliche Gründe:&n - Verbindung zum Server verloren&n - Der Gegner hat das Spiel verlassen!
+CurrentVersion: Aktuelle Version
+Darkmode: Darkmode
+DarkmodeToolTip: De/Aktiviere den Darkmode
+Decrease: Verkleinern
+Difficult: Schwierigkeit
+DifficultToolTip: Wähle eine Schwierigkeit aus
+EmptyNameMessage: Es wurde kein Name übergeben
+EstablishConnection: Baue eine Verbindung zum Server auf
+ExitToolTip: Beendet das Spiel
+FailedToFillFieldMessage: Er konnten nicht alle Schiffe Platztiert werden!&nDas Spielfeld wurde daher zurück gesetzt.
+Field: Spielfeld
+FieldSize: Feldgröße
+FieldSizeToolTip: Wähle eine Feldgröße aus
+FileLoadErrorLabel: Dateifehler
+FileLoadErrorMessage: Die Datei wurde beschädigt oder&nist nicht mit dieser Version Kompatibel!
+FullScreen: Vollbild
+Game: Spiel
+GameFieldLabel: Setze alle Schiffe auf das Feld
+GameMode: Modus
+GameModePlayer: Spieler
+GameModePlayerToolTip: Computer vs. Spieler
+GameStartsIn: Das Spiel startet in %time% Sekunden
+GiveUp: Aufgeben
+GiveUpMessage: Bist du sicher das du Aufgeben möchtest?
+Hosting: Hosten
+HostInitializesWarningMessage: Warte bis der Host den Server initialisiert hat
+HostingToolTip: Eigenen Server erstellen
+HostPortDontExistMessage: Der angegebene GUI.Host/Port existiert nicht
+IllegalCharactersMessage: Du verwendest Illegale Zeichen! Es dürfen nur&nBuchstaben und Zahlen so wie _ und - verwendet werden!
+Increase: Vergrößern
+Language: Sprache
+LanguageChangedMessage: Die Sprache wurde Erfolgreich geändert.&nDie Übersetzungen sind möglicherweise nicht zu 100% Korrekt.
+LanguageID: Deutsch
+LanguageToolTip: Wähle eine Sprache
+LastUpdate: Letztes Update
+Load: Spiel Laden
+LoadToolTip: Spiel Laden
+MultiPlayer: Mehrspieler
+MultiPlayerLabel: Netzwerkverbindung
+MultiPlayerToolTip: Mehrspieler
+Music: Musik
+Off: AUS
+On: AN
+Opponent: Gegner
+OptionLabel: Spiel Einstellungen
+PaintWall: Mauer
+PaintWallToolTip: Soll eine Art Mauer, um ein zerstörtes Schiff erscheinen?
+PlayerLeftGame: %player% hat das Spiel verlassen!
+PlayerLeftGameMessage: Dein Gegner hat aufgegeben.
+PlayersTurnMessage: %player% ist am Zug
+PlayerWonMessage: %player% hat Gewonnen
+PortToHighMessage: Der Port muss zwischen 1 und 50000 liegen
+Quit: Beenden
+QuitMessage: Bist du sicher das du das Spiel Beenden möchtest?
+Random: Zufällig
+RandomToolTip: Platziere zufällige Schiffe
+Repeat: Wiederholen
+RepeatToolTip: Bei einem Treffer nochmal schießen?
+Reset: Zurücksetzten
+ResetFailed: Fehler beim Zurücksetzen!
+ResetFailedMessage: Deine Spiel Einstellungen konnten nicht zurück&ngesetzt werden!
+ResetSettingsToolTip: Setzte alles in der Lobby zu den Startwerten zurück
+ResetSuccessful: Erfolgreich zurückgesetzt
+ResetSuccessfulMessage: Deine Spiel Einstellungen wurden erfolgreich&nzurück gesetzt.
+ResetToolTip: Alle Schiffe vom Spielfeld entfernen
+Result: Ergebnis
+Return: Zurück
+ReturnBackToOldPanelToolTip: Kehre zum letzten Punkt zurück
+Rules: Regeln
+RulesMessage:  - Das Spiel Start, sobald beide Spieler ihre Schiffe gesetzt haben&n - Der Spieler, der ein Schiff trifft darf noch mal schießen,&n   solange bis der Spieler einen Fehlschuss hat&n - Das Spiel ist zu ende, sobald ein Spieler keine Schiffe mehr hat
+Save: Speichern
+SearchServer: Suche
+SearchServerToolTip: Server Suchen
+ServerAlreayExistLabel: Verbindung Fehlgeschlagen
+ServerAlreayExistMessage: Der Angegebene Server existier bereits!
+Settings: Einstellungen
+SettingsToolTip: Öffnet die Einstellungen
+ShipToolTip: Wie viele Schiff der Größe %shipSize% sollen es werden?
+SinglePlayer: Einzelspieler
+SinglePlayerToolTip: Einzelspieler
+StandardOption: Standard
+Start: Start
+StartToolTip: Startet das Spiel
+Time: Zeit
+TotalShots: Gesamtschüsse
+UnexpectedErrorMessage: Es ist ein Unerwarteter Fehler aufgetreten.&nVersuch es später noch einmal.
+View: Ansicht
+WaitForClient: Warte auf Gegner
+WaitForClientMessage: Warte bis dein Gegner dem Spiel beigetreten ist.
+WaitForOpponentMessage: Warte bis dein Gegner bereit ist&nDas Spiel wird automatisch gestartet :D
+WarningMessage: Seien Sie vorsichtig, diese Funktion kann Fehler verursachen.
+WelcomeMessage: Willkommen bei Schiffe Versenken
+WithoutOption: Ohne
+YouLoseMessage: Du hast Verloren
+YourField: Dein Feld
+YourTurnMessage: Du bist am Zug
+YouWonMessage: Du hast Gewonnen

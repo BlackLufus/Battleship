@@ -1,0 +1,113 @@
+Accept: Aceptar
+AllRightsReserved: Reservados todos los derechos.
+Assume: Asumir
+AssumeToolTip: Guardar ajustes
+Attention: Attention
+Author: Autor
+Background: Fondo
+Cancel: Cancelar
+CancelToolTip: Volver al menú principal
+ChangeSuccessful: Cambio exitoso
+ClassicOption: Clásico
+ClickToCloseLabel: Haga clic en cualquier lugar para cerrar
+Close: Cerrar
+ConnectionFailed: ¡La conexión falló!
+ConnectionLost: ¡Conexión perdida!
+ConnectionLostMessage: Posibles motivos:&n - Se perdió la conexión con el servidor&n - El oponente abandonó el juego.
+CurrentVersion: Versión actual
+Darkmode: Modo oscuro
+DarkmodeToolTip: Desactivar / activar modo oscuro
+Decrease: Disminución
+Difficult: Difícil
+DifficultToolTip: Elige una dificultad
+EmptyNameMessage: No se dio nombre
+EstablishConnection: Establecer una conexión con el servidor
+ExitToolTip: Salir del juego
+FailedToFillFieldMessage: ¡No se pudieron colocar todos los barcos!&nPor lo tanto, el campo de juego se redujo.
+Field: campo de juego
+FieldSize: Tamaño del campo
+FieldSizeToolTip: Elija un tamaño de campo
+FileLoadErrorLabel: Error de archivo
+FileLoadErrorMessage: ¡El archivo está dañado o no es compatible con esta versión!
+FullScreen: Pantalla completa
+Game: Juego
+GameFieldLabel: Pon todos los barcos en el campo
+GameMode: Modo
+GameModePlayer: Jugador
+GameModePlayerToolTip: Computadora vs. jugador
+GameStartsIn: El juego comienza en %time% Seconden
+GiveUp: Darse por vencido
+GiveUpMessage: ¿Estás seguro de que quieres rendirte?
+Hosting: Hosting
+HostInitializesWarningMessage: Espere a que el host inicialice el servidor
+HostingToolTip: Crea tu propio servidor
+HostPortDontExistMessage: La GUI.Host/Port especificada no existe
+IllegalCharactersMessage: ¡Estás usando caracteres ilegales!&n¡Solo se pueden usar letras y números como _ y -!
+Increase: Incrementar
+Language: Idioma
+LanguageChangedMessage: El idioma se cambió correctamente.&nLas traducciones pueden no ser 100% correctas.
+LanguageID: Español
+LanguageToolTip: Elige un idioma
+LastUpdate: Última actualización
+Load: Cargar juego
+LoadToolTip: Cargar juego
+MultiPlayer: Multijugador
+MultiPlayerLabel: Conexión de red
+MultiPlayerToolTip: Multijugador
+Music: Música
+Off: DE
+On: EN
+Opponent: Adversario
+OptionLabel: Configuraciones de juego
+PaintWall: pared
+PaintWallToolTip: ¿Debería aparecer algún tipo de muro alrededor de un barco destruido?
+PlayerLeftGame: ¡%player% abandonó el juego!
+PlayerLeftGameMessage: ¡Tu oponente se ha rendido!
+PlayersTurnMessage: Es el trun de %player%
+PlayerWonMessage: %player% ganó el juego
+PortToHighMessage: El puerto debe estar entre 1 y 50000
+Quit: Dejar
+QuitMessage: ¿Estás seguro de que quieres salir del juego?
+Random: Aleatorio
+RandomToolTip: Coloca los barcos al azar en el campo.
+Repeat: Repetir
+RepeatToolTip: ¿Disparar de nuevo si aciertas?
+Reset: Reiniciar
+ResetFailed: ¡Error de reinicio!
+ResetFailedMessage: ¡La configuración de tu juego no se pudo restablecer!
+ResetSettingsToolTip: Restablecer todos los valores en el lobby a los valores iniciales
+ResetSuccessful: Restablecer con éxito
+ResetSuccessfulMessage: La configuración del juego se ha restablecido & ncon éxito.
+ResetToolTip: Todos los barcos fueron retirados del campo de juego.
+Result: Resultado
+Return: Regreso
+ReturnBackToOldPanelToolTip: Regresar al último punto
+Rules: Reglas
+RulesMessage:  - El juego comienza tan pronto como ambos jugadores hayan plantado sus barcos.&n - El jugador que golpea un barco puede disparar de nuevo\nhasta que el jugador falla un tiro&n - El juego termina tan pronto como un jugador se queda sin barcos.
+Save: Ahorrar
+SearchServer: Buscar
+SearchServerToolTip: Servidor de búsqueda
+ServerAlreayExistLabel: La conexión falló
+ServerAlreayExistMessage: ¡El servidor especificado ya existe!
+Settings: Ajustes
+SettingsToolTip: Abra la configuración
+ShipToolTip: ¿Cuántos barcos del tamaño %shipSize% debería haber?
+SinglePlayer: Un jugador
+SinglePlayerToolTip: Un jugador
+StandardOption: Defecto
+Start: Empezar
+StartToolTip: Comenzar el juego
+Time: Hora
+TotalShots: Disparos totales
+UnexpectedErrorMessage: Se produjo un error inesperado.&nPleace Vuelve a intentarlo más tarde.
+View: Vista
+WaitForClient: Espera al oponente
+WaitForClientMessage: Espere hasta que su oponente haya entrado en el juego.
+WaitForOpponentMessage: Espere hasta que su oponente esté listo.&nEl juego comenzará automáticamente. :D
+WarningMessage: Tenga cuidado, esta función puede provocar errores.
+WelcomeMessage: Bienvenidos a Sinking Ships
+WithoutOption: Sin
+YouLoseMessage: Perdiste
+YourField: Tu campo
+YourTurnMessage: Es tu turno
+YouWonMessage: You Wob

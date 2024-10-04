@@ -1,0 +1,47 @@
+﻿using Battelship.Lobby;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+
+namespace Battleship.Lobby
+{
+    public class Ship
+    {
+        public enum ShipType
+        {
+            Carrier = 1,
+            Battleship = 2,
+            Cruiser = 3,
+            Submarine = 4,
+            Destroyer = 5
+        }
+
+        public enum ShipOrientation
+        {
+            Vertical = 0,
+            Horizontal = 270
+        }
+
+        public int row;
+        public int column;
+        public ShipType shipType;
+        public ShipOrientation shipOrientation;
+
+        public Ship(ShipType shipType, ShipOrientation shipOrientation)
+        {
+            this.shipType = shipType;
+            this.shipOrientation = shipOrientation;
+        }
+
+        public Ship(int row, int column, ShipType shipType, ShipOrientation shipOrientation)
+        {
+            this.row = row;
+            this.column = column;
+            this.shipType = shipType;
+            this.shipOrientation = shipOrientation;
+        }
+    }
+}

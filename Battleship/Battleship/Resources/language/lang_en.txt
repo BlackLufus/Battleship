@@ -1,0 +1,114 @@
+Accept: Accept
+AllRightsReserved: All rights reserved.
+Assume: Assume
+AssumeToolTip: Assume Settings
+Attention: Attention
+Author: Author
+Background: Background
+Cancel: Cancel
+CancelToolTip: Back to main menu
+ChangeSuccessful: Change Successful
+ClassicOption: Classic
+ClickToCloseLabel: Click anywhere to close
+Close: Close
+ConnectionFailed: Connection Failed!
+ConnectionLost: Connection lost
+ConnectionLostMessage: Possible Reasons:&n - Lost Connection to Server&n - The Opponent Left the game!
+CurrentVersion: Current version
+Darkmode: Dark mode
+DarkmodeToolTip: De/Activate dark mode
+Decrease: Decrease
+Destroyed: Destroyed
+Difficult: Difficult
+DifficultToolTip: Select a difficulty
+EmptyNameMessage: No name was given
+EstablishConnection: Establish a connection to the server
+ExitToolTip: Quit the game
+FailedToFillFieldMessage: Not all ships could be placed!&nThe playing field was therefore set back.
+Field: Game Field
+FieldSize: Field Size
+FieldSizeToolTip: Select a field size
+FileLoadErrorLabel: File Error
+FileLoadErrorMessage: The file has been damaged or&nis not compatible with this version!
+FullScreen: FullScreen
+Game: Game
+GameFieldLabel: Put all ships on the field
+GameMode: Mode
+GameModePlayer: Player
+GameModePlayerToolTip: Computer vs. Player
+GameStartsIn: The game starts in %time% Seconden
+GiveUp: Give Up
+GiveUpMessage: Are you sure you want to give up?
+Hosting: Hosting
+HostInitializesWarningMessage: Wait for the host to initialize the server
+HostingToolTip: Create your own server
+HostPortDontExistMessage: The specified GUI.Host/Port does not exist
+IllegalCharactersMessage: You are using illegal characters! Only letters and numbers&nsuch as _ and - may be used!
+Increase: Increase
+Language: Language
+LanguageChangedMessage: The language was changed successfully.&nThe translations may not be 100% correct.
+LanguageID: English
+LanguageToolTip: Choose a language
+LastUpdate: Last update
+Load: Load Game
+LoadToolTip: Load Game
+MultiPlayer: Multiplayer
+MultiPlayerLabel: Network connection
+MultiPlayerToolTip: Multiplayer
+Music: Music
+Off: OFF
+On: ON
+Opponent: Opponent
+OptionLabel: Game Settings
+PaintWall: Wall
+PaintWallToolTip: Should some kind of wall appear around a destroyed ship?
+PlayerLeftGame: %player% left the game!
+PlayerLeftGameMessage: Your opponent has given up!
+PlayersTurnMessage: It's %player%'s trun
+PlayerWonMessage: %player% won the game
+PortToHighMessage: The port must be between 1 and 50000
+Quit: Quit
+QuitMessage: Are you sure you want to quit the game?
+Random: Random
+RandomToolTip: Place the ships randomly on the field
+Repeat: Repeat
+RepeatToolTip: Shoot again if you hit?
+Reset: Reset
+ResetFailed: Reset error!
+ResetFailedMessage: Your game settings could not be reset!
+ResetSettingsToolTip: Reset all values in the lobby to the starting values
+ResetSuccessful: Reset successfully
+ResetSuccessfulMessage: Your game settings have been successfully reset.
+ResetToolTip: All ships were removed from the playing field
+Result: Result
+Return: Return
+ReturnBackToOldPanelToolTip: Return to the last point
+Rules: Rules
+RulesMessage:  - The game starts as soon as both players have planted their ships&n - The player who hits a ship may shoot again\nuntil the player misses a shot&n - The game is over as soon as a player runs out of ships
+Save: Save
+SearchServer: Search
+SearchServerToolTip: Search server
+ServerAlreayExistLabel: Connection Failed
+ServerAlreayExistMessage: The specified server already exists!
+Settings: Settings
+SettingsToolTip: Open the settings
+ShipToolTip: How many ships of the size %shipSize% should there be?
+SinglePlayer: Singleplayer
+SinglePlayerToolTip: Singleplayer
+StandardOption: Default
+Start: Begin
+StartToolTip: Start the game
+Time: Time
+TotalShots: Total shots
+UnexpectedErrorMessage: An unexpected error occurred.&nPleace Try again later.
+View: View
+WaitForClient: Wait for opponent
+WaitForClientMessage: Wait until your opponent has entered the game.
+WaitForOpponentMessage: Wait until your opponent is ready.&nThe game will start automatically. :D
+WarningMessage: Be careful, this feature can cause errors.
+WelcomeMessage: Welcome to Sinking Ships
+WithoutOption: Without
+YouLoseMessage: You lost
+YourField: Your Field
+YourTurnMessage: It's your turn
+YouWonMessage: You Won
