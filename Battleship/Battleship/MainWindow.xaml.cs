@@ -1,4 +1,5 @@
 ﻿using Battelship;
+using Battleship.Lobby;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,6 +28,16 @@ namespace Battleship
 
             Navigation.setup(mainFrame);
             Navigation.navigateTo(Login.get());
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            Navigation.navigateTo(GeneralSettings.get());
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

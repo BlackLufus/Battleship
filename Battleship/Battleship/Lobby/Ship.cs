@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace Battleship.Lobby
 {
-    public class Ship
+    public class Ship : IDisposable
     {
         public enum ShipType
         {
@@ -42,6 +42,11 @@ namespace Battleship.Lobby
             this.column = column;
             this.shipType = shipType;
             this.shipOrientation = shipOrientation;
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

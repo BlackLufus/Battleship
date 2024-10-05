@@ -85,6 +85,8 @@ namespace Battelship.Lobby
                     stackPanel.AddHandler(DragOverEvent, new DragEventHandler(dragAndDropManager.HandleDragOverEvent));
                     stackPanel.AddHandler(DragLeaveEvent, new DragEventHandler(dragAndDropManager.HandleDragLeaveEvent));
                     stackPanel.AddHandler(DropEvent, new DragEventHandler(dragAndDropManager.HandleDropEvent));
+                    stackPanel.MouseRightButtonDown += dragAndDropManager.RemoveShip;
+                    stackPanel.MouseLeftButtonDown += dragAndDropManager.RedragShip;
                     Grid.SetRow(stackPanel, row);
                     Grid.SetColumn(stackPanel, col);
                     DragAndDropGrid.Children.Add(stackPanel);
@@ -99,12 +101,12 @@ namespace Battelship.Lobby
 
         private void randomButton_Click(object sender, RoutedEventArgs e)
         {
-
+            dragAndDropManager.Randomize();
         }
 
         private void resetButton_Click(object sender, RoutedEventArgs e)
         {
-
+            dragAndDropManager.Reset();
         }
 
         private void backButton_Click(object sender, RoutedEventArgs e)
@@ -119,7 +121,6 @@ namespace Battelship.Lobby
 
         private void DragShip_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Debug.WriteLine("Mouse down" + ((Image)sender).Name);
             switch(((Image)sender).Name.ToLower())
             {
                 case "carrier":
@@ -141,36 +142,12 @@ namespace Battelship.Lobby
                     Debug.WriteLine("Unknown ship");
                     break;
             }
-            /*if (sender is UIElement element) 
-            {
-                Debug.WriteLine("Mouse down");
-                dragAndDropManager.StartDrag(element, e.GetPosition(element));
-            }*/
         }
-
-
 
         private void Page_DragOver(object sender, DragEventArgs e)
         {
             Point mousePosition = e.GetPosition(ShipsCanvas);
             dragAndDropManager.MoveDragShip(mousePosition);
-        }
-
-        private void DragShip_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            Debug.WriteLine("Mouse up");
-            dragAndDropManager.EndDrag();
-        }
-
-        private void MainWindow_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
-        {
-            // Wenn die linke Maustaste losgelassen wird und das Ziel nicht erreicht wird
-            if (e.Action == DragAction.Cancel || (e.KeyStates & DragDropKeyStates.LeftMouseButton) == 0)
-            {
-                // Der Drag-Vorgang wurde außerhalb eines Ziehziels abgebrochen
-                Debug.WriteLine("Drag and Drop canceled!");
-                e.Action = DragAction.Cancel;
-            }
         }
     }
 }

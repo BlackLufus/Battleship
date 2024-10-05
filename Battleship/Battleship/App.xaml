@@ -46,13 +46,13 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <!-- Bild für nicht ausgewählt -->
-                            <Image Grid.Column="0" x:Name="NormalIcon" Source="./Ressources/Images/noneSelectedButton.png" Width="24" Height="24" />
+                            <Image Grid.Column="0" x:Name="NormalIcon" Source="./Resources/Images/noneSelectedButton.png" Width="24" Height="24" />
                             <!-- Bild für Hover-Zustand -->
-                            <Image Grid.Column="0" x:Name="HoverIcon" Source="./Ressources/Images/hoveredNoneSelectedButton.png" Width="24" Height="24" Visibility="Collapsed" />
+                            <Image Grid.Column="0" x:Name="HoverIcon" Source="./Resources/Images/hoveredNoneSelectedButton.png" Width="24" Height="24" Visibility="Collapsed" />
                             <!-- Bild für ausgewählt -->
-                            <Image Grid.Column="0" x:Name="SelectedIcon" Source="./Ressources/Images/selectedButton.png" Width="24" Height="24" Visibility="Collapsed" />
+                            <Image Grid.Column="0" x:Name="SelectedIcon" Source="./Resources/Images/selectedButton.png" Width="24" Height="24" Visibility="Collapsed" />
                             <!-- Bild für ausgewählt und Hover -->
-                            <Image Grid.Column="0" x:Name="SelectedHoverIcon" Source="./Ressources/Images/hoveredSelectedButton.png" Width="24" Height="24" Visibility="Collapsed" />
+                            <Image Grid.Column="0" x:Name="SelectedHoverIcon" Source="./Resources/Images/hoveredSelectedButton.png" Width="24" Height="24" Visibility="Collapsed" />
 
                             <!-- Text für RadioButton -->
                             <TextBlock Grid.Column="1" x:Name="RadioButtonText" 

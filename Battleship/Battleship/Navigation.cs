@@ -33,8 +33,11 @@ namespace Battelship
             {
                 throw new Exception("Navigation not set up");
             }
-            instance.pages.Add(page);
-            instance.frame.NavigationService.Navigate(page);
+            if (instance.pages.Count == 0 || instance.pages.Last() != page)
+            {
+                instance.pages.Add(page);
+                instance.frame.NavigationService.Navigate(page);
+            }
         }
 
         public static void navigateAndClear(Page page)

@@ -44,24 +44,24 @@
                 </Grid>
 
                 <Canvas x:Name="ShipsCanvas" Grid.Column="0" Background="Aqua">
-                    <Image x:Name="Battleship" Width="84" Height="28" MouseDown="DragShip_MouseDown" MouseUp="DragShip_MouseUp" Canvas.Left="28" Canvas.Top="10">
+                    <Image x:Name="Battleship" Width="56" Height="28" MouseDown="DragShip_MouseDown" Canvas.Left="50" Canvas.Top="10">
+                        <Image.Source>
+                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/battleship.png" Rotation="Rotate270"/>
+                        </Image.Source>
+                    </Image>
+                    <Image x:Name="Cruiser" Width="84" Height="28" MouseDown="DragShip_MouseDown" Canvas.Left="36" Canvas.Top="74">
                         <Image.Source>
                             <BitmapImage UriSource="Pack://application:,,,/Resources/Images/cruiser.png" Rotation="Rotate270"/>
                         </Image.Source>
                     </Image>
-                    <Image x:Name="Cruiser" Width="84" Height="28" MouseDown="DragShip_MouseDown" MouseUp="DragShip_MouseUp" Canvas.Left="28" Canvas.Top="89">
+                    <Image x:Name="Submarine" Width="126" Height="28" MouseDown="DragShip_MouseDown" Canvas.Left="17" Canvas.Top="153">
                         <Image.Source>
-                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/cruiser.png" Rotation="Rotate270"/>
+                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/Submarine.png" Rotation="Rotate270"/>
                         </Image.Source>
                     </Image>
-                    <Image x:Name="Submarine" Width="84" Height="28" MouseDown="DragShip_MouseDown" MouseUp="DragShip_MouseUp" Canvas.Left="28" Canvas.Top="163">
+                    <Image x:Name="Destroyer" Width="168" Height="28" MouseDown="DragShip_MouseDown" Canvas.Left="-4" Canvas.Top="242">
                         <Image.Source>
-                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/cruiser.png" Rotation="Rotate270"/>
-                        </Image.Source>
-                    </Image>
-                    <Image x:Name="Destroyer" Width="84" Height="28" MouseDown="DragShip_MouseDown" MouseUp="DragShip_MouseUp" Canvas.Left="28" Canvas.Top="242">
-                        <Image.Source>
-                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/cruiser.png" Rotation="Rotate270"/>
+                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/destroyer.png" Rotation="Rotate270"/>
                         </Image.Source>
                     </Image>
                 </Canvas>
