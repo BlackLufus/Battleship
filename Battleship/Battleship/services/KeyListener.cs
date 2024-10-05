@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 
 namespace Battleship.services
@@ -13,8 +6,6 @@ namespace Battleship.services
     internal class KeyListener
     {
         private static KeyListener? instance;
-
-        private Thread thread;
 
         public delegate void KeyDownEventHandler(Key key);
 

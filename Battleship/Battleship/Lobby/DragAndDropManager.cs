@@ -1,17 +1,10 @@
 ﻿using Battleship.services;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Xml.Linq;
 using static Battleship.Lobby.BattleField;
 
 namespace Battleship.Lobby
@@ -26,7 +19,7 @@ namespace Battleship.Lobby
             None
         }
 
-        private List<DragShip> dragShips = new List<DragShip>();
+        private List<DragShip> dragShips = [];
         private Canvas ShipsCanvas;
         private Grid DragAndDropGrid;
         private DragShip? currentDragShip;
@@ -66,9 +59,9 @@ namespace Battleship.Lobby
             }
         }
 
-        private BitmapSource RotateImage(BitmapSource source, double angle)
+        private static TransformedBitmap RotateImage(BitmapSource source, double angle)
         {
-            TransformedBitmap transform = new TransformedBitmap();
+            TransformedBitmap transform = new();
             transform.BeginInit();
             transform.Source = source;
             transform.Transform = new RotateTransform(angle);
@@ -96,14 +89,16 @@ namespace Battleship.Lobby
 
         public void StartDrag(Ship.ShipType shipType, Point offset)
         {
-            Image element = new Image();
-            element.Width = 28 * (int)shipType;
-            element.Height = 28;
-            element.Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + shipType.ToString().ToLower() + ".png")), 270);
+            Image element = new()
+            {
+                Width = 28 * (int)shipType,
+                Height = 28,
+                Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + shipType.ToString().ToLower() + ".png")), 270)
+            };
 
             this.ShipsCanvas.Children.Add(element);
 
-            DragShip dragShip = new DragShip(element, offset, shipType);
+            DragShip dragShip = new(element, offset, shipType);
 
             currentDragShip = dragShip;
 
@@ -118,7 +113,7 @@ namespace Battleship.Lobby
             int column = Grid.GetColumn((UIElement)sender);
             foreach (DragShip dragShip in dragShips)
             {
-                if (battleField.isShipOnPosition(dragShip, row, column))
+                if (BattleField.IsShipOnPosition(dragShip, row, column))
                 {
                     this.currentDragShip = dragShip;
                     dragShip.offset = new Point(e.GetPosition(dragShip.element).X, e.GetPosition(dragShip.element).Y);
@@ -138,8 +133,7 @@ namespace Battleship.Lobby
             if (e.Action == DragAction.Cancel || (e.KeyStates & DragDropKeyStates.LeftMouseButton) == 0)
             {
                 this.ShipsCanvas.Children.Remove((Image)sender);
-                if (this.currentDragShip != null)
-                    this.currentDragShip.Dispose();
+                this.currentDragShip?.Dispose();
                 this.currentDragShip = null;
 
                 // Der Drag-Vorgang wurde außerhalb eines Ziehziels abgebrochen
@@ -153,7 +147,7 @@ namespace Battleship.Lobby
             int column = Grid.GetColumn((UIElement)sender);
             foreach (DragShip dragShip in dragShips)
             {
-                if (battleField.isShipOnPosition(dragShip, row, column))
+                if (BattleField.IsShipOnPosition(dragShip, row, column))
                 {
                     battleField.RemoveShip(dragShip.row, dragShip.column, dragShip.shipType, dragShip.shipOrientation, FieldState.Ship);
                     this.ShipsCanvas.Children.Remove(dragShip.element);
@@ -168,29 +162,29 @@ namespace Battleship.Lobby
         public void Randomize()
         {
             Reset();
-            List<Ship> shipList = new List<Ship>();
+            List<Ship> shipList = [];
             for (int i = 0; i < 4; i++)
             {
                 Ship.ShipType shipType = Ship.ShipType.Battleship;
-                Ship ship = new Ship(shipType, Ship.ShipOrientation.Horizontal);
+                Ship ship = new(shipType, Ship.ShipOrientation.Horizontal);
                 shipList.Add(ship);
             }
             for (int i = 0; i < 3; i++)
             {
                 Ship.ShipType shipType = Ship.ShipType.Cruiser;
-                Ship ship = new Ship(shipType, Ship.ShipOrientation.Horizontal);
+                Ship ship = new(shipType, Ship.ShipOrientation.Horizontal);
                 shipList.Add(ship);
             }
             for (int i = 0; i < 2; i++)
             {
                 Ship.ShipType shipType = Ship.ShipType.Submarine;
-                Ship ship = new Ship(shipType, Ship.ShipOrientation.Horizontal);
+                Ship ship = new(shipType, Ship.ShipOrientation.Horizontal);
                 shipList.Add(ship);
             }
             for (int i = 0; i < 1; i++)
             {
                 Ship.ShipType shipType = Ship.ShipType.Destroyer;
-                Ship ship = new Ship(shipType, Ship.ShipOrientation.Horizontal);
+                Ship ship = new(shipType, Ship.ShipOrientation.Horizontal);
                 shipList.Add(ship);
             }
 
@@ -198,16 +192,20 @@ namespace Battleship.Lobby
 
             foreach (Ship ship in shipList)
             {
-                Image element = new Image();
-                element.Width = 28 * (ship.shipOrientation == Ship.ShipOrientation.Horizontal ? (int)ship.shipType : 1);
-                element.Height = 28 * (ship.shipOrientation == Ship.ShipOrientation.Vertical ? (int)ship.shipType : 1);
-                element.Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + ship.shipType.ToString().ToLower() + ".png")), (int)ship.shipOrientation);
+                Image element = new()
+                {
+                    Width = 28 * (ship.shipOrientation == Ship.ShipOrientation.Horizontal ? (int)ship.shipType : 1),
+                    Height = 28 * (ship.shipOrientation == Ship.ShipOrientation.Vertical ? (int)ship.shipType : 1),
+                    Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + ship.shipType.ToString().ToLower() + ".png")), (int)ship.shipOrientation)
+                };
 
                 this.ShipsCanvas.Children.Add(element);
 
-                DragShip dragShip = new DragShip(element, new Point(0, 0), ship.shipType, ship.shipOrientation);
-                dragShip.row = ship.row;
-                dragShip.column = ship.column;
+                DragShip dragShip = new(element, new Point(0, 0), ship.shipType, ship.shipOrientation)
+                {
+                    row = ship.row,
+                    column = ship.column
+                };
 
                 this.dragShips.Add(dragShip);
 
@@ -218,7 +216,7 @@ namespace Battleship.Lobby
             }
         }
 
-        private void SetDragPosition(UIElement element, Point position)
+        private static void SetDragPosition(UIElement element, Point position)
         {
             if (element == null)
             {
@@ -320,29 +318,31 @@ namespace Battleship.Lobby
             }
         }
 
-        private void MarkField(StackPanel element, BattleField.FieldState fieldState)
+        private static void MarkField(StackPanel element, BattleField.FieldState fieldState)
         {
             if (fieldState == BattleField.FieldState.Marked)
             {
                 //element.Background = Brushes.Green;
-                element.Background = (Brush)new BrushConverter().ConvertFrom("#44ff0000");
+                element.Background = new BrushConverter().ConvertFrom("#44ff0000") as Brush;
                 element.Children.Clear();
             }
             else if (fieldState == BattleField.FieldState.Water)
             {
-                element.Background = (Brush)new BrushConverter().ConvertFrom("#22000000");
+                element.Background = new BrushConverter().ConvertFrom("#22000000") as Brush;
                 element.Children.Clear();
             }
             else if (fieldState == BattleField.FieldState.Ship)
             {
                 //element.Background = Brushes.Red;
-                element.Background = (Brush)new BrushConverter().ConvertFrom("#22000000");
+                element.Background = new BrushConverter().ConvertFrom("#22000000") as Brush;
                 element.Children.Clear();
             }
             else
             {
-                Image image = new Image();
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restricted.png"));
+                Image image = new()
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restricted.png"))
+                };
                 element.Children.Add(image);
             }
         }
@@ -360,22 +360,16 @@ namespace Battleship.Lobby
         }
     }
 
-    public class DragShip : Ship
+    public class DragShip(UIElement element, Point offset, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation = Ship.ShipOrientation.Horizontal) : Ship(shipType, shipOrientation)
     {
-        public UIElement element;
+        public UIElement element = element;
 
-        public Point offset;
+        public Point offset = offset;
         public Point mousePosition;
 
         public void SetMousePosition(Point mousePosition)
         {
             this.mousePosition = mousePosition;
-        }
-
-        public DragShip(UIElement element, Point offset, ShipType shipType, ShipOrientation shipOrientation = ShipOrientation.Horizontal) : base(shipType, shipOrientation)
-        {
-            this.element = element;
-            this.offset = offset;
         }
 
         public void Rotate(ShipOrientation shipOrientation)
@@ -384,15 +378,11 @@ namespace Battleship.Lobby
             {
                 if (shipOrientation == ShipOrientation.Horizontal)
                 {
-                    double temp = offset.X;
-                    offset.X = offset.Y;
-                    offset.Y = temp;
+                    (offset.Y, offset.X) = (offset.X, offset.Y);
                 }
                 else if (shipOrientation == ShipOrientation.Vertical)
                 {
-                    double temp = offset.X;
-                    offset.X = offset.Y;
-                    offset.Y = temp;
+                    (offset.Y, offset.X) = (offset.X, offset.Y);
                 }
 
             }

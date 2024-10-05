@@ -26,11 +26,17 @@
                     <RowDefinition Height="50" />
                     <RowDefinition Height="50" />
                     <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Content="Wähle einen Nutzername" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#000" />
                 <TextBox Grid.Row="1" x:Name="usernameInput" FontSize="24" Width="240" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" LostFocus="usernameInput_LostFocus" />
                 <TextBox Grid.Row="1" x:Name="usernamePlaceholder" FontSize="24" Width="240" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Text="User_0000" GotFocus="usernamePlaceholder_GotFocus"  Foreground="Gray" />
                 <Button Grid.Row="2" Content="Bestätigen" FontSize="24" Width="240" HorizontalAlignment="Center" VerticalAlignment="Center" Click="applyButton_Click" />
+                <Button Grid.Row="3" Content="Start Connection" FontSize="24" Width="240" HorizontalAlignment="Center" VerticalAlignment="Center" Click="startButton_Click" />
+                <Button Grid.Row="4" Content="Host Disconnect" FontSize="24" Width="240" HorizontalAlignment="Center" VerticalAlignment="Center" Click="hostButton_Click" />
+                <Button Grid.Row="5" Content="Client send Hello" FontSize="24" Width="240" HorizontalAlignment="Center" VerticalAlignment="Center" Click="clientButton_Click" />
             </Grid>
         </Grid>
     </Grid>

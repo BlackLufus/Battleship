@@ -1,6 +1,7 @@
 ﻿using Battelship;
 using Battelship.Lobby;
 using Battleship.Lobby;
+using Battleship.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,6 +26,8 @@ namespace Battleship
     public partial class Login : Page
     {
         private static Login? instance;
+        HostSocketService hostSocket;
+        ClientSocketService clientSocket;
         private Login()
         {
             InitializeComponent();
@@ -58,6 +61,25 @@ namespace Battleship
         {
             Navigation.navigateTo(StartMenu.get());
             Debug.WriteLine("Button clicked");
+        }
+
+        private void startButton_Click(object sender, RoutedEventArgs e)
+        {
+            hostSocket = new HostSocketService("192.168.178.33", 12345);
+            hostSocket.Start();
+
+            clientSocket = new ClientSocketService("192.168.178.33", 12345);
+            clientSocket.Connect();
+        }
+
+            private void hostButton_Click(object sender, RoutedEventArgs e)
+        {
+            hostSocket.Disconnect();
+        }
+
+        private void clientButton_Click(object sender, RoutedEventArgs e)
+        {
+            clientSocket.Send(new LobbyServiceMessage(LobbyServiceMessage.MessageType.Name, "client"));
         }
     }
 }

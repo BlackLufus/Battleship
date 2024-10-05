@@ -80,7 +80,7 @@ namespace Battelship.Lobby
 
                     StackPanel stackPanel = new StackPanel();
                     var bc = new BrushConverter();
-                    stackPanel.Background = (Brush)bc.ConvertFrom("#22000000");
+                    stackPanel.Background = bc.ConvertFrom("#22000000") as Brush;
                     stackPanel.AllowDrop = true;
                     stackPanel.AddHandler(DragOverEvent, new DragEventHandler(dragAndDropManager.HandleDragOverEvent));
                     stackPanel.AddHandler(DragLeaveEvent, new DragEventHandler(dragAndDropManager.HandleDragLeaveEvent));

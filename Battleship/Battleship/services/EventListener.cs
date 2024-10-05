@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Battleship.services
+﻿namespace Battleship.services
 {
-    abstract class EventListener
+    abstract class EventListener(String id)
     {
         private static List<EventListener>? eventListeners = new List<EventListener>();
-        private string id;
-
-        protected EventListener(String id)
-        {
-            this.id = id;
-        }
+        private string id = id;
 
         public static void AddListener(EventListener listener)
         {

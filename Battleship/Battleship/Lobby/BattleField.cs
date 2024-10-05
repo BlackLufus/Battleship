@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace Battleship.Lobby
 {
-    public class BattleField
+    public class BattleField(int size, bool restricted)
     {
         public enum FieldState
         {
@@ -17,20 +12,13 @@ namespace Battleship.Lobby
             Marked = 2
         }
 
-        public int size;
-        public int[,] field;
-        private bool restricted;
+        public int size = size;
+        public int[,] field = new int[size, size];
+        private bool restricted = restricted;
 
         private Ship? lastShip;
 
-        public BattleField(int size, bool restricted)
-        {
-            this.size = size;
-            this.field = new int[size, size];
-            this.restricted = restricted;
-        }
-
-        public bool isShipOnPosition(Ship ship, int row, int column)
+        public static bool IsShipOnPosition(Ship ship, int row, int column)
         {
             if (ship.shipOrientation == Ship.ShipOrientation.Vertical)
             {
@@ -82,10 +70,7 @@ namespace Battleship.Lobby
         {   
             if (CheckShip(row, column, shipType, shipOrientation, fieldState == null ? FieldState.Water : (fieldState == FieldState.Ship ? FieldState.Marked : FieldState.Water)))
             {
-                if (fieldState == null)
-                {
-                    fieldState = FieldState.Ship;
-                }
+                fieldState ??= FieldState.Ship;
                 if (fieldState == FieldState.Marked)
                 {
                     lastShip = new Ship(row, column, shipType, shipOrientation);
@@ -121,9 +106,9 @@ namespace Battleship.Lobby
         {
             int index = 0;
 
-            Random randomRow = new Random();
-            Random randomColumn = new Random();
-            Random randomOrientation = new Random();
+            Random randomRow = new();
+            Random randomColumn = new();
+            Random randomOrientation = new();
 
             int totalIterations = 0;
             int iteration = 0;
