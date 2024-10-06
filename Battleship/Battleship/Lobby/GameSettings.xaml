@@ -18,207 +18,219 @@
                 <RowDefinition Height="65" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="*" />
-                <RowDefinition MinHeight="70" Height="70" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="Spieleinstellungen" FontSize="38" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" />
             <Border Grid.Row="1" Background="#222222" CornerRadius="2" Margin="0 8 0 18" />
-            <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <Grid Grid.Row="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="50" />
-                            <RowDefinition Height="50" />
-                            <RowDefinition Height="50" />
-                            <RowDefinition Height="50" />
-                            <RowDefinition Height="50" />
-                            <RowDefinition Height="50" />
-                            <RowDefinition Height="50" />
-                            <RowDefinition Height="50" />
-                            <RowDefinition Height="50" />
-                        </Grid.RowDefinitions>
-                        <Grid Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Text="Spielmodus: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
-                            <Grid Grid.Column="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <RadioButton Grid.Column="0" Style="{StaticResource RadioButtonStyle}" Content="Normal" FontSize="24" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White" />
-                                <RadioButton Grid.Column="1" Style="{StaticResource RadioButtonStyle}" Content="Computer" FontSize="24" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White" />
-                            </Grid>
-                        </Grid>
+            <Border Grid.Row="2" Background="Transparent" CornerRadius="10" BorderBrush="Black" BorderThickness="3">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="Black" Opacity="0.5" />
+                </Border.Effect>
+            </Border>
+            <Grid Grid.Row="2" Margin="3 3 3 3">
+                <Grid.Clip>
+                    <RectangleGeometry Rect="0,0,674,264" RadiusX="10" RadiusY="10"/>
+                </Grid.Clip>
+                <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
                         <Grid Grid.Row="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Text="Spielfeldgröße: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
-                            <Grid Grid.Column="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="50" />
-                                </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Width="30" Height="30" FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <TextBlock Text="-" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
-                                </Button>
-                                <TextBlock Grid.Column="1" Text="10x10" Width="160" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Background="White" />
-                                <Button Grid.Column="2" Width="30" Height="30" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                    <TextBlock Text="+" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
-                                </Button>
-                            </Grid>
-                        </Grid>
-                        <Grid Grid.Row="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Text="Schwierigkeitsgrad: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
-                            <Grid Grid.Column="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="50" />
-                                </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Width="30" Height="30" FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <TextBlock Text="-" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
-                                </Button>
-                                <TextBlock Grid.Column="1" Text="10x10" Width="160" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Background="White" />
-                                <Button Grid.Column="2" Width="30" Height="30" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                    <TextBlock Text="+" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
-                                </Button>
-                            </Grid>
-                        </Grid>
-                        <Grid Grid.Row="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Text="Trefferbonus: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
-                            <Grid Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="10" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Width="260" Height="30" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="On/Off" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="35" />
-                                </Button>
-                            </Grid>
-                        </Grid>
-                        <Grid Grid.Row="4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Text="Gesperrte Bereiche: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
-                            <Grid Grid.Column="2">
-                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="300" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Width="260" Height="30" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="On/Off" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="35" />
-                                </Button>
+                                <TextBlock Grid.Column="1" Text="Spielmodus: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
+                                <Grid Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <RadioButton Grid.Column="0" Style="{StaticResource RadioButtonStyle}" Content="Normal" FontSize="24" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White" />
+                                    <RadioButton Grid.Column="1" Style="{StaticResource RadioButtonStyle}" Content="Computer" FontSize="24" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White" />
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid Grid.Row="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Text="Anzahl der 2er Schiffe: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
-                            <Grid Grid.Column="2">
+                            <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="Anzahl der Schiffe:" FontWeight="Bold" FontSize="14"/>
-                                    <Slider x:Name="Ship2Slider" Minimum="2" Maximum="5" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Width="200"/>
-                                    <TextBlock Text="{Binding ElementName=ShipSlider, Path=Value}" FontSize="16" HorizontalAlignment="Center"/>
-                                </StackPanel>
-                            </Grid>
-                        </Grid>
-                        <Grid Grid.Row="6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Text="Anzahl der 3er Schiffe: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
-                            <Grid Grid.Column="2">
-                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="300" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="Anzahl der Schiffe:" FontWeight="Bold" FontSize="14"/>
-                                    <Slider x:Name="Ship3Slider" Minimum="2" Maximum="5" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Width="200"/>
-                                    <TextBlock Text="{Binding ElementName=ShipSlider, Path=Value}" FontSize="16" HorizontalAlignment="Center"/>
-                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="Spielfeldgröße: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
+                                <Grid Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="50" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Width="30" Height="30" FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock Text="-" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
+                                    </Button>
+                                    <TextBlock Grid.Column="1" Text="10x10" Width="160" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Background="White" />
+                                    <Button Grid.Column="2" Width="30" Height="30" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <TextBlock Text="+" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
+                                    </Button>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid Grid.Row="7">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Text="Anzahl der 4er Schiffe: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
-                            <Grid Grid.Column="2">
+                            <Grid Grid.Row="2">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="Anzahl der Schiffe:" FontWeight="Bold" FontSize="14"/>
-                                    <Slider x:Name="Ship4Slider" Minimum="2" Maximum="5" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Width="200"/>
-                                    <TextBlock Text="{Binding ElementName=ShipSlider, Path=Value}" FontSize="16" HorizontalAlignment="Center"/>
-                                </StackPanel>
-                            </Grid>
-                        </Grid>
-                        <Grid Grid.Row="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Text="Anzahl der 5er Schiffe: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
-                            <Grid Grid.Column="2">
-                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="300" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="Anzahl der Schiffe:" FontWeight="Bold" FontSize="14"/>
-                                    <Slider x:Name="Ship5Slider" Minimum="2" Maximum="5" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Width="200"/>
-                                    <TextBlock Text="{Binding ElementName=ShipSlider, Path=Value}" FontSize="16" HorizontalAlignment="Center"/>
-                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="Schwierigkeitsgrad: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
+                                <Grid Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="50" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Width="30" Height="30" FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock Text="-" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
+                                    </Button>
+                                    <TextBlock Grid.Column="1" Text="10x10" Width="160" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Background="White" />
+                                    <Button Grid.Column="2" Width="30" Height="30" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <TextBlock Text="+" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text="Trefferbonus: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
+                                <Grid Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Width="260" Height="30" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="On/Off" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="35" />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text="Gesperrte Bereiche: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
+                                <Grid Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Width="260" Height="30" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="On/Off" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="35" />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text="Anzahl der 2er Schiffe: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
+                                <Grid Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="Anzahl der Schiffe:" FontWeight="Bold" FontSize="14"/>
+                                        <Slider x:Name="Ship2Slider" Minimum="2" Maximum="5" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Width="200"/>
+                                        <TextBlock Text="{Binding ElementName=ShipSlider, Path=Value}" FontSize="16" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text="Anzahl der 3er Schiffe: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
+                                <Grid Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="Anzahl der Schiffe:" FontWeight="Bold" FontSize="14"/>
+                                        <Slider x:Name="Ship3Slider" Minimum="2" Maximum="5" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Width="200"/>
+                                        <TextBlock Text="{Binding ElementName=ShipSlider, Path=Value}" FontSize="16" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="7">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text="Anzahl der 4er Schiffe: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
+                                <Grid Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="Anzahl der Schiffe:" FontWeight="Bold" FontSize="14"/>
+                                        <Slider x:Name="Ship4Slider" Minimum="2" Maximum="5" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Width="200"/>
+                                        <TextBlock Text="{Binding ElementName=ShipSlider, Path=Value}" FontSize="16" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text="Anzahl der 5er Schiffe: " FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White" />
+                                <Grid Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="Anzahl der Schiffe:" FontWeight="Bold" FontSize="14"/>
+                                        <Slider x:Name="Ship5Slider" Minimum="2" Maximum="5" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Width="200"/>
+                                        <TextBlock Text="{Binding ElementName=ShipSlider, Path=Value}" FontSize="16" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </StackPanel>
-            </ScrollViewer>
-            <Grid Grid.Row="3" Margin="0 10">
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+            <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Zurück" FontSize="24" Width="240" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BackButton_Click"/>
-                <Button Grid.Column="1" Content="Bestätigen" FontSize="24" Width="240" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ApplyButton_Click"/>
+                <Button Grid.Column="0" Content="Bestätigen" FontSize="24" Width="220" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ApplyButton_Click"/>
+                <Button Grid.Column="1" Content="Zurück" FontSize="24" Width="220" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BackButton_Click"/>
             </Grid>
         </Grid>
     </Grid>

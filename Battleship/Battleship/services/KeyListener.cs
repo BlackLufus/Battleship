@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Battleship.Services;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Battleship.services
@@ -43,6 +44,7 @@ namespace Battleship.services
                 }
             });
 
+            ThreadListener.AddThread(thread); // Füge den Thread zur Liste der Threads hinzu
             // Starte den Thread
             thread.SetApartmentState(ApartmentState.STA);
             thread.IsBackground = true;  // Stelle sicher, dass der Thread im Hintergrund läuft

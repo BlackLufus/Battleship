@@ -39,6 +39,12 @@ namespace Battleship
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+            ThreadListener.StopAllThreads();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Exit_Click(null, null);
         }
     }
 }

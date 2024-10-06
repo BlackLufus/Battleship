@@ -341,7 +341,8 @@ namespace Battleship.Lobby
             {
                 Image image = new()
                 {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restricted.png"))
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png")),
+                    Margin = new Thickness(4, 4, 4, 4),
                 };
                 element.Children.Add(image);
             }

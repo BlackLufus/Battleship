@@ -18,8 +18,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="65" />
                 <RowDefinition Height="30" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="20" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="10" />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="Allgemeine Einstellungen" FontSize="38" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -50,11 +50,10 @@
             <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" x:Name="ResetSettingsButton" Content="Zurücksetzen" FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center" Width="200" />
-                <Button Grid.Column="2" x:Name="BackButton" Content="Zurück" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center" Width="200" Click="BackButton_Click" />
+                <Button Grid.Column="0" x:Name="ResetSettingsButton" Content="Zurücksetzen" FontSize="24" Width="220" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Button Grid.Column="2" x:Name="BackButton" Content="Zurück" FontSize="24" Width="220" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BackButton_Click" />
             </Grid>
         </Grid>
     </Grid>

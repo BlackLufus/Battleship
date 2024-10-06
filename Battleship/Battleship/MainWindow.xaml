@@ -5,41 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Battleship"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="900" MinHeight="550" MinWidth="900" ResizeMode="NoResize">
+        Closing="Window_Closing"
+        Title="MainWindow" Height="550" Width="900" MinHeight="550" MinWidth="900">
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="pack://application:,,,/Resources/Images/background2.jpg"/>
         </Grid.Background>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="50" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50px" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="50px" />
-                </Grid.ColumnDefinitions>
-                <Border Grid.Column="1" BorderBrush="Black" BorderThickness="2" CornerRadius="15" 
-                    Background="#4C000000" Padding="10" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Frame x:Name="mainFrame" NavigationUIVisibility="Hidden" Width="778" Height="396" />
-                </Border>
+        <Viewbox>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="24px" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="24px" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="1" BorderBrush="Black" BorderThickness="2" CornerRadius="15" 
+                                    Background="#4C000000" Padding="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Frame x:Name="mainFrame" NavigationUIVisibility="Hidden" Height="425" Width="780" />
+                    </Border>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="35" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <Button Grid.Column="3" Grid.Row="1" Style="{StaticResource MainWindowButtonStyle}" Click="Settings_Click" VerticalAlignment="Top">
+                        <Image Source="pack://application:,,,/Resources/Images/settings.png" Width="50" Height="50" />
+                    </Button>
+                </Grid>
             </Grid>
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="50" />
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Style="{StaticResource MainWindowButtonStyle}" Click="Settings_Click">
-                    <Image Source="pack://application:,,,/Resources/Images/settings2.png" Width="35" Height="35" />
-                </Button>
-                <Button Grid.Column="2" Style="{StaticResource MainWindowButtonStyle}" Click="Exit_Click">
-                    <Image Source="pack://application:,,,/Resources/Images/exitButton.png" Width="35" Height="35" />
-                </Button>
-            </Grid>
-        </Grid>
+        </Viewbox>
     </Grid>
 </Window>

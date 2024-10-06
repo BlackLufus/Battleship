@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="Battleship.Components.MenuButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:components="clr-namespace:Battleship.Components"
+             mc:Ignorable="d">
+    <Grid>
+        <Border x:Name="MainComponent" CornerRadius="20" Margin="5" BorderThickness="3" BorderBrush="#FF383838" Visibility="Hidden">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="#ccB0FFFF"/>
+                    <!-- Standard Hintergrundfarbe -->
+                </Style>
+            </Border.Style>
+        </Border>
+        <Border CornerRadius="20" Margin="5" BorderThickness="3" BorderBrush="#FF383838">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="#aaFFFFFF"/>
+                    <!-- Standard Hintergrundfarbe -->
+
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#ccB0FFFF"/>
+                            <!-- Hintergrundfarbe bei MouseOver -->
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <!-- 3 Teile -->
+                    <RowDefinition Height="1*"/>
+                    <!-- 1 Teil -->
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Row="0" Source="{Binding ImageSource, RelativeSource={RelativeSource AncestorType=UserControl}}" VerticalAlignment="Center" Margin="5"/>
+                <TextBlock Grid.Row="1" FontSize="20" FontWeight="Bold" Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF525252"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
