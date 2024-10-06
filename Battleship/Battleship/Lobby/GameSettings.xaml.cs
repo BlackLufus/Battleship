@@ -27,7 +27,7 @@ namespace Battelship.Lobby
             InitializeComponent();
         }
 
-        public static GameSettings get()
+        public static GameSettings Get()
         {
             if (instance == null)
             {

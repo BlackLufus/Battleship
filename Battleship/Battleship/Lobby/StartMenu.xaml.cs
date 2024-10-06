@@ -3,6 +3,7 @@ using Battelship;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace Battleship.Lobby
 {
@@ -29,22 +30,24 @@ namespace Battleship.Lobby
 
         private void SingelPlayerButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Navigation.navigateTo(GameSettings.get());
+            Navigation.navigateTo(GameSettings.Get());
+            Debug.WriteLine("DuosButton clicked");
         }
 
         private void DuosButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
+            Debug.WriteLine("DuosButton clicked");
+            Navigation.navigateTo(MultiplayerSetup.Get());
         }
 
         private void OnlineButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
+            Debug.WriteLine("OnlineButton clicked");
         }
 
         private void LoadGameButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
+            Debug.WriteLine("LoadGameButton clicked");
         }
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)

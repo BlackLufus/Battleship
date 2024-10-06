@@ -16,17 +16,20 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace Battleship.Components
+namespace Battleship.Resources.Components
 {
     /// <summary>
     /// Interaktionslogik für MenuButton.xaml
     /// </summary>
     public partial class MenuButton : UserControl
     {
+        private int nextId = 0;
+        private int id;
         ClickEvent clickEvent;
         public MenuButton()
         {
             InitializeComponent();
+            this.id = nextId++;
             clickEvent = new(this, () => OnClick(), MainComponent);
         }
 

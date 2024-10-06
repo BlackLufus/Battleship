@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Battelship;
+using Battelship.Lobby;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +22,34 @@ namespace Battleship.Lobby
     /// </summary>
     public partial class MultiplayerSetup : Page
     {
-        public MultiplayerSetup()
+        private static MultiplayerSetup instance;
+        private MultiplayerSetup()
         {
             InitializeComponent();
+        }
+
+        public static MultiplayerSetup Get()
+        {
+            if (instance == null)
+            {
+                instance = new MultiplayerSetup();
+            }
+            return instance;
+        }
+
+        private void JoinButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void HostButton_Click(object sender, RoutedEventArgs e)
+        {
+            Navigation.navigateTo(GameSettings.Get());
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            Navigation.navigateBack();
         }
     }
 }

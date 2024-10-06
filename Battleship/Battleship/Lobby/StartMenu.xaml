@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Battelship.Lobby"
-      xmlns:components="clr-namespace:Battleship.Components"
+      xmlns:components="clr-namespace:Battleship.Resources.Components"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Lobby">
@@ -35,9 +35,9 @@
                     <ColumnDefinition Width="260" />
                 </Grid.ColumnDefinitions>
                 <components:MenuButton Grid.Column="0" Grid.Row="0" ImageSource="pack://application:,,,/Resources/Images/singelplayer.png" Text="Einzelspieler" PreviewMouseLeftButtonUp="SingelPlayerButton_MouseLeftButtonDown" />
-                <components:MenuButton Grid.Column="2" Grid.Row="0" ImageSource="pack://application:,,,/Resources/Images/multiplayer.png" Text="Duos" MouseLeftButtonDown="DuosButton_MouseLeftButtonDown" />
-                <components:MenuButton Grid.Column="0" Grid.Row="2" ImageSource="pack://application:,,,/Resources/Images/online.png" Text="Online" MouseLeftButtonDown="OnlineButton_MouseLeftButtonDown" />
-                <components:MenuButton Grid.Column="2" Grid.Row="2" ImageSource="pack://application:,,,/Resources/Images/load-file.png" Text="Spiel Laden" MouseLeftButtonDown="LoadGameButton_MouseLeftButtonDown" />
+                <components:MenuButton Grid.Column="2" Grid.Row="0" ImageSource="pack://application:,,,/Resources/Images/multiplayer.png" Text="Duos" MouseLeftButtonUp="DuosButton_MouseLeftButtonDown" />
+                <components:MenuButton Grid.Column="0" Grid.Row="2" ImageSource="pack://application:,,,/Resources/Images/online.png" Text="Online" MouseLeftButtonUp="OnlineButton_MouseLeftButtonDown" />
+                <components:MenuButton Grid.Column="2" Grid.Row="2" ImageSource="pack://application:,,,/Resources/Images/load-file.png" Text="Spiel Laden" MouseLeftButtonUp="LoadGameButton_MouseLeftButtonDown" />
             </Grid>
         </Grid>
     </Grid>

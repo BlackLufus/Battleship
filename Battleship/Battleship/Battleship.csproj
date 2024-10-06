@@ -19,6 +19,9 @@
     <None Remove="Resources\Images\adjustment.png" />
     <None Remove="Resources\Images\background2.jpg" />
     <None Remove="Resources\Images\battleship.png" />
+    <None Remove="Resources\Images\Components\accept.png" />
+    <None Remove="Resources\Images\Components\delete-hover.png" />
+    <None Remove="Resources\Images\Components\delete.png" />
     <None Remove="Resources\Images\cross.png" />
     <None Remove="Resources\Images\cruiser.png" />
     <None Remove="Resources\Images\destroyer.png" />
@@ -49,6 +52,9 @@
     <Resource Include="Resources\Images\adjustment.png" />
     <Resource Include="Resources\Images\background2.jpg" />
     <Resource Include="Resources\Images\battleship.png" />
+    <Resource Include="Resources\Images\Components\accept.png" />
+    <Resource Include="Resources\Images\Components\delete-hover.png" />
+    <Resource Include="Resources\Images\Components\delete.png" />
     <Resource Include="Resources\Images\cross.png" />
     <Resource Include="Resources\Images\cruiser.png" />
     <Resource Include="Resources\Images\destroyer.png" />
@@ -74,7 +80,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Components\MenuButton.xaml">
+    <Page Update="Resources\Components\MenuButton.xaml">
       <CustomToolNamespace>Components</CustomToolNamespace>
     </Page>
   </ItemGroup>

@@ -44,17 +44,17 @@ namespace Battleship
 
         private void usernamePlaceholder_GotFocus(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("Got focus");
-            usernamePlaceholder.Visibility = Visibility.Hidden;
-            usernameInput.Focus();
+            /*Debug.WriteLine("Got focus");
+            UsernamePlaceholder.Visibility = Visibility.Hidden;
+            UsernameInput.Focus();*/
         }
 
         private void usernameInput_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (usernameInput.Text == "")
+            /*if (UsernameInput.Text == "")
             {
-                usernamePlaceholder.Visibility = Visibility.Visible;
-            }
+                UsernamePlaceholder.Visibility = Visibility.Visible;
+            }*/
         }
 
         private void applyButton_Click(object sender, RoutedEventArgs e)

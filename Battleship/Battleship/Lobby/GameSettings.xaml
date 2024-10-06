@@ -78,11 +78,11 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="50" />
                                     </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Width="30" Height="30" FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button Grid.Column="0" Width="30" HorizontalAlignment="Right" VerticalAlignment="Center">
                                         <TextBlock Text="-" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
                                     </Button>
                                     <TextBlock Grid.Column="1" Text="10x10" Width="160" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Background="White" />
-                                    <Button Grid.Column="2" Width="30" Height="30" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <Button Grid.Column="2" Width="30" HorizontalAlignment="Left" VerticalAlignment="Center">
                                         <TextBlock Text="+" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
                                     </Button>
                                 </Grid>
@@ -101,11 +101,11 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="50" />
                                     </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Width="30" Height="30" FontSize="24" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button Grid.Column="0" Width="30" HorizontalAlignment="Right" VerticalAlignment="Center">
                                         <TextBlock Text="-" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
                                     </Button>
                                     <TextBlock Grid.Column="1" Text="10x10" Width="160" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Background="White" />
-                                    <Button Grid.Column="2" Width="30" Height="30" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <Button Grid.Column="2" Width="30"  HorizontalAlignment="Left" VerticalAlignment="Center">
                                         <TextBlock Text="+" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
                                     </Button>
                                 </Grid>
@@ -122,9 +122,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Width="260" Height="30" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <TextBlock Text="On/Off" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="35" />
-                                    </Button>
+                                    <Button Grid.Column="0" Width="260" Content="On/Off" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Grid>
                             </Grid>
                             <Grid Grid.Row="4">
@@ -139,9 +137,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Width="260" Height="30" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <TextBlock Text="On/Off" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="35" />
-                                    </Button>
+                                    <Button Grid.Column="0" Width="260" Content="On/Off" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Grid>
                             </Grid>
                             <Grid Grid.Row="5">
@@ -229,8 +225,8 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Bestätigen" FontSize="24" Width="220" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ApplyButton_Click"/>
-                <Button Grid.Column="1" Content="Zurück" FontSize="24" Width="220" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BackButton_Click"/>
+                <Button Grid.Column="0" Content="Bestätigen" Click="ApplyButton_Click"/>
+                <Button Grid.Column="1" Content="Zurück" Click="BackButton_Click"/>
             </Grid>
         </Grid>
     </Grid>
