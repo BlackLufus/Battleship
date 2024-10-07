@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Battleship.Services
+namespace Battleship.Network
 {
     public class SocketServiceMessage(byte type, string message)
     {

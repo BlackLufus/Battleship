@@ -18,32 +18,32 @@ namespace Battelship.Lobby
     /// <summary>
     /// Interaktionslogik für GameSettings.xaml
     /// </summary>
-    public partial class GameSettings : Page
+    public partial class GameSettingsPage : Page
     {
-        private static GameSettings? instance;
+        private static GameSettingsPage? instance;
 
-        private GameSettings()
+        private GameSettingsPage()
         {
             InitializeComponent();
         }
 
-        public static GameSettings Get()
+        public static GameSettingsPage Get()
         {
             if (instance == null)
             {
-                instance = new GameSettings();
+                instance = new GameSettingsPage();
             }
             return instance;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.navigateBack();
+            Navigation.NavigateBack();
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.navigateTo(FleetManager.get());
+            Navigation.NavigateTo(FleetManagerPage.get());
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Battleship.Services
+namespace Battleship.Network
 {
     public class HostSocketService(string ipAddress, int port) : SocketService(IPAddress.Parse(ipAddress), port)
     {

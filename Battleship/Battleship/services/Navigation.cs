@@ -19,16 +19,13 @@ namespace Battelship
             this.frame = frame;
         }
 
-        public static void setup(Frame frame)
+        public static void Setup(Frame frame)
         {
-            if (instance == null)
-            {
-                instance = new Navigation(frame);
-            }
+            instance = new Navigation(frame);
         }
 
 
-        public static void navigateTo(Page page)
+        public static void NavigateTo(Page page)
         {
             if (instance == null)
             {
@@ -42,7 +39,7 @@ namespace Battelship
             }
         }
 
-        public static void navigateAndClear(Page page)
+        public static void NavigateAndClear(Page page)
         {
             if (instance == null)
             {
@@ -54,7 +51,7 @@ namespace Battelship
             instance.frame.NavigationService.Navigate(page);
         }
 
-        public static void navigateBack()
+        public static void NavigateBack()
         {
             if (instance == null)
             {

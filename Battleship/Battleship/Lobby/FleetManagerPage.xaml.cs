@@ -25,25 +25,25 @@ namespace Battelship.Lobby
     /// <summary>
     /// Interaktionslogik für FleetManager.xaml
     /// </summary>
-    public partial class FleetManager : Page
+    public partial class FleetManagerPage : Page
     {
 
-        private static FleetManager? instance;
+        private static FleetManagerPage? instance;
 
         DragAndDropManager dragAndDropManager;
 
-        private FleetManager()
+        private FleetManagerPage()
         {
             InitializeComponent();
             this.dragAndDropManager = new DragAndDropManager(ShipsCanvas, DragAndDropGrid, 10);
             CreateImageGrid();
         }
 
-        public static FleetManager get()
+        public static FleetManagerPage get()
         {
             if (instance == null)
             {
-                instance = new FleetManager();
+                instance = new FleetManagerPage();
             }
             return instance;
         }
@@ -111,12 +111,12 @@ namespace Battelship.Lobby
 
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.navigateBack();
+            Navigation.NavigateBack();
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.navigateTo(StartMenu.get());
+            Navigation.NavigateTo(StartMenuPage.get());
         }
 
         private void DragShip_MouseDown(object sender, MouseButtonEventArgs e)

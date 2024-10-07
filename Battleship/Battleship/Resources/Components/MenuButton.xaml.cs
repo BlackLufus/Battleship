@@ -42,7 +42,7 @@ namespace Battleship.Resources.Components
             set { SetValue(IsPressedProperty, value); } // Setter implementieren, um die UI zu aktualisieren
         }
 
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(MenuButton), new PropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("MenuButtonText", typeof(string), typeof(MenuButton), new PropertyMetadata(""));
 
         public string Text
         {

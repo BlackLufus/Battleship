@@ -1,4 +1,4 @@
-﻿namespace Battleship.Services
+﻿namespace Battleship.Network
 {
     public class LobbyServiceMessage(LobbyServiceMessage.MessageType type, string message) : SocketServiceMessage((byte)type, message)
     {

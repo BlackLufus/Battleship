@@ -33,6 +33,7 @@
                                         <TextBox 
                                             Grid.Column="1"
                                             x:Name="InputField" 
+                                            Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             FontSize="20" 
                                             TextAlignment="Left" 
                                             HorizontalAlignment="Stretch" 

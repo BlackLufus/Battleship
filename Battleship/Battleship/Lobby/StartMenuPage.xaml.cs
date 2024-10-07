@@ -10,34 +10,34 @@ namespace Battleship.Lobby
     /// <summary>
     /// Interaktionslogik für StartMenu.xaml
     /// </summary>
-    public partial class StartMenu : Page
+    public partial class StartMenuPage : Page
     {
-        private static StartMenu? instance;
+        private static StartMenuPage? instance;
 
-        private StartMenu()
+        private StartMenuPage()
         {
             InitializeComponent();
         }
 
-        public static StartMenu get()
+        public static StartMenuPage get()
         {
             if (instance == null)
             {
-                instance = new StartMenu();
+                instance = new StartMenuPage();
             }
             return instance;
         }
 
         private void SingelPlayerButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Navigation.navigateTo(GameSettings.Get());
+            Navigation.NavigateTo(GameSettingsPage.Get());
             Debug.WriteLine("DuosButton clicked");
         }
 
         private void DuosButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Debug.WriteLine("DuosButton clicked");
-            Navigation.navigateTo(MultiplayerSetup.Get());
+            Navigation.NavigateTo(MultiplayerSetupPage.Get());
         }
 
         private void OnlineButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

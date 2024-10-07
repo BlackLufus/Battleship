@@ -45,6 +45,21 @@ namespace Battleship.Resources.Components
             set => SetValue(PlaceholderProperty, value);
         }
 
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register(
+                "Text",  // Der Name des Propertys
+                typeof(string),  // Der Typ des Propertys
+                typeof(MenuButton),  // Der Typ, in dem das Property registriert wird
+                new PropertyMetadata("")  // Standardwert und Property-Metadata
+            );
+
+        // CLR-Wrapper für das DependencyProperty
+        public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
+
         private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
 

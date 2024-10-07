@@ -20,19 +20,19 @@ namespace Battleship.Lobby
     /// <summary>
     /// Interaktionslogik für MultiplayerSetup.xaml
     /// </summary>
-    public partial class MultiplayerSetup : Page
+    public partial class MultiplayerSetupPage : Page
     {
-        private static MultiplayerSetup instance;
-        private MultiplayerSetup()
+        private static MultiplayerSetupPage? instance;
+        private MultiplayerSetupPage()
         {
             InitializeComponent();
         }
 
-        public static MultiplayerSetup Get()
+        public static MultiplayerSetupPage Get()
         {
             if (instance == null)
             {
-                instance = new MultiplayerSetup();
+                instance = new MultiplayerSetupPage();
             }
             return instance;
         }
@@ -44,12 +44,12 @@ namespace Battleship.Lobby
 
         private void HostButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.navigateTo(GameSettings.Get());
+            Navigation.NavigateTo(GameSettingsPage.Get());
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.navigateBack();
+            Navigation.NavigateBack();
         }
     }
 }

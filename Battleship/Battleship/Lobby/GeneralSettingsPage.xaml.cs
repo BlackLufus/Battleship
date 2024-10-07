@@ -19,26 +19,26 @@ namespace Battleship.Lobby
     /// <summary>
     /// Interaktionslogik für GeneralSettings.xaml
     /// </summary>
-    public partial class GeneralSettings : Page
+    public partial class GeneralSettingsPage : Page
     {
-        private static GeneralSettings? instance;
-        private GeneralSettings()
+        private static GeneralSettingsPage? instance;
+        private GeneralSettingsPage()
         {
             InitializeComponent();
         }
 
-        public static GeneralSettings get()
+        public static GeneralSettingsPage get()
         {
             if (instance == null)
             {
-                instance = new GeneralSettings();
+                instance = new GeneralSettingsPage();
             }
             return instance;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.navigateBack();
+            Navigation.NavigateBack();
         }
     }
 }

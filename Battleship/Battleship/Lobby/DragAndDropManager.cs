@@ -42,15 +42,15 @@ namespace Battleship.Lobby
                 if (key == Key.Left || key == Key.Right)
                 {
                     this.currentDragShip.Rotate(DragShip.ShipOrientation.Horizontal);
-                    image.Width = 28 * (int)this.currentDragShip.shipType;
-                    image.Height = 28;
+                    image.Width = 30 * (int)this.currentDragShip.shipType;
+                    image.Height = 30;
                     Debug.WriteLine(image.Width);
                 }
                 else if (key == Key.Up || key == Key.Down)
                 {
                     this.currentDragShip.Rotate(DragShip.ShipOrientation.Vertical);
-                    image.Width = 28;
-                    image.Height = 28 * (int)this.currentDragShip.shipType;
+                    image.Width = 30;
+                    image.Height = 30 * (int)this.currentDragShip.shipType;
                     Debug.WriteLine(image.Height);
                 }
                 image.Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + this.currentDragShip.shipType.ToString().ToLower() + ".png")), (int)this.currentDragShip.shipOrientation);
@@ -91,8 +91,8 @@ namespace Battleship.Lobby
         {
             Image element = new()
             {
-                Width = 28 * (int)shipType,
-                Height = 28,
+                Width = 30 * (int)shipType,
+                Height = 30,
                 Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + shipType.ToString().ToLower() + ".png")), 270)
             };
 
@@ -194,8 +194,8 @@ namespace Battleship.Lobby
             {
                 Image element = new()
                 {
-                    Width = 28 * (ship.shipOrientation == Ship.ShipOrientation.Horizontal ? (int)ship.shipType : 1),
-                    Height = 28 * (ship.shipOrientation == Ship.ShipOrientation.Vertical ? (int)ship.shipType : 1),
+                    Width = 30 * (ship.shipOrientation == Ship.ShipOrientation.Horizontal ? (int)ship.shipType : 1),
+                    Height = 30 * (ship.shipOrientation == Ship.ShipOrientation.Vertical ? (int)ship.shipType : 1),
                     Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + ship.shipType.ToString().ToLower() + ".png")), (int)ship.shipOrientation)
                 };
 
@@ -209,8 +209,8 @@ namespace Battleship.Lobby
 
                 this.dragShips.Add(dragShip);
 
-                Canvas.SetLeft(dragShip.element, 195 + dragShip.column * 28);
-                Canvas.SetTop(dragShip.element, 0 + dragShip.row * 28);
+                Canvas.SetLeft(dragShip.element, 190 + dragShip.column * 30);
+                Canvas.SetTop(dragShip.element, 0 + dragShip.row * 30);
 
                 Update();
             }
@@ -226,17 +226,17 @@ namespace Battleship.Lobby
             {
                 position.X = 0;
             }
-            else if (position.X > 450)
+            else if (position.X > Application.Current.MainWindow.Width)
             {
-                position.X = 450;
+                position.X = Application.Current.MainWindow.Width;
             }
             if (position.Y < 0)
             {
                 position.Y = 0;
             }
-            else if (position.Y > 250)
+            else if (position.Y > Application.Current.MainWindow.Height)
             {
-                position.Y = 250;
+                position.Y = Application.Current.MainWindow.Height;
             }
             Canvas.SetLeft(element, position.X);
             Canvas.SetTop(element, position.Y);
@@ -246,6 +246,7 @@ namespace Battleship.Lobby
         {
             if (currentDragShip != null)
             {
+                Debug.WriteLine(currentDragShip.offset.X + " " + currentDragShip.offset.Y + " " + mousePosition.X + " " + mousePosition.Y);
                 currentDragShip.SetMousePosition(mousePosition);
                 SetDragPosition(currentDragShip.element, new Point(mousePosition.X - currentDragShip.offset.X, mousePosition.Y - currentDragShip.offset.Y));
             }
@@ -256,8 +257,8 @@ namespace Battleship.Lobby
             if (dragEvent == DragEvent.DragEnter)
             {
                 if (battleField.SetShip(
-                dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)dragShip.offset.Y / 28 : row,
-                dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)dragShip.offset.X / 28 : column,
+                dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)dragShip.offset.Y / 30 : row,
+                dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)dragShip.offset.X / 30 : column,
                 dragShip.shipType,
                 dragShip.shipOrientation,
                 FieldState.Marked))
@@ -266,15 +267,15 @@ namespace Battleship.Lobby
                 }
                 else
                 {
-                    Canvas.SetLeft(dragShip.element, 195 + column * 28);
-                    Canvas.SetTop(dragShip.element, 0 + row * 28);
+                    Canvas.SetLeft(dragShip.element, 190 + column * 30);
+                    Canvas.SetTop(dragShip.element, 0 + row * 30);
                 }
             }
             else if (dragEvent == DragEvent.DragDrop)
             {
                 if (!battleField.SetShip(
-                dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)(dragShip.offset.Y / 28) : row,
-                dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)(dragShip.offset.X / 28) : column,
+                dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)(dragShip.offset.Y / 30) : row,
+                dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)(dragShip.offset.X / 30) : column,
                 dragShip.shipType,
                 dragShip.shipOrientation,
                 FieldState.Ship))
@@ -283,8 +284,8 @@ namespace Battleship.Lobby
                 }
                 else
                 {
-                    Canvas.SetTop(dragShip.element, 0 + row * 28);
-                    Canvas.SetLeft(dragShip.element, 198 + column * 28);
+                    Canvas.SetTop(dragShip.element, 0 + row * 30);
+                    Canvas.SetLeft(dragShip.element, 190 + column * 30);
                     ShipsCanvas.Children.Add(dragShip.element);
                     dragShip.row = row;
                     dragShip.column = column;
@@ -294,8 +295,8 @@ namespace Battleship.Lobby
             else if (dragEvent == DragEvent.DragLeave)
             {
                 if (!battleField.RemoveShip(
-                    dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)dragShip.offset.Y / 28 : row,
-                    dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)dragShip.offset.X / 28 : column,
+                    dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)dragShip.offset.Y / 30 : row,
+                    dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)dragShip.offset.X / 30 : column,
                     dragShip.shipType,
                     dragShip.shipOrientation,
                     FieldState.Marked))
