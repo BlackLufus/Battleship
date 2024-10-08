@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Battleship.Lobby;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,18 +23,21 @@ namespace Battelship.Lobby
     {
         private static GameSettingsPage? instance;
 
+        public static GameSettingsPage Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new GameSettingsPage();
+                }
+                return instance;
+            }
+        }
+
         private GameSettingsPage()
         {
             InitializeComponent();
-        }
-
-        public static GameSettingsPage Get()
-        {
-            if (instance == null)
-            {
-                instance = new GameSettingsPage();
-            }
-            return instance;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -43,7 +47,7 @@ namespace Battelship.Lobby
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateTo(FleetManagerPage.get());
+            Navigation.NavigateTo(new FleetManagerPage());
         }
     }
 }

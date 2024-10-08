@@ -22,21 +22,11 @@ namespace Battleship.Lobby
     /// <summary>
     /// Interaktionslogik für WelcomePage.xaml
     /// </summary>
-    public partial class WelcomePage : Page
+    public partial class LoginPage : Page
     {
-        private static WelcomePage? instance;
-        private WelcomePage()
+        public LoginPage()
         {
             InitializeComponent();
-        }
-
-        public static WelcomePage get()
-        {
-            if (instance == null)
-            {
-                instance = new WelcomePage();
-            }
-            return instance;
         }
 
         private void applyButton_Click(object sender, RoutedEventArgs e)
@@ -46,7 +36,7 @@ namespace Battleship.Lobby
                 DialogHandler.Show(DialogHandler.DialogType.Warning, DialogHandler.ButtonType.Ok, "Benutzername wird benötigt!", "Bitte gib einen Benutzernamen ein.");
                 return;
             }
-            Navigation.NavigateTo(StartMenuPage.get());
+            Navigation.NavigateTo(new MenuPage());
             Debug.WriteLine("Button clicked");
         }
     }

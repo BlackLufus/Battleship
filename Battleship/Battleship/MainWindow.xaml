@@ -8,68 +8,7 @@
         Closing="Window_Closing"
         Title="MainWindow" Height="550" Width="900" MinHeight="550" MinWidth="900">
     <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="pack://application:,,,/Resources/Images/background2.jpg"/>
-        </Grid.Background>
-        <Viewbox>
-            <Grid>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="25" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="25" />
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="24px" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="24px" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="1" BorderBrush="#CC67F1A9" BorderThickness="6" CornerRadius="15" 
-                                    Background="#6222" Padding="20 10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="60" />
-                                    <RowDefinition Height="30" />
-                                </Grid.RowDefinitions>
-                                <Border Grid.Row="1" Background="#222222" CornerRadius="2" Margin="0 7 0 19" />
-                            </Grid>
-                        </Border>
-                    </Grid>
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="35" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20" />
-                            <RowDefinition Height="50" />
-                        </Grid.RowDefinitions>
-                        <Button Grid.Column="3" Grid.Row="1" Style="{StaticResource MainWindowButtonStyle}" Click="Settings_Click" VerticalAlignment="Top">
-                            <Image Source="pack://application:,,,/Resources/Images/settings.png" Width="50" Height="50" />
-                        </Button>
-                    </Grid>
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="24px" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="24px" />
-                        </Grid.ColumnDefinitions>
-                        <Frame Grid.Column="1" x:Name="mainFrame" NavigationUIVisibility="Hidden" Height="425" Width="780" Margin="10" />
-                    </Grid>
-                </Grid>
-                <Grid>
-                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </Viewbox>
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
         <Grid x:Name="DialogContainer" Background="#8000" Visibility="Collapsed">
             <Viewbox>
                 <Grid Width="900" Height="550">
@@ -80,12 +19,10 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Row="0" Grid.Column="0" Name="DialogGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        
+
                     </Grid>
                 </Grid>
             </Viewbox>
         </Grid>
-
-
     </Grid>
 </Window>

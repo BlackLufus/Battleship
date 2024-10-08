@@ -1,5 +1,6 @@
 ﻿using Battelship;
 using Battleship.Lobby;
+using Battleship.Playground;
 using Battleship.Resources.Components;
 using Battleship.Services;
 using System;
@@ -28,20 +29,11 @@ namespace Battleship
         {
             InitializeComponent();
 
-            Navigation.Setup(mainFrame);
-            Navigation.NavigateAndClear(WelcomePage.get());
+            Navigation.RegisterFrame(MainFrame);
+            Navigation.RegisterPage(new LobbyMainPage(true));
+            //Navigation.RegisterPage(new PlaygroundPage());
 
             DialogHandler.Setup(DialogContainer, DialogGrid);
-        }
-
-        private void Dialog_DialogCallback(DialogHandler.Result result)
-        {
-            Debug.WriteLine(result);
-        }
-
-        private void Settings_Click(object sender, RoutedEventArgs e)
-        {
-            Navigation.NavigateTo(GeneralSettingsPage.get());
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)

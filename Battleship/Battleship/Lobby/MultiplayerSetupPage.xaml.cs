@@ -23,18 +23,22 @@ namespace Battleship.Lobby
     public partial class MultiplayerSetupPage : Page
     {
         private static MultiplayerSetupPage? instance;
+
+        public static MultiplayerSetupPage Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new MultiplayerSetupPage();
+                }
+                return instance;
+            }
+        }
+
         private MultiplayerSetupPage()
         {
             InitializeComponent();
-        }
-
-        public static MultiplayerSetupPage Get()
-        {
-            if (instance == null)
-            {
-                instance = new MultiplayerSetupPage();
-            }
-            return instance;
         }
 
         private void JoinButton_Click(object sender, RoutedEventArgs e)
@@ -44,7 +48,7 @@ namespace Battleship.Lobby
 
         private void HostButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateTo(GameSettingsPage.Get());
+            Navigation.NavigateTo(GameSettingsPage.Instance);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

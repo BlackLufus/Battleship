@@ -28,24 +28,13 @@ namespace Battelship.Lobby
     public partial class FleetManagerPage : Page
     {
 
-        private static FleetManagerPage? instance;
-
         DragAndDropManager dragAndDropManager;
 
-        private FleetManagerPage()
+        public FleetManagerPage()
         {
             InitializeComponent();
             this.dragAndDropManager = new DragAndDropManager(ShipsCanvas, DragAndDropGrid, 10);
             CreateImageGrid();
-        }
-
-        public static FleetManagerPage get()
-        {
-            if (instance == null)
-            {
-                instance = new FleetManagerPage();
-            }
-            return instance;
         }
 
         private void CreateImageGrid()
@@ -116,7 +105,7 @@ namespace Battelship.Lobby
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateTo(StartMenuPage.get());
+            Navigation.NavigateTo(new MenuPage());
         }
 
         private void DragShip_MouseDown(object sender, MouseButtonEventArgs e)

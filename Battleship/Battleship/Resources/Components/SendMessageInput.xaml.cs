@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,13 +16,13 @@ using System.Windows.Shapes;
 namespace Battleship.Resources.Components
 {
     /// <summary>
-    /// Interaktionslogik für Input.xaml
+    /// Interaktionslogik für SendMessageInput.xaml
     /// </summary>
-    public partial class Input : UserControl
+    public partial class SendMessageInput : UserControl
     {
         private bool isEmpty = false;
         private TextBox? inputField;
-        public Input()
+        public SendMessageInput()
         {
             InitializeComponent();
         }
@@ -32,10 +30,10 @@ namespace Battleship.Resources.Components
         // Placeholder DependencyProperty
         public static readonly DependencyProperty PlaceholderProperty =
             DependencyProperty.Register(
-                "Placeholder",  // Der Name des Propertys
+                "SendMessagePlaceholder",  // Der Name des Propertys
                 typeof(string),  // Der Typ des Propertys
                 typeof(Input),  // Der Typ, in dem das Property registriert wird
-                new PropertyMetadata("User_0000")  // Standardwert und Property-Metadata
+                new PropertyMetadata("Add message here...")  // Standardwert und Property-Metadata
             );
 
         // CLR-Wrapper für das DependencyProperty
@@ -47,9 +45,9 @@ namespace Battleship.Resources.Components
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register(
-                "Text",  // Der Name des Propertys
+                "SendMessageText",  // Der Name des Propertys
                 typeof(string),  // Der Typ des Propertys
-                typeof(Input),  // Der Typ, in dem das Property registriert wird
+                typeof(SendMessageInput),  // Der Typ, in dem das Property registriert wird
                 new PropertyMetadata("")  // Standardwert und Property-Metadata
             );
 
@@ -62,9 +60,9 @@ namespace Battleship.Resources.Components
 
         public static new readonly DependencyProperty FontSizeProperty =
             DependencyProperty.Register(
-                "InputFontSize",  // Der Name des Propertys
+                "SendMessageInputFontSize",  // Der Name des Propertys
                 typeof(string),  // Der Typ des Propertys
-                typeof(Input),  // Der Typ, in dem das Property registriert wird
+                typeof(SendMessageInput),  // Der Typ, in dem das Property registriert wird
                 new PropertyMetadata("20")  // Standardwert und Property-Metadata
             );
 
