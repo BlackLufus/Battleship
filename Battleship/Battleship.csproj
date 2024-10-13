@@ -23,6 +23,10 @@
     <None Remove="Resources\Images\Components\accept.png" />
     <None Remove="Resources\Images\Components\delete-hover.png" />
     <None Remove="Resources\Images\Components\delete.png" />
+    <None Remove="Resources\Images\Components\left-arrow.png" />
+    <None Remove="Resources\Images\Components\minus.png" />
+    <None Remove="Resources\Images\Components\plus.png" />
+    <None Remove="Resources\Images\Components\right-arrow.png" />
     <None Remove="Resources\Images\Components\send-active.png" />
     <None Remove="Resources\Images\Components\send-hover.png" />
     <None Remove="Resources\Images\Components\send.png" />
@@ -49,6 +53,7 @@
     <None Remove="Resources\Images\settings2.png" />
     <None Remove="Resources\Images\singelplayer.png" />
     <None Remove="Resources\Images\submarine.png" />
+    <None Remove="Resources\Images\target.png" />
     <None Remove="Resources\Images\water-field.png" />
   </ItemGroup>
 
@@ -60,6 +65,10 @@
     <Resource Include="Resources\Images\Components\accept.png" />
     <Resource Include="Resources\Images\Components\delete-hover.png" />
     <Resource Include="Resources\Images\Components\delete.png" />
+    <Resource Include="Resources\Images\Components\left-arrow.png" />
+    <Resource Include="Resources\Images\Components\minus.png" />
+    <Resource Include="Resources\Images\Components\plus.png" />
+    <Resource Include="Resources\Images\Components\right-arrow.png" />
     <Resource Include="Resources\Images\Components\send-active.png" />
     <Resource Include="Resources\Images\Components\send-hover.png" />
     <Resource Include="Resources\Images\Components\send.png" />
@@ -80,6 +89,7 @@
     <Resource Include="Resources\Images\settings.png" />
     <Resource Include="Resources\Images\singelplayer.png" />
     <Resource Include="Resources\Images\submarine.png" />
+    <Resource Include="Resources\Images\target.png" />
     <Resource Include="Resources\Images\water-field.png" />
   </ItemGroup>
 

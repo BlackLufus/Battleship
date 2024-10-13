@@ -13,16 +13,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Battleship.Playground
+namespace Battleship.Resources.Components
 {
     /// <summary>
-    /// Interaktionslogik für PlaygroundPage.xaml
+    /// Interaktionslogik für Switch.xaml
     /// </summary>
-    public partial class PlaygroundPage : Page
+    public partial class Switch : UserControl
     {
-        public PlaygroundPage()
+        public Switch()
         {
             InitializeComponent();
+        }
+
+        public bool IsChecked
+        {
+            get { return SwitchComponent.IsChecked == true; }
         }
     }
 }

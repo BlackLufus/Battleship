@@ -55,7 +55,7 @@
                                     <Label Grid.Column="3" Content="Spieler 1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
                                 </Grid>
                                 <Grid VerticalAlignment="Bottom">
-                                    <Grid Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True" Background="Red">
+                                    <Grid x:Name="EnemyFieldBackground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True" Background="Red">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="30" />
                                             <RowDefinition Height="30" />
@@ -92,7 +92,7 @@
                                     <Canvas>
 
                                     </Canvas>
-                                    <Grid Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
+                                    <Grid x:Name="EnemyFieldForeground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="30" />
                                             <RowDefinition Height="30" />
@@ -138,7 +138,7 @@
                                     <Label Grid.Column="3" Content="Spieler 2" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
                                 </Grid>
                                 <Grid VerticalAlignment="Bottom">
-                                    <Grid Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True" Background="Red">
+                                    <Grid x:Name="MyFieldBackground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True" Background="Red">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="30" />
                                             <RowDefinition Height="30" />
@@ -172,10 +172,10 @@
                                         <Image Grid.Row="1" Grid.Column="0" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
                                         <Image Grid.Row="1" Grid.Column="1" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
                                     </Grid>
-                                    <Canvas>
+                                    <Canvas x:Name="MyField">
 
                                     </Canvas>
-                                    <Grid Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
+                                    <Grid x:Name="MyFieldForeground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="30" />
                                             <RowDefinition Height="30" />

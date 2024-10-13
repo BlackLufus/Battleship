@@ -1,4 +1,6 @@
-﻿using Battleship.Lobby;
+﻿using Battleship.Global;
+using Battleship.Lobby;
+using Battleship.Playground;
 using Battleship.services;
 using System;
 using System.Collections.Generic;
@@ -28,19 +30,21 @@ namespace Battelship.Lobby
     public partial class FleetManagerPage : Page
     {
 
+        private GameSetting gameSetting;
         DragAndDropManager dragAndDropManager;
 
-        public FleetManagerPage()
+        public FleetManagerPage(GameSetting gameSetting)
         {
+            this.gameSetting = gameSetting;
             InitializeComponent();
-            this.dragAndDropManager = new DragAndDropManager(ShipsCanvas, DragAndDropGrid, 10);
+            this.dragAndDropManager = new DragAndDropManager(ShipsCanvas, DragAndDropGrid, gameSetting);
             CreateImageGrid();
         }
 
         private void CreateImageGrid()
         {
             // Erstelle 10 Zeilen und 10 Spalten
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < gameSetting.FieldSize; i++)
             {
                 ImageGrid.RowDefinitions.Add(new RowDefinition());
                 ImageGrid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -49,9 +53,9 @@ namespace Battelship.Lobby
             }
 
             // Füge in jede Zelle ein Bild hinzu
-            for (int row = 0; row < 10; row++)
+            for (int row = 0; row < gameSetting.FieldSize; row++)
             {
-                for (int col = 0; col < 10; col++)
+                for (int col = 0; col < gameSetting.FieldSize; col++)
                 {
                     // Erstelle ein Image
                     Image image = new Image();
@@ -85,7 +89,7 @@ namespace Battelship.Lobby
 
         private void finishButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Navigation.RegisterPage(new PlaygroundPage(gameSetting, dragAndDropManager.DragShips));
         }
 
         private void randomButton_Click(object sender, RoutedEventArgs e)
@@ -113,19 +117,24 @@ namespace Battelship.Lobby
             switch(((Image)sender).Name.ToLower())
             {
                 case "carrier":
-                    dragAndDropManager.StartDrag(Ship.ShipType.Carrier, e.GetPosition((Image)sender));
+                    if (dragAndDropManager.CarrierPlaced != gameSetting.CarrierAmount)
+                        dragAndDropManager.StartDrag(Ship.ShipType.Carrier, e.GetPosition((Image)sender));
                     break;
                 case "battleship":
-                    dragAndDropManager.StartDrag(Ship.ShipType.Battleship, e.GetPosition((Image)sender));
+                    if (dragAndDropManager.BattleshipPlaced != gameSetting.BattleshipAmount)
+                        dragAndDropManager.StartDrag(Ship.ShipType.Battleship, e.GetPosition((Image)sender));
                     break;
                 case "cruiser":
-                    dragAndDropManager.StartDrag(Ship.ShipType.Cruiser, e.GetPosition((Image)sender));
+                    if (dragAndDropManager.CruiserPlaced != gameSetting.CruiserAmount)
+                        dragAndDropManager.StartDrag(Ship.ShipType.Cruiser, e.GetPosition((Image)sender));
                     break;
                 case "submarine":
-                    dragAndDropManager.StartDrag(Ship.ShipType.Submarine, e.GetPosition((Image)sender));
+                    if (dragAndDropManager.SubmarinePlaced != gameSetting.SubmarineAmount)
+                        dragAndDropManager.StartDrag(Ship.ShipType.Submarine, e.GetPosition((Image)sender));
                     break;
                 case "destroyer":
-                    dragAndDropManager.StartDrag(Ship.ShipType.Destroyer, e.GetPosition((Image)sender));
+                    if (dragAndDropManager.DestroyerPlaced != gameSetting.DestroyerAmount)
+                        dragAndDropManager.StartDrag(Ship.ShipType.Destroyer, e.GetPosition((Image)sender));
                     break;
                 default:
                     Debug.WriteLine("Unknown ship");

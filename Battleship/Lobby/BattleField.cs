@@ -130,12 +130,12 @@ namespace Battleship.Lobby
                     shipList[index].column = column;
                     shipList[index].shipOrientation = orientation;
                     iteration = 0;
-                    resetIteration = 0;
                     index++;
                 }
                 else if (resetIteration > maxResetIteration)
                 {
                     Debug.WriteLine("Set ships randomly state: FAILED (Iterations: " + totalIterations + " & ResetIteration " + resetIteration + ")");
+                    Reset();
                     return false;
                 }
                 else if (iteration > maxIteration)

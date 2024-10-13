@@ -40,7 +40,11 @@ namespace Battleship.services
                             keys.Remove(key);
                         }
                     }
-                    Thread.Sleep(1); // CPU schonen
+                    try
+                    {
+                        Thread.Sleep(1); // CPU schonen
+                    }
+                    catch (Exception e) { }
                 }
             });
 
