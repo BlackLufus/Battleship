@@ -89,11 +89,11 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <Button Grid.Row="1" Content="Fertig" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="finishButton_Click" />
-                    <Button Grid.Row="2" Content="Zufällig" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="randomButton_Click" />
-                    <Button Grid.Row="3" Content="Zurücksetzen" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="resetButton_Click" />
-                    <Button Grid.Row="4" Content="Abbruch" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="cancelButton_Click" />
-                    <Button Grid.Row="4" Content="Zurück" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="backButton_Click" />
+                    <Button Grid.Row="1" Content="Fertig" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="FinishButton_Click" />
+                    <Button Grid.Row="2" Content="Zufällig" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="RandomButton_Click" />
+                    <Button Grid.Row="3" Content="Zurücksetzen" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ResetButton_Click" />
+                    <Button x:Name="CancelButton" Grid.Row="4" Content="Abbruch" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="CancelButton_Click" Visibility="Collapsed" />
+                    <Button x:Name="BackButton" Grid.Row="4" Content="Zurück" FontSize="24" Width="140" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BackButton_Click" />
                 </Grid>
             </Grid>
             <Canvas Grid.Row="2">

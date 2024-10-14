@@ -1,8 +1,10 @@
-﻿using System.Diagnostics;
+﻿using Battleship.Global;
+using System.Diagnostics;
+using static Battleship.Global.BattleshipPlayground;
 
 namespace Battleship.Lobby
 {
-    public class BattleField(int size, bool restricted)
+    public class BattleField(GameSetting gameSetting)
     {
         public enum FieldState
         {
@@ -12,9 +14,35 @@ namespace Battleship.Lobby
             Marked = 2
         }
 
-        public int size = size;
-        public int[,] field = new int[size, size];
-        private bool restricted = restricted;
+        public enum ShotState
+        {
+            Miss = -1,
+            Water = 0,
+            Ship = 1,
+            Hit = 2,
+            Sunk = 3
+        }
+
+        private readonly GameSetting gameSetting = gameSetting;
+        private int[,] field = new int[gameSetting.FieldSize, gameSetting.FieldSize];
+        public int[,] Field { get { return field; } }
+        public int[,] FieldNoRestiction
+        {
+            get
+            {
+                for (int i = 0; i < gameSetting.FieldSize; i++)
+                {
+                    for (int j = 0; j < gameSetting.FieldSize; j++)
+                    {
+                        if (field[i, j] == (int)FieldState.Restricted)
+                        {
+                            field[i, j] = (int)FieldState.Water;
+                        }
+                    }
+                }
+                return field;
+            }
+        }
 
         private Ship? lastShip;
 
@@ -39,7 +67,7 @@ namespace Battleship.Lobby
 
         public bool CheckShip(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation, FieldState checkForFieldState)
         {
-            if (row < 0 || column < 0 || row >= size || column >= size)
+            if (row < 0 || column < 0 || row >= gameSetting.FieldSize || column >= gameSetting.FieldSize)
             {
                 return false;
             }
@@ -47,7 +75,7 @@ namespace Battleship.Lobby
             {
                 for (int i = 0; i < (int)shipType; i++)
                 {
-                    if (row + i >= size || field[row + i, column] != (int)checkForFieldState)
+                    if (row + i >= gameSetting.FieldSize || field[row + i, column] != (int)checkForFieldState)
                     {
                         return false;
                     }
@@ -57,7 +85,7 @@ namespace Battleship.Lobby
             {
                 for (int i = 0; i < (int)shipType; i++)
                 {
-                    if (column + i >= size || field[row, column + i] != (int)checkForFieldState)
+                    if (column + i >= gameSetting.FieldSize || field[row, column + i] != (int)checkForFieldState)
                     {
                         return false;
                     }
@@ -80,7 +108,7 @@ namespace Battleship.Lobby
                     for (int i = 0; i < (int)shipType; i++)
                     {
                         field[row + i, column] = (int)fieldState;
-                        if (restricted)
+                        if (gameSetting.RestrictedArea)
                         {
                             AddRestrictedArea(row + i, column);
                         }
@@ -91,7 +119,7 @@ namespace Battleship.Lobby
                     for (int i = 0; i < (int)shipType; i++)
                     {
                         field[row, column + i] = (int)fieldState;
-                        if (restricted)
+                        if (gameSetting.RestrictedArea)
                         {
                             AddRestrictedArea(row, column + i);
                         }
@@ -120,8 +148,8 @@ namespace Battleship.Lobby
             {
                 iteration++;
                 totalIterations++;
-                int row = randomRow.Next(0, size);
-                int column = randomColumn.Next(0, size);
+                int row = randomRow.Next(0, gameSetting.FieldSize);
+                int column = randomColumn.Next(0, gameSetting.FieldSize);
                 Ship.ShipOrientation orientation = randomOrientation.Next(0, 2) == 0 ? Ship.ShipOrientation.Horizontal : Ship.ShipOrientation.Vertical;
 
                 if (SetShip(row, column, shipList[index].shipType, orientation, null))
@@ -168,7 +196,7 @@ namespace Battleship.Lobby
                         field[row, column + i] = (int)FieldState.Water;
                     }
                 }
-                if (restricted)
+                if (gameSetting.RestrictedArea)
                 {
                     RemoveRestictedArea();
                 }
@@ -192,7 +220,7 @@ namespace Battleship.Lobby
             {
                 field[row - 1, column] = (int)FieldState.Restricted;
             }
-            if (row < size - 1 && field[row + 1, column] == (int)FieldState.Water)
+            if (row < gameSetting.FieldSize - 1 && field[row + 1, column] == (int)FieldState.Water)
             {
                 field[row + 1, column] = (int)FieldState.Restricted;
             }
@@ -200,7 +228,7 @@ namespace Battleship.Lobby
             {
                 field[row, column - 1] = (int)FieldState.Restricted;
             }
-            if (column < size - 1 && field[row, column + 1] == (int)FieldState.Water)
+            if (column < gameSetting.FieldSize - 1 && field[row, column + 1] == (int)FieldState.Water)
             {
                 field[row, column + 1] = (int)FieldState.Restricted;
             }
@@ -208,15 +236,15 @@ namespace Battleship.Lobby
             {
                 field[row - 1, column - 1] = (int)FieldState.Restricted;
             }
-            if (row < size - 1 && column < size - 1 && field[row + 1, column + 1] == (int)FieldState.Water)
+            if (row < gameSetting.FieldSize - 1 && column < gameSetting.FieldSize - 1 && field[row + 1, column + 1] == (int)FieldState.Water)
             {
                 field[row + 1, column + 1] = (int)FieldState.Restricted;
             }
-            if (row > 0 && column < size - 1 && field[row - 1, column + 1] == (int)FieldState.Water)
+            if (row > 0 && column < gameSetting.FieldSize - 1 && field[row - 1, column + 1] == (int)FieldState.Water)
             {
                 field[row - 1, column + 1] = (int)FieldState.Restricted;
             }
-            if (row < size - 1 && column > 0 && field[row + 1, column - 1] == (int)FieldState.Water)
+            if (row < gameSetting.FieldSize - 1 && column > 0 && field[row + 1, column - 1] == (int)FieldState.Water)
             {
                 field[row + 1, column - 1] = (int)FieldState.Restricted;
             }
@@ -224,9 +252,9 @@ namespace Battleship.Lobby
 
         public void RemoveRestictedArea()
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < gameSetting.FieldSize; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j < gameSetting.FieldSize; j++)
                 {
                     if (field[i, j] == (int)FieldState.Restricted)
                     {
@@ -234,9 +262,9 @@ namespace Battleship.Lobby
                     }
                 }
             }
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < gameSetting.FieldSize; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j < gameSetting.FieldSize; j++)
                 {
                     if (field[i, j] == (int)FieldState.Ship)
                     {
@@ -248,9 +276,9 @@ namespace Battleship.Lobby
 
         public void Reset()
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < gameSetting.FieldSize; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j < gameSetting.FieldSize; j++)
                 {
                     field[i, j] = (int)FieldState.Water;
                 }
@@ -261,9 +289,9 @@ namespace Battleship.Lobby
 
         public void Dump()
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < gameSetting.FieldSize; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j < gameSetting.FieldSize; j++)
                 {
                     Debug.Write(field[i, j] + " ");
                 }

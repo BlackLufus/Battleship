@@ -1,5 +1,7 @@
 ﻿using Battleship.Global;
+using Battleship.Resources.Components;
 using Battleship.services;
+using Battleship.Services;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,47 +14,36 @@ namespace Battleship.Lobby
 {
     public class DragAndDropManager
     {
-        enum DragEvent
-        {
-            DragEnter,
-            DragLeave,
-            DragDrop,
-            None
-        }
+        public delegate void DragEnterEventHandler(DragShip dragShip, int row, int Column);
+        public event DragEnterEventHandler? DragEnterEvent;
 
-        private BattleField battleField;
-        private DragShip? currentDragShip;
+        public delegate void DragLeaveEventHandler(DragShip dragShip, int row, int Column);
+        public event DragLeaveEventHandler? DragLeaveEvent;
 
+        public delegate void DragDropEventHandler(DragShip dragShip, int row, int Column, Action<int, int> callback);
+        public event DragDropEventHandler? DragDropEvent;
 
-        private Canvas ShipsCanvas;
-        private Grid DragAndDropGrid;
+        public delegate void UpdateEventHandler();
+        public event UpdateEventHandler? UpdateEvent;
 
+        public delegate void AddShipEventHandler(UIElement image);
+        public event AddShipEventHandler? AddShipEvent;
 
-        private GameSetting gameSetting;
+        public delegate void RemoveShipEventHandler(UIElement image);
+        public event RemoveShipEventHandler? RemoveShipEvent;
 
+        private readonly BattleField battleField;
+        private readonly GameSetting gameSetting;
 
-        private List<DragShip> dragShips = [];
+        private readonly List<DragShip> dragShips = [];
         public List<DragShip> DragShips => dragShips;
 
+        private DragShip? currentDragShip;
 
-        private int carrierPlaced = 0;
-        private int battleshipPlaced = 0;
-        private int cruiserPlaced = 0;
-        private int submarinePlaced = 0;
-        private int destroyerPlaced = 0;
-        public int CarrierPlaced => carrierPlaced;
-        public int BattleshipPlaced => battleshipPlaced;
-        public int CruiserPlaced => cruiserPlaced;
-        public int SubmarinePlaced => submarinePlaced;
-        public int DestroyerPlaced => destroyerPlaced;
-
-
-        public DragAndDropManager(Canvas ShipsCanvas, Grid DragAndDropGrid, GameSetting gameSetting)
+        public DragAndDropManager(GameSetting gameSetting, BattleField battleField)
         {
-            this.ShipsCanvas = ShipsCanvas;
-            this.DragAndDropGrid = DragAndDropGrid;
             this.gameSetting = gameSetting;
-            this.battleField = new BattleField(gameSetting.FieldSize, true);
+            this.battleField = battleField;
             KeyListener.Event().KeyDownEvent += KeyListener_KeyDownEvent;
         }
 
@@ -67,14 +58,12 @@ namespace Battleship.Lobby
                     this.currentDragShip.Rotate(DragShip.ShipOrientation.Horizontal);
                     image.Width = gameSetting.SingleFieldSize * (int)this.currentDragShip.shipType;
                     image.Height = gameSetting.SingleFieldSize;
-                    Debug.WriteLine(image.Width);
                 }
                 else if (key == Key.Up || key == Key.Down)
                 {
                     this.currentDragShip.Rotate(DragShip.ShipOrientation.Vertical);
                     image.Width = gameSetting.SingleFieldSize;
                     image.Height = gameSetting.SingleFieldSize * (int)this.currentDragShip.shipType;
-                    Debug.WriteLine(image.Height);
                 }
                 image.Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + this.currentDragShip.shipType.ToString().ToLower() + ".png")), (int)this.currentDragShip.shipOrientation);
                 Point mousePosition = this.currentDragShip.mousePosition;
@@ -95,19 +84,24 @@ namespace Battleship.Lobby
         public void HandleDragOverEvent(object sender, DragEventArgs e)
         {
             DragShip dragShip = (DragShip)e.Data.GetData(typeof(DragShip));
-            UpdateField(dragShip, Grid.GetRow((UIElement)sender), Grid.GetColumn((UIElement)sender), DragEvent.DragEnter);
+            DragEnterEvent?.Invoke(dragShip, Grid.GetRow((UIElement)sender), Grid.GetColumn((UIElement)sender));
         }
 
         public void HandleDragLeaveEvent(object sender, DragEventArgs e)
         {
             DragShip dragShip = (DragShip)e.Data.GetData(typeof(DragShip));
-            UpdateField(dragShip, Grid.GetRow((UIElement)sender), Grid.GetColumn((UIElement)sender), DragEvent.DragLeave);
+            DragLeaveEvent?.Invoke(dragShip, Grid.GetRow((UIElement)sender), Grid.GetColumn((UIElement)sender));
         }
 
         public void HandleDropEvent(object sender, DragEventArgs e)
         {
             DragShip dragShip = (DragShip)e.Data.GetData(typeof(DragShip));
-            UpdateField(dragShip, Grid.GetRow((UIElement)sender), Grid.GetColumn((UIElement)sender), DragEvent.DragDrop);
+            DragDropEvent?.Invoke(dragShip, Grid.GetRow((UIElement)sender), Grid.GetColumn((UIElement)sender), (int row, int column) =>
+            {
+                dragShip.row = row;
+                dragShip.column = column;
+                dragShips.Add(dragShip);
+            });
         }
 
         public void StartDrag(Ship.ShipType shipType, Point offset)
@@ -119,7 +113,7 @@ namespace Battleship.Lobby
                 Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + shipType.ToString().ToLower() + ".png")), 270)
             };
 
-            this.ShipsCanvas.Children.Add(element);
+            AddShipEvent?.Invoke(element);
 
             DragShip dragShip = new(element, offset, shipType);
 
@@ -147,8 +141,8 @@ namespace Battleship.Lobby
 
                     DragDrop.DoDragDrop(dragShip.element, dragShip, DragDropEffects.All);
                     dragShips.Remove(dragShip);
-                    
-                    Update();
+
+                    UpdateEvent?.Invoke();
                     
                     break;
                 }
@@ -158,9 +152,9 @@ namespace Battleship.Lobby
         private void Element_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
             // Wenn die linke Maustaste losgelassen wird und das Ziel nicht erreicht wird
-            if (e.Action == DragAction.Cancel || (e.KeyStates & DragDropKeyStates.LeftMouseButton) == 0)
+            if (e.Action == DragAction.Cancel || (e.KeyStates & DragDropKeyStates.LeftMouseButton) == 0 || (e.KeyStates & DragDropKeyStates.RightMouseButton) != 0)
             {
-                this.ShipsCanvas.Children.Remove((Image)sender);
+                RemoveShipEvent?.Invoke((Image)sender);
                 this.currentDragShip?.Dispose();
                 this.currentDragShip = null;
 
@@ -178,50 +172,25 @@ namespace Battleship.Lobby
                 if (BattleField.IsShipOnPosition(dragShip, row, column))
                 {
                     battleField.RemoveShip(dragShip.row, dragShip.column, dragShip.shipType, dragShip.shipOrientation, FieldState.Ship);
-                    this.ShipsCanvas.Children.Remove(dragShip.element);
+
+                    RemoveShipEvent?.Invoke(dragShip.element);
 
                     dragShips.Remove(dragShip);
                     dragShip.Dispose();
 
-                    Update();
-                    
+                    UpdateEvent?.Invoke();
+
                     break;
                 }
             }
         }
 
-        public void Randomize()
+        public void Randomize(List<Ship> shipList)
         {
             Reset();
-            List<Ship> shipList = [];
-            for (int i = 0; i < gameSetting.BattleshipAmount; i++)
-            {
-                Ship.ShipType shipType = Ship.ShipType.Battleship;
-                Ship ship = new(shipType, Ship.ShipOrientation.Horizontal);
-                shipList.Add(ship);
-            }
-            for (int i = 0; i < gameSetting.CruiserAmount; i++)
-            {
-                Ship.ShipType shipType = Ship.ShipType.Cruiser;
-                Ship ship = new(shipType, Ship.ShipOrientation.Horizontal);
-                shipList.Add(ship);
-            }
-            for (int i = 0; i < gameSetting.SubmarineAmount; i++)
-            {
-                Ship.ShipType shipType = Ship.ShipType.Submarine;
-                Ship ship = new(shipType, Ship.ShipOrientation.Horizontal);
-                shipList.Add(ship);
-            }
-            for (int i = 0; i < gameSetting.DestroyerAmount; i++)
-            {
-                Ship.ShipType shipType = Ship.ShipType.Destroyer;
-                Ship ship = new(shipType, Ship.ShipOrientation.Horizontal);
-                shipList.Add(ship);
-            }
 
             if (battleField.Randomize(shipList))
             {
-
                 foreach (Ship ship in shipList)
                 {
                     Image element = new()
@@ -231,7 +200,7 @@ namespace Battleship.Lobby
                         Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + ship.shipType.ToString().ToLower() + ".png")), (int)ship.shipOrientation)
                     };
 
-                    this.ShipsCanvas.Children.Add(element);
+                    AddShipEvent?.Invoke(element);
 
                     DragShip dragShip = new(element, new Point(0, 0), ship.shipType, ship.shipOrientation)
                     {
@@ -244,8 +213,12 @@ namespace Battleship.Lobby
                     Canvas.SetLeft(dragShip.element, 190 + (double)dragShip.column * gameSetting.SingleFieldSize);
                     Canvas.SetTop(dragShip.element, 0 + (double)dragShip.row * gameSetting.SingleFieldSize);
 
-                    Update();
+                    UpdateEvent?.Invoke();
                 }
+            }
+            else
+            {
+                Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Randomize failed", "Randomize failed, please try again.");
             }
         }
 
@@ -284,123 +257,16 @@ namespace Battleship.Lobby
             }
         }
 
-        private void UpdateField(DragShip dragShip, int row, int column, DragEvent? dragEvent)
-        {
-            if (dragEvent == DragEvent.DragEnter)
-            {
-                if (battleField.SetShip(
-                dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)(dragShip.offset.Y / gameSetting.SingleFieldSize) : row,
-                dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)(dragShip.offset.X / gameSetting.SingleFieldSize) : column,
-                dragShip.shipType,
-                dragShip.shipOrientation,
-                FieldState.Marked))
-                {
-                    return;
-                }
-                else
-                {
-                    Canvas.SetLeft(dragShip.element, 190 + column * gameSetting.SingleFieldSize);
-                    Canvas.SetTop(dragShip.element, 0 + row * gameSetting.SingleFieldSize);
-                }
-            }
-            else if (dragEvent == DragEvent.DragDrop)
-            {
-                if (!battleField.SetShip(
-                dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)(dragShip.offset.Y / gameSetting.SingleFieldSize) : row,
-                dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)(dragShip.offset.X / gameSetting.SingleFieldSize) : column,
-                dragShip.shipType,
-                dragShip.shipOrientation,
-                FieldState.Ship))
-                {
-                    return;
-                }
-                else
-                {
-                    Canvas.SetTop(dragShip.element, 0 + row * gameSetting.SingleFieldSize);
-                    Canvas.SetLeft(dragShip.element, 190 + column * gameSetting.SingleFieldSize);
-                    ShipsCanvas.Children.Add(dragShip.element);
-                    dragShip.row = row;
-                    dragShip.column = column;
-                    dragShips.Add(dragShip);
-                }
-            }
-            else if (dragEvent == DragEvent.DragLeave)
-            {
-                if (!battleField.RemoveShip(
-                    dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)(dragShip.offset.Y / gameSetting.SingleFieldSize) : row,
-                    dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)(dragShip.offset.X / gameSetting.SingleFieldSize) : column,
-                    dragShip.shipType,
-                    dragShip.shipOrientation,
-                    FieldState.Marked))
-                {
-                    return;
-                }
-            }
-            Update();
-        }
-
-        private void Update()
-        {
-            for (int x = 0; x < gameSetting.FieldSize; x++)
-            {
-                for (int y = 0; y < gameSetting.FieldSize; y++)
-                {
-                    StackPanel stackPanel = (StackPanel)DragAndDropGrid.Children.Cast<UIElement>().First(e => Grid.GetRow(e) == x && Grid.GetColumn(e) == y);
-                    MarkField(stackPanel, (BattleField.FieldState)battleField.field[x, y]);
-                }
-            }
-            UpdateShipsInfo();
-        }
-
-        private static void MarkField(StackPanel element, BattleField.FieldState fieldState)
-        {
-            if (fieldState == BattleField.FieldState.Marked)
-            {
-                //element.Background = Brushes.Green;
-                element.Background = new BrushConverter().ConvertFrom("#44ff0000") as Brush;
-                element.Children.Clear();
-            }
-            else if (fieldState == BattleField.FieldState.Water)
-            {
-                element.Background = new BrushConverter().ConvertFrom("#22000000") as Brush;
-                element.Children.Clear();
-            }
-            else if (fieldState == BattleField.FieldState.Ship)
-            {
-                //element.Background = Brushes.Red;
-                element.Background = new BrushConverter().ConvertFrom("#22000000") as Brush;
-                element.Children.Clear();
-            }
-            else
-            {
-                Image image = new()
-                {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png")),
-                    Margin = new Thickness(4, 4, 4, 4),
-                };
-                element.Children.Add(image);
-            }
-        }
-
-        private void UpdateShipsInfo()
-        {
-            carrierPlaced = dragShips.Count(dragShip => dragShip.shipType == Ship.ShipType.Carrier);
-            battleshipPlaced = dragShips.Count(dragShip => dragShip.shipType == Ship.ShipType.Battleship);
-            cruiserPlaced = dragShips.Count(dragShip => dragShip.shipType == Ship.ShipType.Cruiser);
-            submarinePlaced = dragShips.Count(dragShip => dragShip.shipType == Ship.ShipType.Submarine);
-            destroyerPlaced = dragShips.Count(dragShip => dragShip.shipType == Ship.ShipType.Destroyer);
-        }
-
         public void Reset()
         {
             dragShips.ForEach(
                 dragShip => {
-                    this.ShipsCanvas.Children.Remove(dragShip.element);
+                    RemoveShipEvent?.Invoke(dragShip.element);
                     dragShip.Dispose();
                 });
             dragShips.Clear();
             battleField.Reset();
-            Update();
+            UpdateEvent?.Invoke();
         }
     }
 

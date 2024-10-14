@@ -34,6 +34,7 @@
     <None Remove="Resources\Images\cruiser.png" />
     <None Remove="Resources\Images\destroyer.png" />
     <None Remove="Resources\Images\exitButton.png" />
+    <None Remove="Resources\Images\fire.png" />
     <None Remove="Resources\Images\hoveredNoneSelectedButton.png" />
     <None Remove="Resources\Images\hoveredSelectedButton.png" />
     <None Remove="Resources\Images\load-file.png" />
@@ -46,6 +47,7 @@
     <None Remove="Resources\Images\Radiobutton\selected-radio-hover-focus.png" />
     <None Remove="Resources\Images\Radiobutton\selected-radio-hover.png" />
     <None Remove="Resources\Images\Radiobutton\selected-radio.png" />
+    <None Remove="Resources\Images\red-cross.png" />
     <None Remove="Resources\Images\restricted.png" />
     <None Remove="Resources\Images\restriction.png" />
     <None Remove="Resources\Images\selectedButton.png" />
@@ -75,6 +77,7 @@
     <Resource Include="Resources\Images\cross.png" />
     <Resource Include="Resources\Images\cruiser.png" />
     <Resource Include="Resources\Images\destroyer.png" />
+    <Resource Include="Resources\Images\fire.png" />
     <Resource Include="Resources\Images\load-file.png" />
     <Resource Include="Resources\Images\multiplayer.png" />
     <Resource Include="Resources\Images\online.png" />
@@ -84,6 +87,7 @@
     <Resource Include="Resources\Images\Radiobutton\selected-radio-hover-focus.png" />
     <Resource Include="Resources\Images\Radiobutton\selected-radio-hover.png" />
     <Resource Include="Resources\Images\Radiobutton\selected-radio.png" />
+    <Resource Include="Resources\Images\red-cross.png" />
     <Resource Include="Resources\Images\restricted.png" />
     <Resource Include="Resources\Images\restriction.png" />
     <Resource Include="Resources\Images\settings.png" />

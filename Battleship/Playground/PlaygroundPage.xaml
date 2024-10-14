@@ -89,10 +89,40 @@
                                         <Image Grid.Row="1" Grid.Column="0" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
                                         <Image Grid.Row="1" Grid.Column="1" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
                                     </Grid>
-                                    <Canvas>
+                                    <Canvas x:Name="EnemyField">
 
                                     </Canvas>
                                     <Grid x:Name="EnemyFieldForeground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.Clip>
+                                            <RectangleGeometry Rect="0, 0, 300, 300" RadiusX="8" RadiusY="8" />
+                                        </Grid.Clip>
+                                        <Grid Background="#8fff" />
+                                    </Grid>
+                                    <Grid x:Name="EnemyFieldTarget" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="30" />
                                             <RowDefinition Height="30" />
@@ -176,6 +206,36 @@
 
                                     </Canvas>
                                     <Grid x:Name="MyFieldForeground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                            <RowDefinition Height="30" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="30" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.Clip>
+                                            <RectangleGeometry Rect="0, 0, 300, 300" RadiusX="8" RadiusY="8" />
+                                        </Grid.Clip>
+                                        <Grid Background="#8fff" />
+                                    </Grid>
+                                    <Grid x:Name="MyFieldTarget" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="30" />
                                             <RowDefinition Height="30" />

@@ -12,7 +12,7 @@ namespace Battleship.Global
         int fieldSize,
         Difficult gameDifficult,
         bool hitBonus,
-        bool restricedArea,
+        bool restrictedArea,
         int battleshipAmount,
         int cruiserAmount,
         int submarineAmount,
@@ -53,8 +53,8 @@ namespace Battleship.Global
         public bool HitBonus { get { return hitBonus; } }
 
 
-        private readonly bool restricedArea = restricedArea;
-        public bool RestricedArea { get { return restricedArea; } }
+        private readonly bool restrictedArea = restrictedArea;
+        public bool RestrictedArea { get { return restrictedArea; } }
 
         private readonly int carrierAmount = carrierAmount;
         public int CarrierAmount { get { return carrierAmount; } }

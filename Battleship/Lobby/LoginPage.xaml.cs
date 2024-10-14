@@ -1,5 +1,6 @@
 ﻿using Battelship;
 using Battleship.Lobby;
+using Battleship.Resources.Components;
 using Battleship.Services;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace Battleship.Lobby
         {
             if (string.IsNullOrEmpty(UsernameInput.Text))
             {
-                DialogHandler.Show(DialogHandler.DialogType.Warning, DialogHandler.ButtonType.Ok, "Benutzername wird benötigt!", "Bitte gib einen Benutzernamen ein.");
+                Dialog.Show(Dialog.DialogType.Warning, Dialog.ButtonType.Ok, "Benutzername wird benötigt!", "Bitte gib einen Benutzernamen ein.");
                 return;
             }
             Navigation.NavigateTo(new MenuPage());

@@ -119,7 +119,7 @@ namespace Battelship.Lobby
             Debug.WriteLine("SelectedValue: " + SubmarineAmount.Value);
             Debug.WriteLine("SelectedValue: " + DestroyerAmount.Value);
             Navigation.NavigateTo(new FleetManagerPage(new GameSetting(
-                GameSetting.Mode.PlayerVsComputer,
+                mode,
                 (int)FieldSize.SelectedValue,
                 (GameSetting.Difficult)FieldDifficult.SelectedValue,
                 FieldHitBonus.IsChecked,

@@ -33,7 +33,7 @@ namespace Battleship
             Navigation.RegisterPage(new LobbyMainPage(true));
             //Navigation.RegisterPage(new PlaygroundPage());
 
-            DialogHandler.Setup(DialogContainer, DialogGrid);
+            Dialog.Setup(DialogContainer, DialogGrid);
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)

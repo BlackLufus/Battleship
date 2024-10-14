@@ -1,6 +1,7 @@
 ﻿using Battleship.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,8 +22,45 @@ namespace Battleship.Resources.Components
     /// </summary>
     public partial class Dialog : UserControl
     {
-        public Dialog()
+        public enum DialogType
         {
+            Info,
+            Warning,
+            Error
+        }
+
+        public enum ButtonType
+        {
+            Ok = 0,
+            OkCancel = 1,
+            Apply = 2,
+            ApplyCancel = 3,
+            YesNo = 4,
+            YesNoCancel = 5
+        }
+
+        public enum Result
+        {
+            Ok,
+            Cancel,
+            Apply,
+            Yes,
+            No
+        }
+
+        private static Grid? DialogContainer;
+        private static Grid? DialogGrid;
+
+        public static void Setup(Grid DialogContainer, Grid DialogGrid)
+        {
+            Dialog.DialogContainer = DialogContainer;
+            Dialog.DialogGrid = DialogGrid;
+        }
+
+        private readonly Action<Result>? callback;
+        public Dialog(Action<Result>? callback)
+        {
+            this.callback = callback;
             InitializeComponent();
         }
 
@@ -46,18 +84,53 @@ namespace Battleship.Resources.Components
             set { SetValue(TextProperty, value); }
         }
 
-        public void SetButtonOption(int button, string buttonText, Action<DialogHandler.Result> action, DialogHandler.Result result)
+        public void SetButtonOption(int buttonID, string buttonText, Result result)
         {
-            Button button1 = button switch
+            Button button = buttonID switch
             {
                 1 => ButtonOption1,
                 2 => ButtonOption2,
                 3 => ButtonOption3,
-                _ => throw new ArgumentOutOfRangeException(nameof(button))
+                _ => throw new ArgumentOutOfRangeException(nameof(buttonID))
             };
-            button1.Content = buttonText;
-            button1.Visibility = Visibility.Visible;
-            button1.Click += (sender, e) => action(result);
+            button.Content = buttonText;
+            button.Visibility = Visibility.Visible;
+            button.Click += (sender, e) => {
+                DialogContainer!.Visibility = Visibility.Hidden;
+                DialogGrid!.Children.Clear();
+                callback?.Invoke(result);
+            };
+        }
+
+        public static void Show(DialogType type, ButtonType buttons, string header, string text, Action<Result>? callback = null)
+        {
+            if (DialogContainer == null || DialogGrid == null)
+            {
+                throw new Exception("DialogHandler not set up");
+            }
+            Debug.WriteLine("Showing dialog");
+            Dialog dialog = new Dialog(callback);
+            if (buttons == ButtonType.Ok || buttons == ButtonType.OkCancel)
+            {
+                dialog.SetButtonOption(1, "OK", Result.Ok);
+            }
+            if (buttons == ButtonType.Apply || buttons == ButtonType.ApplyCancel)
+            {
+                dialog.SetButtonOption(1, "Übernehmen", Result.Apply);
+            }
+            if (buttons == ButtonType.YesNo || buttons == ButtonType.YesNoCancel)
+            {
+                dialog.SetButtonOption(1, "Ja", Result.Yes);
+                dialog.SetButtonOption(2, "Nein", Result.No);
+            }
+            if (buttons == ButtonType.OkCancel || buttons == ButtonType.ApplyCancel || buttons == ButtonType.YesNoCancel)
+            {
+                dialog.SetButtonOption(3, "Abbruch", Result.Cancel);
+            }
+            dialog.Header = header;
+            dialog.Text = text;
+            DialogContainer!.Visibility = Visibility.Visible;
+            DialogGrid!.Children.Add(dialog);
         }
     }
 }
