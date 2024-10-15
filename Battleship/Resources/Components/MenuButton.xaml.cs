@@ -26,11 +26,13 @@ namespace Battleship.Resources.Components
         private int nextId = 0;
         private int id;
         ClickEvent clickEvent;
+        public event RoutedEventHandler Click;
+
         public MenuButton()
         {
             InitializeComponent();
             this.id = nextId++;
-            clickEvent = new(this, () => OnClick(), MainComponent);
+            //clickEvent = new(this, () => OnClick(), MainComponent);
         }
 
         public static readonly DependencyProperty IsPressedProperty =
@@ -66,26 +68,9 @@ namespace Battleship.Resources.Components
             set { SetValue(ImageSourceProperty, value); }
         }
 
-        // Benutzerdefiniertes Click-Ereignis
-        public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent(
-            "Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(MenuButton));
-
-        public event RoutedEventHandler Click
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            add { AddHandler(ClickEvent, value); }
-            remove { RemoveHandler(ClickEvent, value); }
-        }
-
-        // Methode zum Auslösen des Click-Ereignisses
-        protected void RaiseClickEvent()
-        {
-            RoutedEventArgs newEventArgs = new RoutedEventArgs(ClickEvent);
-            RaiseEvent(newEventArgs);
-        }
-
-        protected void OnClick()
-        {
-            RaiseClickEvent();
+            Click?.Invoke(this, e);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Battleship.Global;
+﻿using Battleship.Playground;
 using System.Diagnostics;
-using static Battleship.Global.BattleshipPlayground;
+using static Battleship.Playground.Playground;
 
 namespace Battleship.Lobby
 {

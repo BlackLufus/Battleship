@@ -33,10 +33,10 @@
                     <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="260" />
                 </Grid.ColumnDefinitions>
-                <components:MenuButton Grid.Column="0" Grid.Row="0" ImageSource="pack://application:,,,/Resources/Images/singelplayer.png" Text="Einzelspieler" PreviewMouseLeftButtonUp="SingelPlayerButton_MouseLeftButtonDown" />
-                <components:MenuButton Grid.Column="2" Grid.Row="0" ImageSource="pack://application:,,,/Resources/Images/multiplayer.png" Text="Duos" MouseLeftButtonUp="DuosButton_MouseLeftButtonDown" />
-                <components:MenuButton Grid.Column="0" Grid.Row="2" ImageSource="pack://application:,,,/Resources/Images/online.png" Text="Online" MouseLeftButtonUp="OnlineButton_MouseLeftButtonDown" />
-                <components:MenuButton Grid.Column="2" Grid.Row="2" ImageSource="pack://application:,,,/Resources/Images/load-file.png" Text="Spiel Laden" MouseLeftButtonUp="LoadGameButton_MouseLeftButtonDown" />
+                <components:MenuButton Grid.Column="0" Grid.Row="0" ImageSource="pack://application:,,,/Resources/Images/singelplayer.png" Text="Einzelspieler" Click="SingelPlayerButton_MouseLeftButtonDown" />
+                <components:MenuButton Grid.Column="2" Grid.Row="0" ImageSource="pack://application:,,,/Resources/Images/multiplayer.png" Text="Duos" Click="DuosButton_MouseLeftButtonDown" />
+                <components:MenuButton Grid.Column="0" Grid.Row="2" ImageSource="pack://application:,,,/Resources/Images/online.png" Text="Online" Click="OnlineButton_MouseLeftButtonDown" />
+                <components:MenuButton Grid.Column="2" Grid.Row="2" ImageSource="pack://application:,,,/Resources/Images/load-file.png" Text="Spiel Laden" Click="LoadGameButton_MouseLeftButtonDown" />
             </Grid>
         </Grid>
     </Grid>

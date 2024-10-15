@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Battleship.Global.GameSetting;
+using static Battleship.Playground.GameSetting;
 
-namespace Battleship.Global
+namespace Battleship.Playground
 {
     public class GameSetting(
         Mode gameMode,
@@ -40,9 +40,11 @@ namespace Battleship.Global
 
         public enum Difficult
         {
+            VeryEasy,
             Easy,
             Medium,
-            Hard
+            Hard,
+            VeryHard
         }
 
         private readonly Difficult gameDifficult = gameDifficult;

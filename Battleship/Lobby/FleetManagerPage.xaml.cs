@@ -1,5 +1,4 @@
-﻿using Battleship.Global;
-using Battleship.Lobby;
+﻿using Battleship.Lobby;
 using Battleship.Playground;
 using Battleship.Resources.Components;
 using Battleship.services;
@@ -10,7 +9,6 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -271,7 +269,7 @@ namespace Battelship.Lobby
             BattleField enemyBattleField = new BattleField(gameSetting);
             List<Ship> ships = GetShipList();
             enemyBattleField.Randomize(ships);
-            Navigation.RegisterPage(new PlaygroundPage(gameSetting, new BattleshipPlayground(battleField.FieldNoRestiction, dragAndDropManager.DragShips.Select(ship => ship as Ship).ToList()), gameSetting.GameMode == GameSetting.Mode.PlayerVsPlayer ? null : new BattleshipPlayground(enemyBattleField.FieldNoRestiction, ships)));
+            Navigation.RegisterPage(new GameBoardPage(gameSetting, new Playground(battleField.FieldNoRestiction, dragAndDropManager.DragShips.Select(ship => ship as Ship).ToList()), gameSetting.GameMode == GameSetting.Mode.PlayerVsPlayer ? null : new Playground(enemyBattleField.FieldNoRestiction, ships)));
         }
 
         private void RandomButton_Click(object sender, RoutedEventArgs e)

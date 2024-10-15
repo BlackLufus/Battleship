@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace Battleship.Services
 
         public static void AddThread(Thread thread)
         {
+            Debug.WriteLine("Adding thread: " + thread.Name);
             threads.Add(thread);
         }
 
@@ -25,6 +27,8 @@ namespace Battleship.Services
         {
             foreach (Thread thread in threads)
             {
+                Debug.WriteLine("Stopping thread: " + thread.Name);
+
                 thread.Interrupt();
             }
         }

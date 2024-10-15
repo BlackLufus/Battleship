@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Battleship.Global
+namespace Battleship.Playground
 {
-    public class BattleshipPlayground(int[,] field, List<Ship> ships)
+    public class Playground(int[,] field, List<Ship> ships)
     {
         public enum ShotResult
         {

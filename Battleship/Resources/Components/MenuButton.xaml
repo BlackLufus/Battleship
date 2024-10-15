@@ -5,43 +5,59 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:components="clr-namespace:Battleship.Resources.Components"
              mc:Ignorable="d">
-    <Grid>
-        <Border x:Name="MainComponent" CornerRadius="20" Margin="5" BorderThickness="3" BorderBrush="#FF383838" Visibility="Hidden">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Background" Value="#ccB0FFFF"/>
-                    <!-- Standard Hintergrundfarbe -->
-                </Style>
-            </Border.Style>
-        </Border>
-        <Border CornerRadius="20" Margin="5" BorderThickness="3" BorderBrush="#FF383838">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Background" Value="#aaFFFFFF"/>
-                    <!-- Standard Hintergrundfarbe -->
+    <Button Click="Button_Click">
+        <Button.Style>
+            <Style TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Border" Margin="5" 
+                                    BorderThickness="3" 
+                                    BorderBrush="#FF383838"
+                                    CornerRadius="20">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#aaFFFFFF"/>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="3*"/>
+                                        <!-- 3 Teile -->
+                                        <RowDefinition Height="1*"/>
+                                        <!-- 1 Teil -->
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Row="0" Source="{Binding ImageSource, RelativeSource={RelativeSource AncestorType=UserControl}}" VerticalAlignment="Center" Margin="5"/>
+                                    <TextBlock Grid.Row="1" FontSize="20" FontWeight="Bold" Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF525252"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
 
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#ccB0FFFF"/>
-                            <!-- Hintergrundfarbe bei MouseOver -->
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
+                                <!-- MultiTrigger: MouseOver but not pressed -->
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsMouseOver" Value="True"/>
+                                        <Condition Property="IsMouseCaptured" Value="False"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="Border" Property="Background" Value="#CCB0FFFF"/>
+                                </MultiTrigger>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="3*"/>
-                    <!-- 3 Teile -->
-                    <RowDefinition Height="1*"/>
-                    <!-- 1 Teil -->
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Image Grid.Row="0" Source="{Binding ImageSource, RelativeSource={RelativeSource AncestorType=UserControl}}" VerticalAlignment="Center" Margin="5"/>
-                <TextBlock Grid.Row="1" FontSize="20" FontWeight="Bold" Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF525252"/>
-            </Grid>
-        </Border>
-    </Grid>
+                                <!-- MultiTrigger: Pressed and MouseOver -->
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsPressed" Value="True"/>
+                                        <Condition Property="IsMouseOver" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="Border" Property="Background" Value="#CCD0FFFF"/>
+                                </MultiTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Button.Style>
+    </Button>
 </UserControl>

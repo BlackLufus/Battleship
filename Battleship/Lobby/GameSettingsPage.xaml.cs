@@ -1,5 +1,5 @@
-﻿using Battleship.Global;
-using Battleship.Lobby;
+﻿using Battleship.Lobby;
+using Battleship.Playground;
 using Battleship.Resources.Components;
 using System;
 using System.Collections.Generic;
@@ -61,9 +61,12 @@ namespace Battelship.Lobby
             set { sizeList = value; }
         }
         private List<(string, object)> difficultList = [
+            ("Sehr Leicht", GameSetting.Difficult.VeryEasy),
             ("Leicht", GameSetting.Difficult.Easy),
             ("Mittel", GameSetting.Difficult.Medium),
-            ("Schwer", GameSetting.Difficult.Hard)
+            ("Schwer", GameSetting.Difficult.Hard),
+            ("Sehr schwer", GameSetting.Difficult.VeryHard),
+            //("Unmöglich", GameSetting.Difficult.Impossible)
         ];
 
         public List<(string, object)> DifficultList

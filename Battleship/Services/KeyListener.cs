@@ -17,35 +17,35 @@ namespace Battleship.services
             Thread thread = new Thread(() =>
             {
                 List<Key> keys = new List<Key>();
-                while (true)
+                try
                 {
-                    // Iteriere über die gültigen Werte der Enum Key
-                    foreach (Key key in Enum.GetValues(typeof(Key)))
+                    while (true)
                     {
-                        // Überspringe ungültige Enum-Werte, wie Key.None
-                        if (key == Key.None) continue;
+                        // Iteriere über die gültigen Werte der Enum Key
+                        foreach (Key key in Enum.GetValues(typeof(Key)))
+                        {
+                            // Überspringe ungültige Enum-Werte, wie Key.None
+                            if (key == Key.None) continue;
 
-                        // Überprüfe, ob die Taste gedrückt ist
-                        if (Keyboard.IsKeyDown(key) && keys.IndexOf(key) == -1)
-                        {
-                            // Nutze den Dispatcher, um den UI-Zugriff auf den UI-Thread zurückzuführen
-                            Application.Current.Dispatcher.Invoke(() =>
+                            // Überprüfe, ob die Taste gedrückt ist
+                            if (Keyboard.IsKeyDown(key) && keys.IndexOf(key) == -1)
                             {
-                                keys.Add(key);
-                                KeyDownEvent?.Invoke(key);
-                            });
+                                // Nutze den Dispatcher, um den UI-Zugriff auf den UI-Thread zurückzuführen
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    keys.Add(key);
+                                    KeyDownEvent?.Invoke(key);
+                                });
+                            }
+                            else if (!Keyboard.IsKeyDown(key) && keys.IndexOf(key) != -1)
+                            {
+                                keys.Remove(key);
+                            }
                         }
-                        else if (!Keyboard.IsKeyDown(key) && keys.IndexOf(key) != -1)
-                        {
-                            keys.Remove(key);
-                        }
+                            Thread.Sleep(1); // CPU schonen
                     }
-                    try
-                    {
-                        Thread.Sleep(1); // CPU schonen
-                    }
-                    catch (Exception e) { }
                 }
+                catch { }
             });
 
             ThreadListener.AddThread(thread); // Füge den Thread zur Liste der Threads hinzu
@@ -53,6 +53,7 @@ namespace Battleship.services
             thread.SetApartmentState(ApartmentState.STA);
             thread.IsBackground = true;  // Stelle sicher, dass der Thread im Hintergrund läuft
             thread.Start();
+            thread.Name = "KeyListener";
         }
 
         public static KeyListener Event()

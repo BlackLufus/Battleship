@@ -72,9 +72,13 @@
                                                                            Opacity="0.5"/>
                                                                 </Border>
                                                                 <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                    <MultiTrigger>
+                                                                        <MultiTrigger.Conditions>
+                                                                            <Condition Property="IsMouseOver" Value="True"/>
+                                                                            <Condition Property="IsMouseCaptured" Value="False"/>
+                                                                        </MultiTrigger.Conditions>
                                                                         <Setter TargetName="InputImage" Property="Opacity" Value="0.3" />
-                                                                    </Trigger>
+                                                                    </MultiTrigger>
                                                                     <MultiTrigger>
                                                                         <MultiTrigger.Conditions>
                                                                             <Condition Property="IsMouseOver" Value="True"/>

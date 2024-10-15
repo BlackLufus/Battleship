@@ -1,5 +1,4 @@
 ﻿using Battelship;
-using Battleship.Global;
 using Battleship.Lobby;
 using Battleship.Resources.Components;
 using System;
@@ -18,42 +17,51 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using static Battleship.Playground.GameLogic;
 
 namespace Battleship.Playground
 {
     /// <summary>
     /// Interaktionslogik für PlaygroundPage.xaml
     /// </summary>
-    public partial class PlaygroundPage : Page
+    public partial class GameBoardPage : Page
     {
         private readonly GameSetting gameSetting;
-        private readonly BattleshipPlayground myPlayground;
-        private readonly BattleshipPlayground enemyPlayground;
+        private readonly Playground myPlayground;
+        private readonly Playground enemyPlayground;
 
-        private enum Turn
-        {
-            MyTurn = 0,
-            EnemyTurn = 1
-        }
-        private Turn turn = new Random().Next(0, 2) == 0 ? Turn.MyTurn : Turn.EnemyTurn;
+        private readonly GameLogic gameLogic;
 
-        public PlaygroundPage(GameSetting gameSetting, BattleshipPlayground myPlayground, BattleshipPlayground enemyPlayground)
+        public GameBoardPage(GameSetting gameSetting, Playground myPlayground, Playground enemyPlayground)
         {
             this.gameSetting = gameSetting;
             this.myPlayground = myPlayground;
             this.enemyPlayground = enemyPlayground;
 
+            gameLogic = new GameLogic(gameSetting, enemyPlayground);
+            gameLogic.ShotEvent += PlaygroundUI.UpdatePlayground;
+            gameLogic.GameEndedEvent += GameEnded;
+
             InitializeComponent();
 
-            SetBackground();
-            SetShips(myPlayground.Ships, true);
-            if (gameSetting.GameMode != GameSetting.Mode.PlayerVsPlayer) SetShips(enemyPlayground.Ships, false);
-            if (gameSetting.GameMode != GameSetting.Mode.PlayerVsPlayer) StartGame(MyFieldForeground, myPlayground, Turn.EnemyTurn);
-            Debug.WriteLine("GameMode: " + gameSetting.GameMode);
-            if (gameSetting.GameMode == GameSetting.Mode.ComputerVsComputer) StartGame(EnemyFieldForeground, enemyPlayground, Turn.MyTurn);
+            PrepareGame();
+
+            PlaceShips(myPlayground.Ships, true);
+
+            if (gameSetting.GameMode != GameSetting.Mode.PlayerVsPlayer) PlaceShips(enemyPlayground.Ships, false);
+            if (gameSetting.GameMode != GameSetting.Mode.PlayerVsPlayer) gameLogic.StartGame(MyFieldForeground, myPlayground, GameLogic.TurnType.EnemyTurn);
+            if (gameSetting.GameMode == GameSetting.Mode.ComputerVsComputer) gameLogic.StartGame(EnemyFieldForeground, enemyPlayground, GameLogic.TurnType.MyTurn);
         }
 
-        private void SetBackground()
+        private void PrepareGame()
+        {
+            CleanUp();
+            SetupPlaygroundDefinitions();
+            InitializeEnemyPlayground();
+            InitializePlayerPlayground();
+        }
+
+        private void CleanUp()
         {
             EnemyFieldBackground.Children.Clear();
             EnemyFieldBackground.RowDefinitions.Clear();
@@ -73,9 +81,10 @@ namespace Battleship.Playground
             MyFieldTarget.Children.Clear();
             MyFieldTarget.RowDefinitions.Clear();
             MyFieldTarget.ColumnDefinitions.Clear();
+        }
 
-            Debug.WriteLine(gameSetting.FieldSize);
-
+        private void SetupPlaygroundDefinitions()
+        {
             for (int i = 0; i < gameSetting.FieldSize; i++)
             {
                 EnemyFieldBackground.RowDefinitions.Add(new RowDefinition());
@@ -91,22 +100,25 @@ namespace Battleship.Playground
                 MyFieldTarget.RowDefinitions.Add(new RowDefinition());
                 MyFieldTarget.ColumnDefinitions.Add(new ColumnDefinition());
             }
+        }
 
+        private void InitializeEnemyPlayground()
+        {
             for (int row = 0; row < gameSetting.FieldSize; row++)
             {
                 for (int col = 0; col < gameSetting.FieldSize; col++)
                 {
 
                     // Erstelle ein Image
-                    Image enemieImage = new Image();
-                    BitmapImage enemieImageBitmap = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
+                    Image enemieImage = new();
+                    BitmapImage enemieImageBitmap = new(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
                     enemieImage.Source = enemieImageBitmap;
                     Grid.SetRow(enemieImage, row);
                     Grid.SetColumn(enemieImage, col);
                     EnemyFieldBackground.Children.Add(enemieImage);
 
                     // Enemy Field Foreground
-                    Button enemyField = new Button
+                    Button enemyField = new()
                     {
                         Height = gameSetting.SingleFieldSize,
                         Width = gameSetting.SingleFieldSize,
@@ -120,7 +132,7 @@ namespace Battleship.Playground
 
 
                     // Enemy Field Target
-                    Button enemyFieldTarget = new Button
+                    Button enemyFieldTarget = new()
                     {
                         Height = gameSetting.SingleFieldSize,
                         Width = gameSetting.SingleFieldSize,
@@ -167,17 +179,24 @@ namespace Battleship.Playground
                     };
                     enemyFieldTarget.Click += (sender, e) =>
                     {
-                        Shot(enemyField);
+                        gameLogic.Shot(EnemyFieldForeground, enemyField);
                     };
                     Grid.SetRow(enemyFieldTarget, row);
                     Grid.SetColumn(enemyFieldTarget, col);
                     EnemyFieldTarget.Children.Add(enemyFieldTarget);
+                }
+            }
+        }
 
-
-
+        private void InitializePlayerPlayground()
+        {
+            for (int row = 0; row < gameSetting.FieldSize; row++)
+            {
+                for (int col = 0; col < gameSetting.FieldSize; col++)
+                {
                     // My Field Background
-                    Image myImage = new Image();
-                    BitmapImage myBitmap = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
+                    Image myImage = new();
+                    BitmapImage myBitmap = new(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
                     myImage.Source = myBitmap;
                     Grid.SetRow(myImage, row);
                     Grid.SetColumn(myImage, col);
@@ -185,7 +204,7 @@ namespace Battleship.Playground
 
 
                     // My Field Foreground
-                    Button myField = new Button
+                    Button myField = new()
                     {
                         Height = gameSetting.SingleFieldSize,
                         Width = gameSetting.SingleFieldSize,
@@ -199,7 +218,7 @@ namespace Battleship.Playground
 
 
                     // My Field Target
-                    Button myFieldTarget = new Button
+                    Button myFieldTarget = new()
                     {
                         Height = gameSetting.SingleFieldSize,
                         Width = gameSetting.SingleFieldSize,
@@ -211,10 +230,7 @@ namespace Battleship.Playground
                     {
                         int row = Grid.GetRow(myFieldTarget);
                         int col = Grid.GetColumn(myFieldTarget);
-                        Grid grid = new()
-                        {
-                            Background = new BrushConverter().ConvertFrom("#44FFFFFF") as Brush
-                        };
+                        Grid grid = new();
                         grid.Children.Add(new Image
                         {
                             Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/target.png"))
@@ -238,6 +254,14 @@ namespace Battleship.Playground
                             myFieldTarget.Content = null;
                         }
                     };
+                    myFieldTarget.PreviewMouseDown += (sender, e) =>
+                    {
+                        myFieldTarget.Background = new BrushConverter().ConvertFrom("#44FFFFFF") as Brush;
+                    };
+                    myFieldTarget.PreviewMouseUp += (sender, e) =>
+                    {
+                        myFieldTarget.Background = Brushes.Transparent;
+                    };
                     Grid.SetRow(myFieldTarget, row);
                     Grid.SetColumn(myFieldTarget, col);
                     MyFieldTarget.Children.Add(myFieldTarget);
@@ -255,7 +279,7 @@ namespace Battleship.Playground
             return transform;
         }
 
-        private void SetShips(List<Ship> ships, bool myField)
+        private void PlaceShips(List<Ship> ships, bool myField)
         {
             // Set the ships on the playground
             foreach (Ship ship in ships!)
@@ -281,126 +305,10 @@ namespace Battleship.Playground
             }
         }
 
-        private void MarkField(Button element, BattleshipPlayground.FieldState shotResult)
-        {
-            if (shotResult == BattleshipPlayground.FieldState.Hit || shotResult == BattleshipPlayground.FieldState.Sunk)
-            {
-                Image image = new()
-                {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/fire.png")),
-                    Width = gameSetting.SingleFieldSize - 2,
-                    Height = gameSetting.SingleFieldSize - 2,
-                };
-                element.Content = image;
-            }
-            else if (shotResult == BattleshipPlayground.FieldState.Miss)
-            {
-                Image image = new()
-                {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/red-cross.png")),
-                    Width = gameSetting.SingleFieldSize - 2,
-                    Height = gameSetting.SingleFieldSize - 2,
-                };
-                element.Content = image;
-            }
-            else if (shotResult == BattleshipPlayground.FieldState.Restrict)
-            {
-                Image image = new()
-                {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png")),
-                    Width = gameSetting.SingleFieldSize - 2,
-                    Height = gameSetting.SingleFieldSize - 2,
-                };
-                element.Content = image;
-            }
-        }
-        private void UpdateField(Grid playgroundGrid, BattleshipPlayground playground)
-        {
-            for (int row = 0; row < gameSetting.FieldSize; row++)
-            {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
-                {
-                    Button button = (Button)playgroundGrid.Children.Cast<UIElement>().First(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == col);
-                    MarkField(button, (BattleshipPlayground.FieldState)playground.Field[row, col]);
-                }
-            }
-        }
-
-        private void StartGame(Grid playgroundGrid, BattleshipPlayground playground, Turn turn)
-        {
-            AI ai = new AI(gameSetting, playground);
-            bool gameEnded = false;
-            Thread thread = new Thread(() =>
-            {
-                while (!gameEnded)
-                {
-                    if (this.turn == turn)
-                    {
-                        try
-                        {
-                            Thread.Sleep(new Random().Next(75, 100));
-                            bool hit = ai.NextShot();
-                            Debug.WriteLine("Hit: " + hit);
-                            Application.Current.Dispatcher.Invoke(() =>
-                            {
-                                UpdateField(playgroundGrid, playground);
-                            });
-                            if (!gameSetting.HitBonus || !hit)
-                            {
-                                this.turn = this.turn == Turn.MyTurn ? Turn.EnemyTurn : Turn.MyTurn;
-                            }
-                            if (playground.IsAllSunk())
-                            {
-                                gameEnded = true;
-                            }
-                        }
-                        catch (ThreadInterruptedException _) { }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            Thread.Sleep(75);
-                        }
-                        catch (ThreadInterruptedException _) { }
-                    }
-                }
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    GameEnded();
-                });
-            });
-            thread.Start();
-        }
-
-        private void Shot(Button enemyField)
-        {
-            if (gameSetting.GameMode != GameSetting.Mode.ComputerVsComputer && this.turn == Turn.MyTurn)
-            {
-                int row = Grid.GetRow(enemyField);
-                int col = Grid.GetColumn(enemyField);
-                
-                BattleshipPlayground.ShotResult shotResult = enemyPlayground.Shot(row, col);
-                
-                Debug.WriteLine("Shot at " + row + " " + col + " with result " + shotResult);
-
-                UpdateField(EnemyFieldForeground, enemyPlayground);
-
-                if (enemyPlayground.IsAllSunk())
-                {
-                    GameEnded();
-                }
-                else if (!gameSetting.HitBonus || shotResult == BattleshipPlayground.ShotResult.Miss)
-                {
-                    this.turn = Turn.EnemyTurn;
-                }
-            }
-        }
-
         private void GameEnded()
         {
             Debug.WriteLine("Game ended");
-            Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Game ended", "The game has ended\n" + (this.turn == Turn.MyTurn ? "You won" : "You lose"), (result) =>
+            Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Game ended", "The game has ended\n" + (gameLogic.Turn == TurnType.MyTurn ? "You won" : "You lose"), (result) =>
             {
                 if (!Application.Current.Dispatcher.CheckAccess())
                 {

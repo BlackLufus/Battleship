@@ -17,24 +17,24 @@ namespace Battleship.Lobby
             InitializeComponent();
         }
 
-        private void SingelPlayerButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void SingelPlayerButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             Navigation.NavigateTo(GameSettingsPage.Instance);
             Debug.WriteLine("DuosButton clicked");
         }
 
-        private void DuosButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void DuosButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("DuosButton clicked");
             Navigation.NavigateTo(MultiplayerSetupPage.Instance);
         }
 
-        private void OnlineButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnlineButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("OnlineButton clicked");
         }
 
-        private void LoadGameButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void LoadGameButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("LoadGameButton clicked");
         }
@@ -48,6 +48,5 @@ namespace Battleship.Lobby
         {
 
         }
-
     }
 }
