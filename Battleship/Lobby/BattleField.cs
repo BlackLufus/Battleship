@@ -1,4 +1,4 @@
-﻿using Battleship.Playground;
+﻿using Battleship.Global;
 using System.Diagnostics;
 using static Battleship.Playground.Playground;
 
@@ -108,10 +108,7 @@ namespace Battleship.Lobby
                     for (int i = 0; i < (int)shipType; i++)
                     {
                         field[row + i, column] = (int)fieldState;
-                        if (gameSetting.RestrictedArea)
-                        {
-                            AddRestrictedArea(row + i, column);
-                        }
+                        AddRestrictedArea(row + i, column);
                     }
                 }
                 else
@@ -119,10 +116,7 @@ namespace Battleship.Lobby
                     for (int i = 0; i < (int)shipType; i++)
                     {
                         field[row, column + i] = (int)fieldState;
-                        if (gameSetting.RestrictedArea)
-                        {
-                            AddRestrictedArea(row, column + i);
-                        }
+                        AddRestrictedArea(row, column + i);
                     }
                 }
                 return true;

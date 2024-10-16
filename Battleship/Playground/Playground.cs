@@ -1,4 +1,4 @@
-﻿using Battleship.Lobby;
+﻿using Battleship.Global;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,9 +33,9 @@ namespace Battleship.Playground
         private readonly List<Ship> ships = ships;
         public List<Ship> Ships { get { return ships; } }
 
-        public ShotResult Shot(int row, int col)
+        public ShotResult Shoot(int row, int col, bool restrictedArea = true)
         {
-            if (field[row, col] == (int)FieldState.Restrict || field[row, col] == (int)FieldState.Miss || field[row, col] == (int)FieldState.Hit || field[row, col] == (int)FieldState.Sunk)
+            if (WasShot(row, col))
             {
                 return ShotResult.None;
             }
@@ -47,7 +47,7 @@ namespace Battleship.Playground
             else
             {
                 field[row, col] = (int)ShotResult.Hit;
-                if (IsSunk(row, col))
+                if (IsSunk(row, col, restrictedArea))
                 {
                     return ShotResult.Sunk;
                 }
@@ -63,13 +63,13 @@ namespace Battleship.Playground
             return field[row, col] != (int)FieldState.Water && field[row, col] != (int)FieldState.Ship;
         }
 
-        private bool IsSunk(int row, int col)
+        private bool IsSunk(int row, int col, bool restrictedArea = true)
         {
             foreach (Ship ship in ships)
             {
-                if (ship.IsHit(row, col) && ship.IsSunk)
+                if (ship.Hit(row, col) && ship.IsSunk)
                 {
-                    MarkRestictedArea(ship);
+                    if (restrictedArea) MarkRestictedArea(ship);
                     return true;
                 }
             }
@@ -109,6 +109,11 @@ namespace Battleship.Playground
         public bool IsAllSunk()
         {
             return ships.All(ship => ship.IsSunk);
+        }
+
+        public int DeterminedSmallestShipSize()
+        {
+            return ships.Where(ship => !ship.IsSunk).Min(ship => (int)ship.shipType);
         }
 
         public void Dump()

@@ -1,4 +1,4 @@
-﻿using Battleship.Lobby;
+﻿using Battleship.Global;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,6 +12,14 @@ namespace Battleship.Playground.ComputerLogic
 {
     public abstract class GameAILogic(GameSetting gameSetting, Playground playground)
     {
+        protected enum Orientation
+        {
+            None,
+            Horizontal,
+            Vertical,
+            Both
+        }
+
         enum Direction
         {
             Right = 0,
@@ -57,7 +65,7 @@ namespace Battleship.Playground.ComputerLogic
                             shipOrientation = null;
                         }
 
-                        Playground.ShotResult shotResult = playground.Shot(nextShot.Row, nextShot.Col);
+                        Playground.ShotResult shotResult = playground.Shoot(nextShot.Row, nextShot.Col, gameSetting.RestrictedArea || (gameSetting.GameDifficult > GameSetting.Difficult.Easy) || (gameSetting.GameDifficult == GameSetting.Difficult.Easy && new Random().Next(0, 3) == 0));
                         if (shotResult != Playground.ShotResult.None)
                         {
                             if (shotResult == Playground.ShotResult.Miss)
@@ -105,7 +113,7 @@ namespace Battleship.Playground.ComputerLogic
                     }
                     else
                     {
-                        Playground.ShotResult shotResult = playground.Shot(row, col);
+                        Playground.ShotResult shotResult = playground.Shoot(row, col, gameSetting.RestrictedArea || (gameSetting.GameDifficult > GameSetting.Difficult.Easy) || (gameSetting.GameDifficult == GameSetting.Difficult.Easy && new Random().Next(0, 3) == 0));
 
                         if (shotResult != Playground.ShotResult.None)
                         {
@@ -126,7 +134,7 @@ namespace Battleship.Playground.ComputerLogic
                                 }
                                 else
                                 {
-                                    Reset();
+                                    ResetVariables();
                                 }
                                 return true;
                             }
@@ -158,10 +166,13 @@ namespace Battleship.Playground.ComputerLogic
                 possibleDirections.Remove(directionVertical);
                 return directionVertical;
             }
-            possibleDirections = [Direction.Up, Direction.Down, Direction.Left, Direction.Right];
-            Direction direction = possibleDirections[new Random().Next(0, 4)];
-            possibleDirections.Remove(direction);
-            return direction;
+            else
+            {
+                possibleDirections = [Direction.Up, Direction.Down, Direction.Left, Direction.Right];
+                Direction direction = possibleDirections[new Random().Next(0, 4)];
+                possibleDirections.Remove(direction);
+                return direction;
+            }
         }
 
         private void ChangeDirection()
@@ -182,7 +193,7 @@ namespace Battleship.Playground.ComputerLogic
             lastShot = null;
         }
 
-        private void Reset()
+        private void ResetVariables()
         {
             firstShot = null;
             lastShot = null;
@@ -191,13 +202,6 @@ namespace Battleship.Playground.ComputerLogic
             possibleDirections = [Direction.Left, Direction.Up, Direction.Right, Direction.Down];
         }
 
-        protected enum Orientation
-        {
-            None,
-            Horizontal,
-            Vertical,
-            Both
-        }
         protected Orientation DetermineShipOrientation(int row, int col, int i = 0)
         {
             if (gameSetting.GameDifficult == GameSetting.Difficult.Easy)
@@ -211,20 +215,20 @@ namespace Battleship.Playground.ComputerLogic
             }
 
             // Wenn das Feld Wasser oder Schiff ist, mache weiter
-            if (playground.Field[row, col] != (int)Playground.FieldState.Water &&
-                playground.Field[row, col] != (int)Playground.FieldState.Ship)
+            if (playground.WasShot(row, col))
             {
                 //Debug.WriteLine("Field is not water or ship");
                 return Orientation.None;
             }
 
-            int shipSize = i != 0 ? i : DetermineShipSize();
+            int shipSize = i != 0 ? i : playground.DeterminedSmallestShipSize();
 
             int vertical = CheckDirection(row + 1, col, 1, 0) + CheckDirection(row - 1, col, -1, 0) + 1;
             int horizontal = CheckDirection(row, col + 1, 0, 1) + CheckDirection(row, col - 1, 0, -1) + 1;
 
             /*Debug.WriteLine("Horizontal: " + horizontal);
-            Debug.WriteLine("Vertical: " + vertical);*/
+            Debug.WriteLine("Vertical: " + vertical);
+            Debug.WriteLine("ShipSize: " + shipSize);*/
 
             if (horizontal >= shipSize && vertical >= shipSize)
             {
@@ -244,36 +248,6 @@ namespace Battleship.Playground.ComputerLogic
             }
         }
 
-        private int DetermineShipSize()
-        {
-            int carrierAmount = playground.Ships.FindAll(ship => ship.shipType == Ship.ShipType.Carrier).Count;
-            if (carrierAmount > 0)
-            {
-                return (int)Ship.ShipType.Carrier;
-            }
-            int battleshipAmount = playground.Ships.FindAll(ship => ship.shipType == Ship.ShipType.Battleship).Count;
-            if (battleshipAmount > 0)
-            {
-                return (int)Ship.ShipType.Battleship;
-            }
-            int cruiserAmount = playground.Ships.FindAll(ship => ship.shipType == Ship.ShipType.Cruiser).Count;
-            if (cruiserAmount > 0)
-            {
-                return (int)Ship.ShipType.Cruiser;
-            }
-            int submarineAmount = playground.Ships.FindAll(ship => ship.shipType == Ship.ShipType.Submarine).Count;
-            if (submarineAmount > 0)
-            {
-                return (int)Ship.ShipType.Submarine;
-            }
-            int destroyerAmount = playground.Ships.FindAll(ship => ship.shipType == Ship.ShipType.Destroyer).Count;
-            if (destroyerAmount > 0)
-            {
-                return (int)Ship.ShipType.Destroyer;
-            }
-            return 0; // Falls kein Schiff verfügbar ist
-        }
-
         private int CheckDirection(int row, int col, int rowStep, int colStep)
         {
             int count = 0;
@@ -285,8 +259,7 @@ namespace Battleship.Playground.ComputerLogic
             while (newRow >= 0 && newRow < gameSetting.FieldSize && newCol >= 0 && newCol < gameSetting.FieldSize)
             {
                 // Wenn das Feld Wasser oder Schiff ist, zähle es
-                if (playground.Field[newRow, newCol] == (int)Playground.FieldState.Water ||
-                    playground.Field[newRow, newCol] == (int)Playground.FieldState.Ship)
+                if (!playground.WasShot(newRow, newCol))
                 {
                     count++;
                 }

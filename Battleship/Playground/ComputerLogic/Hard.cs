@@ -1,4 +1,4 @@
-﻿using Battleship.Lobby;
+﻿using Battleship.Global;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,6 +54,10 @@ namespace Battleship.Playground.ComputerLogic
 
                                 if (orientation != Orientation.None)
                                 {
+                                    if (orientation == Orientation.Both)
+                                    {
+                                        probability![row, col]--;
+                                    }
                                     if (orientation == Orientation.Horizontal || orientation == Orientation.Both)
                                     {
                                         if (col + (int)ship.shipType - 1 < gameSetting.FieldSize)
@@ -140,11 +144,13 @@ namespace Battleship.Playground.ComputerLogic
         }
         protected override Shot GetNextShot()
         {
+            Debug.WriteLine("Hard: GetNextShot (claivoantAbilities: " + claivoyantAbilities + " nextClaivoyantShot: " + nextClaivoyantShot + ")");
             if (claivoyantAbilities && nextClaivoyantShot == 0)
             {
-                nextClaivoyantShot = new Random().Next(2, 3);
+                nextClaivoyantShot = new Random().Next(3, 5);
                 return ClairvoyantShot();
             }
+            else if (claivoyantAbilities) nextClaivoyantShot--;
             InitializeProbability();
             DetermineProbability();
             Dump();
@@ -173,6 +179,7 @@ namespace Battleship.Playground.ComputerLogic
             {
                 throw new InvalidOperationException("Es gibt keine möglichen Schüsse.");
             }
+            maxShots.ForEach(shot => Debug.WriteLine("Hard: GetNextShot: Möglicher Schuss: " + shot.Row + " " + shot.Col));
             // Wähle zufällig einen der besten Schüsse
             return maxShots[new Random().Next(0, maxShots.Count)];
         }
@@ -184,14 +191,28 @@ namespace Battleship.Playground.ComputerLogic
 
         private void Dump()
         {
+            Debug.WriteLine("=============================================");
+            for (int i = 0; i < gameSetting.FieldSize + 1; i++)
+            {
+                Debug.Write((i.ToString().Length == 1 ? "  " + i : i.ToString().Length == 2 ? " " + i : i) + " ");
+            }
+            Debug.WriteLine("");
             for (int row = 0; row < gameSetting.FieldSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
+                for (int col = 0; col < gameSetting.FieldSize + 1; col++)
                 {
-                    Debug.Write((probability[row, col].ToString().Length == 1 ? "  " + probability[row, col] : probability[row, col].ToString().Length == 2 ? " " + probability[row, col] : probability[row, col]) + " ");
+                    if (col == 0)
+                    {
+                        Debug.Write(" " + ((row + 1).ToString().Length == 1 ? " " + (row + 1) : (row + 1)) + " ");
+                    }
+                    else
+                    {
+                        Debug.Write((probability![row, col - 1].ToString().Length == 1 ? "  " + probability[row, col - 1] : probability[row, col - 1].ToString().Length == 2 ? " " + probability[row, col - 1] : probability[row, col - 1]) + " ");
+                    }
                 }
                 Debug.WriteLine("");
             }
+            Debug.WriteLine("=============================================");
         }
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Battleship.Playground.GameSetting;
+using static Battleship.Global.GameSetting;
 
-namespace Battleship.Playground
+namespace Battleship.Global
 {
     public class GameSetting(
         Mode gameMode,

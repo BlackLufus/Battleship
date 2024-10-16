@@ -1,4 +1,5 @@
-﻿using Battleship.Playground.ComputerLogic;
+﻿using Battleship.Global;
+using Battleship.Playground.ComputerLogic;
 using Battleship.Services;
 using System;
 using System.Collections.Generic;
@@ -37,14 +38,14 @@ namespace Battleship.Playground
             bool gameEnded = false;
             Thread thread = new(() =>
             {
-                //try {
+                try {
                     while (!gameEnded)
                     {
                         if (this.turn == turn)
                         {
                             Thread.Sleep(new Random().Next(75, 100));
                             bool hit = computerLogic.NextShot();
-                            Debug.WriteLine("Hit: " + hit);
+                            //Debug.WriteLine("Hit: " + hit);
                             Application.Current.Dispatcher.Invoke(() =>
                             {
                                 ShotEvent?.Invoke(gameSetting, playgroundGrid, playground);
@@ -67,8 +68,8 @@ namespace Battleship.Playground
                     {
                         GameEndedEvent?.Invoke();
                     });
-                /*}
-                catch { }*/
+                }
+                catch { }
             });
             thread.Start();
             thread.Name = "GameLogicThread";
@@ -82,9 +83,9 @@ namespace Battleship.Playground
                 int row = Grid.GetRow(enemyField);
                 int col = Grid.GetColumn(enemyField);
 
-                Playground.ShotResult shotResult = enemyPlayground.Shot(row, col);
+                Playground.ShotResult shotResult = enemyPlayground.Shoot(row, col, gameSetting.RestrictedArea);
 
-                Debug.WriteLine("Shot at " + row + " " + col + " with result " + shotResult);
+                //Debug.WriteLine("Shot at " + row + " " + col + " with result " + shotResult);
 
                 ShotEvent?.Invoke(gameSetting, playgroundGrid, enemyPlayground);
 

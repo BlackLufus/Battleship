@@ -1,5 +1,5 @@
-﻿using Battleship.Lobby;
-using Battleship.Playground;
+﻿using Battleship.Global;
+using Battleship.Lobby;
 using Battleship.Resources.Components;
 using System;
 using System.Collections.Generic;

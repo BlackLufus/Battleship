@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using Battleship.Lobby;
 using System.Windows.Media;
+using Battleship.Global;
 
 namespace Battleship.Playground
 {
@@ -45,7 +46,7 @@ namespace Battleship.Playground
                 };
                 element.Content = image;
             }
-            else if (state == FieldState.Restrict)
+            else if (state == FieldState.Restrict && gameSetting.RestrictedArea)
             {
                 Image image = new()
                 {

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Battleship.Global;
 
 namespace Battleship.Playground.ComputerLogic
 {
@@ -48,7 +49,6 @@ namespace Battleship.Playground.ComputerLogic
 
         public bool NextShot()
         {
-            Debug.WriteLine("NextShot");
             return gameSetting.GameDifficult switch
             {
                 GameSetting.Difficult.VeryEasy => easy!.NextShot(),

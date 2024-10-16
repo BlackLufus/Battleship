@@ -1,4 +1,4 @@
-﻿namespace Battleship.Lobby
+﻿namespace Battleship.Global
 {
     public class Ship : IDisposable
     {
@@ -23,7 +23,7 @@
         public ShipOrientation shipOrientation;
 
         private int health;
-        private List<(int, int)> shots = [];
+        private readonly List<(int, int)> shots = [];
 
         public int Health => health;
         public bool IsSunk => health == 0;
@@ -43,7 +43,7 @@
             this.shipOrientation = shipOrientation;
         }
 
-        public bool IsHit(int row, int column)
+        public bool Hit(int row, int column)
         {
             if (shots.Contains((row, column)))
             {
@@ -61,7 +61,8 @@
             }
             else
             {
-                if (this.column == column && row >= this.row && row < this.row + (int)shipType) {
+                if (this.column == column && row >= this.row && row < this.row + (int)shipType)
+                {
                     shots.Add((row, column));
                     health--;
                     return true;
