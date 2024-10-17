@@ -105,7 +105,7 @@ namespace Battelship.Lobby
                     var bc = new BrushConverter();
                     stackPanel.Background = bc.ConvertFrom("#22000000") as Brush;
                     stackPanel.AllowDrop = true;
-                    stackPanel.AddHandler(DragOverEvent, new DragEventHandler(dragAndDropManager.HandleDragOverEvent));
+                    stackPanel.AddHandler(DragEnterEvent, new DragEventHandler(dragAndDropManager.HandleDragEnterEvent));
                     stackPanel.AddHandler(DragLeaveEvent, new DragEventHandler(dragAndDropManager.HandleDragLeaveEvent));
                     stackPanel.AddHandler(DropEvent, new DragEventHandler(dragAndDropManager.HandleDropEvent));
                     stackPanel.MouseRightButtonDown += dragAndDropManager.RemoveShip;
@@ -126,49 +126,40 @@ namespace Battelship.Lobby
                 dragShip.shipOrientation,
                 FieldState.Marked))
             {
-                return;
-            }
-            else
-            {
                 Canvas.SetLeft(dragShip.element, 190 + column * gameSetting.SingleFieldSize);
                 Canvas.SetTop(dragShip.element, 0 + row * gameSetting.SingleFieldSize);
+                Update();
             }
-            Update();
         }
 
         private void TriggerDragLeaveEvent(DragShip dragShip, int row, int column)
         {
-            if (!battleField.RemoveShip(
+            if (battleField.RemoveShip(
                     dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)(dragShip.offset.Y / gameSetting.SingleFieldSize) : row,
                     dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)(dragShip.offset.X / gameSetting.SingleFieldSize) : column,
                     dragShip.shipType,
                     dragShip.shipOrientation,
                     FieldState.Marked))
             {
-                return;
+                Update();
             }
-            Update();
         }
 
         private void TriggerDragDropEvent(DragShip dragShip, int row, int column, Action<int, int> callback)
         {
-            if (!battleField.SetShip(
+            if (battleField.SetShip(
                 dragShip.shipOrientation == DragShip.ShipOrientation.Vertical ? row -= (int)(dragShip.offset.Y / gameSetting.SingleFieldSize) : row,
                 dragShip.shipOrientation == DragShip.ShipOrientation.Horizontal ? column -= (int)(dragShip.offset.X / gameSetting.SingleFieldSize) : column,
                 dragShip.shipType,
                 dragShip.shipOrientation,
                 FieldState.Ship))
             {
-                return;
-            }
-            else
-            {
                 Canvas.SetTop(dragShip.element, 0 + row * gameSetting.SingleFieldSize);
                 Canvas.SetLeft(dragShip.element, 190 + column * gameSetting.SingleFieldSize);
                 AddShip(dragShip.element);
                 callback(row, column);
+                Update();
             }
-            Update();
         }
 
         private void Update()

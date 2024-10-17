@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	<PublishSingleFile>true</PublishSingleFile>
+	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<!-- Oder eine andere Runtime wie linux-x64 oder osx-x64 -->
+	<SelfContained>false</SelfContained>
+	<!-- Optional: Macht die Datei unabhängig von einer installierten .NET-Laufzeit -->
+	<!--<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>-->
+	<!-- Optional: Für native Bibliotheken -->
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>

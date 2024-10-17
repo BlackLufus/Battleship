@@ -1,5 +1,7 @@
 ﻿using Battleship.Global;
 using System.Diagnostics;
+using static Battleship.Global.Ship;
+using System.Windows.Controls;
 using static Battleship.Playground.Playground;
 
 namespace Battleship.Lobby
@@ -46,6 +48,14 @@ namespace Battleship.Lobby
 
         private Ship? lastShip;
 
+        /**
+         * 
+         * @Description Check if a ship is on a specific position
+         * @Param ship The ship to check
+         * @Param row The row to check
+         * @Param column The column to check
+         * @Return true if the ship is on the position, otherwise false
+         */
         public static bool IsShipOnPosition(Ship ship, int row, int column)
         {
             if (ship.shipOrientation == Ship.ShipOrientation.Vertical)
@@ -65,6 +75,15 @@ namespace Battleship.Lobby
             return true;
         }
 
+        /**
+         * @Description Check if a ship can be placed on the field
+         * @Param row The row where the ship should be placed
+         * @Param column The column where the ship should be placed
+         * @Param shipType The type of the ship
+         * @Param shipOrientation The orientation of the ship
+         * @Param checkForFieldState The state of the field where the ship should be placed
+         * @Return true if the ship can be placed, otherwise false
+         */
         public bool CheckShip(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation, FieldState checkForFieldState)
         {
             if (row < 0 || column < 0 || row >= gameSetting.FieldSize || column >= gameSetting.FieldSize)
@@ -94,6 +113,15 @@ namespace Battleship.Lobby
             return true;
         }
 
+        /**
+         * @Description Set a ship on the field
+         * @Param row The row where the ship should be placed
+         * @Param column The column where the ship should be placed
+         * @Param shipType The type of the ship
+         * @Param shipOrientation The orientation of the ship
+         * @Param fieldState The state of the field where the ship should be placed
+         * @Return true if the ship was placed successfully, otherwise false
+         */
         public bool SetShip(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation, FieldState? fieldState)
         {   
             if (CheckShip(row, column, shipType, shipOrientation, fieldState == null ? FieldState.Water : (fieldState == FieldState.Ship ? FieldState.Marked : FieldState.Water)))
@@ -120,6 +148,7 @@ namespace Battleship.Lobby
                     }
                 }
                 return true;
+
             }
             return false;
         }
@@ -172,6 +201,15 @@ namespace Battleship.Lobby
             return true;
         }
 
+        /// <summary>
+        /// Remove a ship from the field
+        /// </summary>
+        /// <param name="row">The row where the ship is placed</param>
+        /// <param name="column">The column where the ship is placed</param>
+        /// <param name="shipType">The type of the ship</parm>
+        /// <param name="shipOrientation">The orientation of the ship</param>
+        /// <param name="checkForFieldState">The state of the field where the ship should be placed</param>
+        /// <returns>true if the ship was placed successfully, otherwise false</returns>
         public bool RemoveShip(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation, FieldState checkForFieldState)
         {
             if (CheckShip(row, column, shipType, shipOrientation, checkForFieldState))
@@ -199,6 +237,9 @@ namespace Battleship.Lobby
             return false;
         }
 
+        /// <summary>
+        /// Remove the last ship from the field
+        /// </summary>
         public void RemoveLastShip()
         {
             if (lastShip != null)
@@ -208,6 +249,11 @@ namespace Battleship.Lobby
             }
         }
 
+        /// <summary>
+        /// Add a restricted area around a ship
+        /// </summary>
+        /// <param name="row">The row where the ship is placed</param>
+        /// <param name="column">The column where the ship is placed</param>
         public void AddRestrictedArea(int row, int column)
         {
             if (row > 0 && field[row - 1, column] == (int)FieldState.Water)
@@ -244,6 +290,9 @@ namespace Battleship.Lobby
             }
         }
 
+        /// <summary>
+        /// Remove all restricted areas from the field
+        /// </summary>
         public void RemoveRestictedArea()
         {
             for (int i = 0; i < gameSetting.FieldSize; i++)
@@ -268,6 +317,9 @@ namespace Battleship.Lobby
             }
         }
 
+        /// <summary>
+        /// Reset the field
+        /// </summary>
         public void Reset()
         {
             for (int i = 0; i < gameSetting.FieldSize; i++)
@@ -281,6 +333,9 @@ namespace Battleship.Lobby
 
         }   
 
+        /// <summary>
+        /// Dump the field to the console
+        /// </summary>
         public void Dump()
         {
             for (int i = 0; i < gameSetting.FieldSize; i++)

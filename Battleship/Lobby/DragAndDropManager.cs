@@ -81,7 +81,7 @@ namespace Battleship.Lobby
             return transform;
         }
 
-        public void HandleDragOverEvent(object sender, DragEventArgs e)
+        public void HandleDragEnterEvent(object sender, DragEventArgs e)
         {
             DragShip dragShip = (DragShip)e.Data.GetData(typeof(DragShip));
             DragEnterEvent?.Invoke(dragShip, Grid.GetRow((UIElement)sender), Grid.GetColumn((UIElement)sender));
@@ -213,13 +213,14 @@ namespace Battleship.Lobby
                     Canvas.SetLeft(dragShip.element, 190 + (double)dragShip.column * gameSetting.SingleFieldSize);
                     Canvas.SetTop(dragShip.element, 0 + (double)dragShip.row * gameSetting.SingleFieldSize);
 
-                    UpdateEvent?.Invoke();
                 }
             }
             else
             {
                 Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Randomize failed", "Randomize failed, please try again.");
             }
+
+            UpdateEvent?.Invoke();
         }
 
         private static void SetDragPosition(UIElement element, Point position)

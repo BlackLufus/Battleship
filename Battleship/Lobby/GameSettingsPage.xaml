@@ -107,7 +107,7 @@
                                     <Button Grid.Column="2" Width="30"  HorizontalAlignment="Left" VerticalAlignment="Center">
                                         <TextBlock Text="+" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
                                     </Button>-->
-                                    <component:Selector x:Name="FieldDifficult" Width="260" Items="{Binding DifficultList}" Index="1"/>
+                                    <component:Selector x:Name="FieldDifficult" Width="260" Items="{Binding DifficultList}" Index="2"/>
                                 </Grid>
                             </Grid>
                             <Grid Grid.Row="3">
