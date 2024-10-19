@@ -32,6 +32,7 @@ namespace Battleship.Lobby
         private void OnlineButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("OnlineButton clicked");
+            Navigation.NavigateTo(OnlinePage.Instance);
         }
 
         private void LoadGameButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)

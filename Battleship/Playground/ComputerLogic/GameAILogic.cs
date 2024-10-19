@@ -41,16 +41,16 @@ namespace Battleship.Playground.ComputerLogic
 
         public abstract bool NextShot();
 
-        protected bool DeterminedNextShot(Func<Shot> nextShotFunction, bool random = false)
+        protected bool DeterminedNextShot(Func<Shot> nextShotFunction)
         {
             do
             {
-                if (random || firstShot == null)
+                if (firstShot == null)
                 {
                     Shot nextShot = nextShotFunction();
 
                     Orientation determinedOrientation = DetermineShipOrientation(nextShot.Row, nextShot.Col);
-                    if (determinedOrientation != Orientation.None)
+                    if (gameSetting.GameDifficult == GameSetting.Difficult.VeryEasy || determinedOrientation != Orientation.None)
                     {
                         if (determinedOrientation == Orientation.Vertical)
                         {
@@ -74,7 +74,7 @@ namespace Battleship.Playground.ComputerLogic
                             }
                             else
                             {
-                                if (shotResult == Playground.ShotResult.Hit)
+                                if (shotResult == Playground.ShotResult.Hit && gameSetting.GameDifficult != GameSetting.Difficult.VeryEasy)
                                 {
                                     firstShot = new Shot(nextShot.Row, nextShot.Col);
                                 }

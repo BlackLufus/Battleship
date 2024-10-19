@@ -7,11 +7,10 @@ using Battleship.Global;
 
 namespace Battleship.Playground.ComputerLogic
 {
-    public class Easy(GameSetting gameSetting, Playground playground, bool randomly = false) : GameAILogic(gameSetting, playground)
+    public class Easy(GameSetting gameSetting, Playground playground) : GameAILogic(gameSetting, playground)
     {
         private readonly GameSetting gameSetting = gameSetting;
         private readonly Playground playground = playground;
-        private readonly bool randomly = randomly;
 
         override protected Shot GetNextShot()
         {
@@ -23,7 +22,7 @@ namespace Battleship.Playground.ComputerLogic
 
         override public bool NextShot()
         {
-            return DeterminedNextShot(GetNextShot, randomly);
+            return DeterminedNextShot(GetNextShot);
         }
     }
 }

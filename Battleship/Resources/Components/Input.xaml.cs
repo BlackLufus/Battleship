@@ -23,6 +23,7 @@ namespace Battleship.Resources.Components
     public partial class Input : UserControl
     {
         private bool isEmpty = false;
+        public bool IsEmpty => isEmpty;
         private TextBox? inputField;
         public Input()
         {

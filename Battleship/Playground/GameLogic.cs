@@ -18,7 +18,7 @@ namespace Battleship.Playground
         public delegate void ShotEventEventHandler(GameSetting gameSetting, Grid type, Playground playground);
         public event ShotEventEventHandler? ShotEvent;
 
-        public delegate void GameEndedEventHandler();
+        public delegate void GameEndedEventHandler(TurnType turn);
         public event GameEndedEventHandler? GameEndedEvent;
 
         private readonly GameSetting gameSetting = gameSetting;
@@ -66,7 +66,7 @@ namespace Battleship.Playground
                     }
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        GameEndedEvent?.Invoke();
+                        GameEndedEvent?.Invoke(turn);
                     });
                 }
                 catch { }
@@ -91,7 +91,7 @@ namespace Battleship.Playground
 
                 if (enemyPlayground.IsAllSunk())
                 {
-                    GameEndedEvent?.Invoke();
+                    GameEndedEvent?.Invoke(TurnType.MyTurn);
                 }
                 else if (!gameSetting.HitBonus || shotResult == Playground.ShotResult.Miss)
                 {

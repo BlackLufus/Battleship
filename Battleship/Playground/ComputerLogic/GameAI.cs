@@ -30,7 +30,7 @@ namespace Battleship.Playground.ComputerLogic
             switch (gameSetting.GameDifficult)
             {
                 case GameSetting.Difficult.VeryEasy:
-                    easy = new Easy(gameSetting, playground, true);
+                    easy = new Easy(gameSetting, playground);
                     break;
                 case GameSetting.Difficult.Easy:
                     easy = new Easy(gameSetting, playground);

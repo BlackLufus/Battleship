@@ -306,10 +306,10 @@ namespace Battleship.Playground
             }
         }
 
-        private void GameEnded()
+        private void GameEnded(TurnType turn)
         {
             Debug.WriteLine("Game ended");
-            Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Game ended", "The game has ended\n" + (gameLogic.Turn == TurnType.MyTurn ? "You won" : "You lose"), (result) =>
+            Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Game ended", "The game has ended\n" + (turn == TurnType.MyTurn ? "You won" : "You lose"), (result) =>
             {
                 if (!Application.Current.Dispatcher.CheckAccess())
                 {

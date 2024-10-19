@@ -32,7 +32,7 @@ namespace Battleship.Lobby
 
         private void applyButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(UsernameInput.Text))
+            if (UsernameInput.IsEmpty)
             {
                 Dialog.Show(Dialog.DialogType.Warning, Dialog.ButtonType.Ok, "Benutzername wird benötigt!", "Bitte gib einen Benutzernamen ein.");
                 return;

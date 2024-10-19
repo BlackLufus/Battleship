@@ -67,6 +67,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MQTTnet" Version="4.3.7.1207" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\Images\adjustment.png" />
     <Resource Include="Resources\Images\background1.jpg" />
     <Resource Include="Resources\Images\background2.jpg" />
