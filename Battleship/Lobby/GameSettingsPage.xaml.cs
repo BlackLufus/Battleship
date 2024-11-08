@@ -1,5 +1,6 @@
 ﻿using Battleship.Global;
 using Battleship.Lobby;
+using Battleship.Network;
 using Battleship.Resources.Components;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,9 @@ namespace Battelship.Lobby
     /// </summary>
     public partial class GameSettingsPage : Page
     {
+        private MQTTService? mqttService;
+        private bool isWaiting = false;
+        private HostSocketService? hostSocketService;
         private GameSetting.Mode mode;
         private static GameSettingsPage? instance;
         private List<(string, object)> sizeList = [
@@ -87,8 +91,51 @@ namespace Battelship.Lobby
             }
         }
 
-        private GameSettingsPage()
+        public GameSettingsPage()
         {
+            InitializeComponent();
+
+            // Setze das DataContext, damit das Binding funktioniert
+            this.DataContext = this;
+        }
+
+        public GameSettingsPage(MQTTService mqttService)
+        {
+            this.mqttService = mqttService;
+            mqttService.OnClientConnected += () =>
+            {
+                Debug.WriteLine("Connected");
+                if (isWaiting)
+                {
+                    isWaiting = false;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ApplyButton_Click(null, null);
+                    });
+                }
+            };
+            mqttService.OnDisconnected += () =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Disconnected", "The other player has disconnected");
+                    Navigation.NavigateAndClear(new MenuPage());
+                });
+            };
+            mode = GameSetting.Mode.PlayerVsPlayer;
+            Debug.WriteLine("PlayerVsPlayer");
+
+            InitializeComponent();
+
+            // Setze das DataContext, damit das Binding funktioniert
+            this.DataContext = this;
+        }
+
+        public GameSettingsPage(HostSocketService hostSocketService)
+        {
+            this.hostSocketService = hostSocketService;
+            mode = GameSetting.Mode.PlayerVsPlayer;
+
             InitializeComponent();
 
             // Setze das DataContext, damit das Binding funktioniert
@@ -112,6 +159,32 @@ namespace Battelship.Lobby
                     }
                 }
             }
+            else if (mqttService != null)
+            {
+                if (mqttService.IsOpponentConnected)
+                {
+                    mqttService.SendGameSettings(
+                        (int)FieldSize.SelectedValue,
+                        FieldHitBonus.IsChecked,
+                        FieldRestricedArea.IsChecked,
+                        0,
+                        BattleshipAmount.Value,
+                        CruiserAmount.Value,
+                        SubmarineAmount.Value,
+                        DestroyerAmount.Value
+                    );
+                }
+                else
+                {
+                    isWaiting = true;
+                    Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Warte auf Verbindung", "Warte auf Verbindung des Gegners");
+                    return;
+                }
+            }
+            else if (hostSocketService != null)
+            {
+                hostSocketService.Send(new LobbyServiceMessage(LobbyServiceMessage.MessageType.FieldSize, (string)FieldSize.SelectedValue));
+            }
             Debug.WriteLine("SelectedValue: " + mode);
             Debug.WriteLine("SelectedValue: " + FieldSize.SelectedValue);
             Debug.WriteLine("SelectedValue: " + FieldDifficult.SelectedValue);
@@ -121,17 +194,20 @@ namespace Battelship.Lobby
             Debug.WriteLine("SelectedValue: " + CruiserAmount.Value);
             Debug.WriteLine("SelectedValue: " + SubmarineAmount.Value);
             Debug.WriteLine("SelectedValue: " + DestroyerAmount.Value);
-            Navigation.NavigateTo(new FleetManagerPage(new GameSetting(
-                mode,
-                (int)FieldSize.SelectedValue,
-                (GameSetting.Difficult)FieldDifficult.SelectedValue,
-                FieldHitBonus.IsChecked,
-                FieldRestricedArea.IsChecked,
-                BattleshipAmount.Value,
-                CruiserAmount.Value,
-                SubmarineAmount.Value,
-                DestroyerAmount.Value
-            )));
+            Navigation.NavigateTo(new FleetManagerPage(
+                new GameSetting(
+                    mode,
+                    (int)FieldSize.SelectedValue,
+                    (GameSetting.Difficult)FieldDifficult.SelectedValue,
+                    FieldHitBonus.IsChecked,
+                    FieldRestricedArea.IsChecked,
+                    BattleshipAmount.Value,
+                    CruiserAmount.Value,
+                    SubmarineAmount.Value,
+                    DestroyerAmount.Value
+                ),
+                mqttService
+            ));
         }
     }
 }

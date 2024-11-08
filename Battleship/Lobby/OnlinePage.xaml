@@ -49,14 +49,14 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <components:Input Grid.Column="0" x:Name="AddressInput" Placeholder="83940193" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                            <components:Input Grid.Column="0" x:Name="GameIDInput" Placeholder="Game_0815" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
                         </Grid>
                         <Label Grid.Row="4" Grid.Column="0" Content="Wähle einen Password" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#EEE" />
                         <Grid Grid.Row="6" Grid.Column="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <components:Input Grid.Column="0" x:Name="PortInput" Placeholder="password" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                            <components:Input Grid.Column="0" x:Name="PasswordInput" Placeholder="Password" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
                         </Grid>
                     </Grid>
                 </Border>
@@ -68,8 +68,8 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Verbinden" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ConnectToPrivateGameButton_Click"/>
-                <Button Grid.Column="1" Content="Spiel Erstellen" HorizontalAlignment="Center" VerticalAlignment="Center" Click="PrivateGameButton_Click"/>
+                <Button Grid.Column="0" x:Name="ConnectButton" Content="Verbinden" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ConnectToPrivateGameButton_Click"/>
+                <Button Grid.Column="1" x:Name="PrivateGameButton" Content="Spiel Erstellen" HorizontalAlignment="Center" VerticalAlignment="Center" Click="PrivateGameButton_Click"/>
                 <Button Grid.Column="2" Content="Zurück" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BackButton_Click"/>
             </Grid>
         </Grid>

@@ -1,4 +1,5 @@
 ﻿using Battelship;
+using Battleship.Global;
 using Battleship.Lobby;
 using Battleship.Resources.Components;
 using Battleship.Services;
@@ -28,6 +29,7 @@ namespace Battleship.Lobby
         public LoginPage()
         {
             InitializeComponent();
+            UsernameInput.Text = Variables.Username;
         }
 
         private void applyButton_Click(object sender, RoutedEventArgs e)
@@ -37,6 +39,7 @@ namespace Battleship.Lobby
                 Dialog.Show(Dialog.DialogType.Warning, Dialog.ButtonType.Ok, "Benutzername wird benötigt!", "Bitte gib einen Benutzernamen ein.");
                 return;
             }
+            Variables.Username = UsernameInput.Text;
             Navigation.NavigateTo(new MenuPage());
             Debug.WriteLine("Button clicked");
         }

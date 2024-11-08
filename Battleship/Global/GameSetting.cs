@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Battleship.Network;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Battleship.Global
     public class GameSetting(
         Mode gameMode,
         int fieldSize,
-        Difficult gameDifficult,
+        Difficult? gameDifficult,
         bool hitBonus,
         bool restrictedArea,
         int battleshipAmount,
@@ -47,8 +48,8 @@ namespace Battleship.Global
             VeryHard
         }
 
-        private readonly Difficult gameDifficult = gameDifficult;
-        public Difficult GameDifficult { get { return gameDifficult; } }
+        private readonly Difficult? gameDifficult = gameDifficult;
+        public Difficult? GameDifficult { get { return gameDifficult; } }
 
 
         private readonly bool hitBonus = hitBonus;

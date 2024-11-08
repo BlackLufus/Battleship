@@ -1,5 +1,6 @@
 ﻿using Battleship.Global;
 using Battleship.Lobby;
+using Battleship.Network;
 using Battleship.Playground;
 using Battleship.Resources.Components;
 using Battleship.services;
@@ -30,6 +31,7 @@ namespace Battelship.Lobby
     /// </summary>
     public partial class FleetManagerPage : Page
     {
+        private readonly MQTTService? mqttService;
 
         private readonly GameSetting gameSetting;
         private readonly BattleField battleField;
@@ -46,9 +48,21 @@ namespace Battelship.Lobby
         public int SubmarinePlaced => submarinePlaced;
         public int DestroyerPlaced => destroyerPlaced;
 
-        public FleetManagerPage(GameSetting gameSetting)
+        public FleetManagerPage(GameSetting gameSetting, MQTTService? mqttService = null)
         {
             this.gameSetting = gameSetting;
+            this.mqttService = mqttService;
+            if (mqttService != null)
+            {
+                mqttService.OnDisconnected += () =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Disconnected", "The other player has disconnected");
+                        Navigation.NavigateAndClear(new MenuPage());
+                    });
+                };
+            }
 
             InitializeComponent();
 
@@ -261,7 +275,27 @@ namespace Battelship.Lobby
             BattleField enemyBattleField = new BattleField(gameSetting);
             List<Ship> ships = GetShipList();
             enemyBattleField.Randomize(ships);
-            Navigation.RegisterPage(new GameBoardPage(gameSetting, new Playground(battleField.FieldNoRestiction, dragAndDropManager.DragShips.Select(ship => ship as Ship).ToList()), gameSetting.GameMode == GameSetting.Mode.PlayerVsPlayer ? null : new Playground(enemyBattleField.FieldNoRestiction, ships)));
+            Debug.WriteLine("FinishButton clicked");
+            Debug.WriteLine("mqttService: " + mqttService);
+            if (mqttService != null)
+            {
+                if (!mqttService.IsOpponentReady)
+                {
+                    Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Warte auf Gegner", "Warte bis der Gegner fertig ist");
+                }
+                mqttService.OnStartGame += () =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Navigation.RegisterPage(new GameBoardPage(mqttService, gameSetting, new Playground(battleField.FieldNoRestiction, dragAndDropManager.DragShips.Select(ship => ship as Ship).ToList()), mqttService.IsMyTurn));
+                    });
+                };
+                mqttService.SendReady();
+            }
+            else
+            {
+                Navigation.RegisterPage(new GameBoardPage(gameSetting, new Playground(battleField.FieldNoRestiction, dragAndDropManager.DragShips.Select(ship => ship as Ship).ToList()), new Playground(enemyBattleField.FieldNoRestiction, ships)));
+            }
         }
 
         private void RandomButton_Click(object sender, RoutedEventArgs e)
@@ -282,6 +316,7 @@ namespace Battelship.Lobby
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Navigation.NavigateAndClear(new MenuPage());
+            mqttService?.Disconnected();
         }
 
         private void DragShip_MouseDown(object sender, MouseButtonEventArgs e)

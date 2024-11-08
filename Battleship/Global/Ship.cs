@@ -8,7 +8,7 @@
             Battleship = 2,
             Cruiser = 3,
             Submarine = 4,
-            Destroyer = 5
+            Destroyer = 5,
         }
 
         public enum ShipOrientation
@@ -22,17 +22,16 @@
         public ShipType shipType;
         public ShipOrientation shipOrientation;
 
-        private int health;
         private readonly List<(int, int)> shots = [];
 
-        public int Health => health;
-        public bool IsSunk => health == 0;
+        public int Health => (int)shipType - shots.Count;
+        public List<(int, int)> Shots => shots;
+        public bool IsSunk => Health == 0;
 
         public Ship(ShipType shipType, ShipOrientation shipOrientation)
         {
             this.shipType = shipType;
             this.shipOrientation = shipOrientation;
-            health = (int)shipType;
         }
 
         public Ship(int row, int column, ShipType shipType, ShipOrientation shipOrientation)
@@ -54,7 +53,6 @@
                 if (this.row == row && column >= this.column && column < this.column + (int)shipType)
                 {
                     shots.Add((row, column));
-                    health--;
                     return true;
                 }
                 return false;
@@ -64,7 +62,6 @@
                 if (this.column == column && row >= this.row && row < this.row + (int)shipType)
                 {
                     shots.Add((row, column));
-                    health--;
                     return true;
                 }
                 return false;
@@ -75,6 +72,5 @@
         {
             GC.SuppressFinalize(this);
         }
-
     }
 }

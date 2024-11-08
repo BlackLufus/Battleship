@@ -52,7 +52,7 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Column="1" Content="Gegner:" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
-                                    <Label Grid.Column="3" Content="Spieler 1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
+                                    <Label Grid.Column="3" x:Name="OpponentUsername" Content="Spieler 1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
                                 </Grid>
                                 <Grid VerticalAlignment="Bottom">
                                     <Grid x:Name="EnemyFieldBackground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True" Background="Red">
@@ -165,7 +165,7 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Column="1" Content="Dein Feld:" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
-                                    <Label Grid.Column="3" Content="Spieler 2" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
+                                    <Label Grid.Column="3" x:Name="MyUsername" Content="Spieler 2" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
                                 </Grid>
                                 <Grid VerticalAlignment="Bottom">
                                     <Grid x:Name="MyFieldBackground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True" Background="Red">

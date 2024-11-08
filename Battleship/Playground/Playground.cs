@@ -127,5 +127,76 @@ namespace Battleship.Playground
                 Debug.WriteLine("");
             }
         }
+
+        // Defines a ship on the field if the ships were not defined before
+        public void DefineShip(int row, int col, bool isSunk = false)
+        {
+            field[row, col] = (int)FieldState.Ship;
+            // Erstelle ein neues Schiff an der gegebenen Position
+            Ship newShip = new(row, col, Ship.ShipType.Carrier, Ship.ShipOrientation.Horizontal);
+            if (!isSunk)
+            {
+                newShip.Shots.Add((row, col));
+            }
+
+            // Liste, um gemergte Schiffe zu speichern
+            List<Ship> oldShips = new();
+
+            // Iteriere über alle vorhandenen Schiffe
+            foreach (Ship ship in ships)
+            {
+                // Prüfe alle benachbarten Positionen (oben, unten, links, rechts)
+                if (ship.Shots.Contains((row - 1, col)))
+                {
+                    Debug.WriteLine("Merge Ship with TOP ship");
+                    newShip.row = Math.Min(newShip.row, ship.row);
+                    newShip.shipType = (Ship.ShipType)((int)ship.shipType + (int)newShip.shipType);
+                    newShip.Shots.AddRange(ship.Shots);
+                    newShip.shipOrientation = Ship.ShipOrientation.Vertical;
+                    oldShips.Add(ship);
+                }
+                if (ship.Shots.Contains((row + 1, col)))
+                {
+                    Debug.WriteLine("Merge Ship with BOTTOM ship");
+                    newShip.shipType = (Ship.ShipType)((int)ship.shipType + (int)newShip.shipType);
+                    newShip.Shots.AddRange(ship.Shots);
+                    newShip.shipOrientation = Ship.ShipOrientation.Vertical;
+                    oldShips.Add(ship);
+                }
+                if (ship.Shots.Contains((row, col - 1)))
+                {
+                    Debug.WriteLine("Merge Ship with LEFT ship");
+                    newShip.column = Math.Min(newShip.column, ship.column);
+                    newShip.shipType = (Ship.ShipType)((int)ship.shipType + (int)newShip.shipType);
+                    newShip.shipOrientation = Ship.ShipOrientation.Horizontal;
+                    newShip.Shots.AddRange(ship.Shots);
+                    oldShips.Add(ship);
+                }
+                if (ship.Shots.Contains((row, col + 1)))
+                {
+                    Debug.WriteLine("Merge Ship with RIGHT ship");
+                    newShip.shipType = (Ship.ShipType)((int)ship.shipType + (int)newShip.shipType);
+                    newShip.shipOrientation = Ship.ShipOrientation.Horizontal;
+                    newShip.Shots.AddRange(ship.Shots);
+                    oldShips.Add(ship);
+                }
+            }
+
+            // Entferne alle alten Schiffe, die gemergt wurden
+            foreach (Ship ship in oldShips)
+            {
+                ships.Remove(ship);
+            }
+
+            // Füge das neue, gemergte Schiff zur Liste hinzu
+            ships.Add(newShip);
+
+            // Debug-Ausgaben zur Überprüfung der Schiffsliste
+            Debug.WriteLine("Ships -> " + ships.Count);
+            foreach (Ship ship in ships)
+            {
+                Debug.WriteLine("Ship -> " + ship.shipType + ", Positionen: " + string.Join(", ", ship.Shots));
+            }
+        }
     }
 }

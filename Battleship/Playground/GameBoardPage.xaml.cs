@@ -1,6 +1,7 @@
 ﻿using Battelship;
 using Battleship.Global;
 using Battleship.Lobby;
+using Battleship.Network;
 using Battleship.Resources.Components;
 using System;
 using System.Collections.Generic;
@@ -27,11 +28,33 @@ namespace Battleship.Playground
     /// </summary>
     public partial class GameBoardPage : Page
     {
+        private readonly MQTTService? mqttService;
         private readonly GameSetting gameSetting;
         private readonly Playground myPlayground;
         private readonly Playground enemyPlayground;
 
         private readonly GameLogic gameLogic;
+
+        public GameBoardPage(MQTTService mqttService, GameSetting gameSetting, Playground myPlayground, bool myTurn = false)
+        {
+            this.gameSetting = gameSetting;
+            this.myPlayground = myPlayground;
+            this.enemyPlayground = new Playground(new int[gameSetting.FieldSize, gameSetting.FieldSize], []);
+            this.mqttService = mqttService;
+
+            InitializeComponent();
+
+            SetOpponentUsername(mqttService.OpponentUsername);
+            SetMyUsername(Variables.Username);
+
+            PrepareGame();
+
+            PlaceShips(myPlayground.Ships, true);
+
+            gameLogic = new GameLogic(gameSetting, MyFieldForeground, myPlayground, EnemyFieldForeground, enemyPlayground, mqttService);
+            gameLogic.ShotEvent += PlaygroundUI.UpdatePlayground;
+            gameLogic.GameEndedEvent += GameEnded;
+        }
 
         public GameBoardPage(GameSetting gameSetting, Playground myPlayground, Playground enemyPlayground)
         {
@@ -49,9 +72,19 @@ namespace Battleship.Playground
 
             PlaceShips(myPlayground.Ships, true);
 
-            if (gameSetting.GameMode != GameSetting.Mode.PlayerVsPlayer) PlaceShips(enemyPlayground.Ships, false);
-            if (gameSetting.GameMode != GameSetting.Mode.PlayerVsPlayer) gameLogic.StartGame(MyFieldForeground, myPlayground, GameLogic.TurnType.EnemyTurn);
+            PlaceShips(enemyPlayground.Ships, false);
+            gameLogic.StartGame(MyFieldForeground, myPlayground, GameLogic.TurnType.EnemyTurn);
             if (gameSetting.GameMode == GameSetting.Mode.ComputerVsComputer) gameLogic.StartGame(EnemyFieldForeground, enemyPlayground, GameLogic.TurnType.MyTurn);
+        }
+
+        private void SetOpponentUsername(string username)
+        {
+            OpponentUsername.Content = username;
+        }
+
+        private void SetMyUsername(string username)
+        {
+            MyUsername.Content = username;
         }
 
         private void PrepareGame()
@@ -180,7 +213,14 @@ namespace Battleship.Playground
                     };
                     enemyFieldTarget.Click += (sender, e) =>
                     {
-                        gameLogic.Shot(EnemyFieldForeground, enemyField);
+                        if (gameSetting.GameMode == GameSetting.Mode.PlayerVsPlayer)
+                        {
+                            gameLogic!.Shot(EnemyFieldForeground, enemyField);
+                        }
+                        else
+                        {
+                            gameLogic!.Shot(EnemyFieldForeground, enemyField);
+                        }
                     };
                     Grid.SetRow(enemyFieldTarget, row);
                     Grid.SetColumn(enemyFieldTarget, col);

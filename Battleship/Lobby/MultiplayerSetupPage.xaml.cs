@@ -1,5 +1,7 @@
 ﻿using Battelship;
 using Battelship.Lobby;
+using Battleship.Network;
+using Battleship.Resources.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +50,20 @@ namespace Battleship.Lobby
 
         private void HostButton_Click(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateTo(GameSettingsPage.Instance);
+            if (AddressInput.Text.Equals(""))
+            {
+                Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "ID-Address wird benötigt!", "Bitte geben Sie die ID-Adresse ein, um ein Spiel zu hosten.");
+            }
+            else if (PortInput.Text.Equals(""))
+            {
+                Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Port wird benötigt!", "Bitte geben Sie den Port ein, um ein Spiel zu hosten.");
+            }
+            else
+            {
+                HostSocketService hostSocketService = new HostSocketService(AddressInput.Text, int.Parse(PortInput.Text));
+                hostSocketService.Start();
+                Navigation.NavigateTo(new GameSettingsPage());
+            }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
