@@ -115,4 +115,8 @@
     </Page>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Battelship\" />
+  </ItemGroup>
+
 </Project>

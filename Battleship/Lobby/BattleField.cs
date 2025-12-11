@@ -10,24 +10,14 @@ namespace Battleship.Lobby
     {
         public enum FieldState
         {
-            Restricted = -1,
+            Blocked = -1,
             Water = 0,
             Ship = 1,
             Marked = 2
         }
 
-        public enum ShotState
-        {
-            Miss = -1,
-            Water = 0,
-            Ship = 1,
-            Hit = 2,
-            Sunk = 3
-        }
-
         private readonly GameSetting gameSetting = gameSetting;
         private int[,] field = new int[gameSetting.FieldSize, gameSetting.FieldSize];
-        public int[,] Field { get { return field; } }
         public int[,] FieldNoRestiction
         {
             get
@@ -36,7 +26,7 @@ namespace Battleship.Lobby
                 {
                     for (int j = 0; j < gameSetting.FieldSize; j++)
                     {
-                        if (field[i, j] == (int)FieldState.Restricted)
+                        if (field[i, j] == (int)FieldState.Blocked)
                         {
                             field[i, j] = (int)FieldState.Water;
                         }
@@ -46,114 +36,103 @@ namespace Battleship.Lobby
             }
         }
 
-        private Ship? lastShip;
 
-        /**
-         * 
-         * @Description Check if a ship is on a specific position
-         * @Param ship The ship to check
-         * @Param row The row to check
-         * @Param column The column to check
-         * @Return true if the ship is on the position, otherwise false
-         */
-        public static bool IsShipOnPosition(Ship ship, int row, int column)
+        private int[,] board = new int[gameSetting.FieldSize, gameSetting.FieldSize];
+        public List<Ship> ships = new List<Ship>();
+        public Ship? markedShip = null;
+        public bool isNewShip = false;
+
+        public Ship GetShip(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation)
         {
-            if (ship.shipOrientation == Ship.ShipOrientation.Vertical)
+            if (!isNewShip)
             {
-                if (row < ship.row || row >= ship.row + (int)ship.shipType || column != ship.column)
+                foreach (Ship ship in ships)
                 {
-                    return false;
+                    if (ship.row == row && ship.column == column)
+                    {
+                        Debug.WriteLine("Existing Ship Retrieved");
+                        Ship retrievedShip = ship;
+                        BlockSurroundingCells(ship, false);
+                        ships.Remove(ship);
+                        return retrievedShip;
+                    }
                 }
             }
-            else
-            {
-                if (column < ship.column || column >= ship.column + (int)ship.shipType || row != ship.row)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return new Ship(row, column, shipType, shipOrientation);
         }
 
         /**
-         * @Description Check if a ship can be placed on the field
+         * @Description Mark the board with a ship
          * @Param row The row where the ship should be placed
          * @Param column The column where the ship should be placed
          * @Param shipType The type of the ship
          * @Param shipOrientation The orientation of the ship
-         * @Param checkForFieldState The state of the field where the ship should be placed
-         * @Return true if the ship can be placed, otherwise false
-         */
-        public bool CheckShip(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation, FieldState checkForFieldState)
-        {
-            if (row < 0 || column < 0 || row >= gameSetting.FieldSize || column >= gameSetting.FieldSize)
-            {
-                return false;
-            }
-            if (shipOrientation == Ship.ShipOrientation.Vertical)
-            {
-                for (int i = 0; i < (int)shipType; i++)
-                {
-                    if (row + i >= gameSetting.FieldSize || field[row + i, column] != (int)checkForFieldState)
-                    {
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < (int)shipType; i++)
-                {
-                    if (column + i >= gameSetting.FieldSize || field[row, column + i] != (int)checkForFieldState)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        /**
-         * @Description Set a ship on the field
-         * @Param row The row where the ship should be placed
-         * @Param column The column where the ship should be placed
-         * @Param shipType The type of the ship
-         * @Param shipOrientation The orientation of the ship
-         * @Param fieldState The state of the field where the ship should be placed
          * @Return true if the ship was placed successfully, otherwise false
          */
-        public bool SetShip(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation, FieldState? fieldState)
-        {   
-            if (CheckShip(row, column, shipType, shipOrientation, fieldState == null ? FieldState.Water : (fieldState == FieldState.Ship ? FieldState.Marked : FieldState.Water)))
+        public bool Mark(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation)
+        {
+            Ship ship = GetShip(row, column, shipType, shipOrientation);
+            if (!IsBlocked(ship))
             {
-                fieldState ??= FieldState.Ship;
-                if (fieldState == FieldState.Marked)
-                {
-                    lastShip = new Ship(row, column, shipType, shipOrientation);
-                }
-                if (shipOrientation == Ship.ShipOrientation.Vertical)
-                {
-                    for (int i = 0; i < (int)shipType; i++)
-                    {
-                        field[row + i, column] = (int)fieldState;
-                        AddRestrictedArea(row + i, column);
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < (int)shipType; i++)
-                    {
-                        field[row, column + i] = (int)fieldState;
-                        AddRestrictedArea(row, column + i);
-                    }
-                }
+                markedShip = ship;
                 return true;
-
             }
             return false;
         }
 
-        public bool Randomize(List<Ship> shipList)
+        /**
+         * @Description Add a ship the board
+         * @Return true if the ship was placed successfully, otherwise false
+         */
+        public Ship? Add()
+        {
+            isNewShip = false;
+            if (markedShip != null)
+            {
+                ships.Add(markedShip);
+                BlockSurroundingCells(markedShip);
+                markedShip = null;
+                return ships.Last();
+            }
+            markedShip = null;
+            return null;
+        }
+
+        /**
+         * @Description Remove a ship the board
+         * @Return true if the ship was placed successfully, otherwise false
+         */
+        public bool Remove()
+        {
+            if (markedShip != null)
+            {
+                markedShip = null;
+                return true;
+            }
+            return false;
+        }
+
+        public bool RemoveLast()
+        {
+            if (markedShip != null)
+            {
+                markedShip = null;
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * @Description Remove all ships from the board
+         * @Return true if the ship was placed successfully, otherwise false
+         */
+        public void Reset()
+        {
+            board = new int[gameSetting.FieldSize, gameSetting.FieldSize];
+            ships.Clear();
+        }
+
+        public List<Ship> Randomize(List<Ship> shipList)
         {
             int index = 0;
 
@@ -175,11 +154,10 @@ namespace Battleship.Lobby
                 int column = randomColumn.Next(0, gameSetting.FieldSize);
                 Ship.ShipOrientation orientation = randomOrientation.Next(0, 2) == 0 ? Ship.ShipOrientation.Horizontal : Ship.ShipOrientation.Vertical;
 
-                if (SetShip(row, column, shipList[index].shipType, orientation, null))
+                isNewShip = true;
+                if (Mark(row, column, shipList[index].shipType, orientation))
                 {
-                    shipList[index].row = row;
-                    shipList[index].column = column;
-                    shipList[index].shipOrientation = orientation;
+                    Add();
                     iteration = 0;
                     index++;
                 }
@@ -187,7 +165,7 @@ namespace Battleship.Lobby
                 {
                     Debug.WriteLine("Set ships randomly state: FAILED (Iterations: " + totalIterations + " & ResetIteration " + resetIteration + ")");
                     Reset();
-                    return false;
+                    return null;
                 }
                 else if (iteration > maxIteration)
                 {
@@ -198,140 +176,131 @@ namespace Battleship.Lobby
                 }
             }
             Debug.WriteLine("Set ships randomly state: SUCCESSFUL (Iterations: " + totalIterations + " & ResetIteration " + resetIteration + ")");
-            return true;
+            return ships;
         }
 
-        /// <summary>
-        /// Remove a ship from the field
-        /// </summary>
-        /// <param name="row">The row where the ship is placed</param>
-        /// <param name="column">The column where the ship is placed</param>
-        /// <param name="shipType">The type of the ship</parm>
-        /// <param name="shipOrientation">The orientation of the ship</param>
-        /// <param name="checkForFieldState">The state of the field where the ship should be placed</param>
-        /// <returns>true if the ship was placed successfully, otherwise false</returns>
-        public bool RemoveShip(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation, FieldState checkForFieldState)
+        public bool IsBlocked(Ship ship)
         {
-            if (CheckShip(row, column, shipType, shipOrientation, checkForFieldState))
+            int len = (int)ship.shipType;
+            if (ship.shipOrientation == Ship.ShipOrientation.Horizontal)
             {
-                if (shipOrientation == Ship.ShipOrientation.Vertical)
+                if (ship.column < 0 || ship.column + len > gameSetting.FieldSize)
                 {
-                    for (int i = 0; i < (int)shipType; i++)
+                    return true;
+                }
+                for (int i = 0; i < len; i++)
+                {
+                    if (board[ship.row, ship.column + i] > 0)
                     {
-                        field[row + i, column] = (int)FieldState.Water;
+                        return true;
                     }
                 }
-                else
+            }
+            else if (ship.shipOrientation == Ship.ShipOrientation.Vertical)
+            {
+                if (ship.row < 0 || ship.row + len > gameSetting.FieldSize)
                 {
-                    for (int i = 0; i < (int)shipType; i++)
+                    return true;
+                }
+                for (int i = 0; i < len; i++)
+                {
+                    if (board[ship.row + i, ship.column] > 0)
                     {
-                        field[row, column + i] = (int)FieldState.Water;
+                        return true;
                     }
                 }
-                if (gameSetting.RestrictedArea)
-                {
-                    RemoveRestictedArea();
-                }
-                return true;
             }
             return false;
         }
 
-        /// <summary>
-        /// Remove the last ship from the field
-        /// </summary>
-        public void RemoveLastShip()
+        public void BlockSurroundingCells(Ship ship, bool add = true)
         {
-            if (lastShip != null)
+            int len = (int)ship.shipType;
+            if (ship.shipOrientation == Ship.ShipOrientation.Horizontal)
             {
-                RemoveShip(lastShip.row, lastShip.column, lastShip.shipType, lastShip.shipOrientation, FieldState.Marked);
-                lastShip = null;
-            }
-        }
-
-        /// <summary>
-        /// Add a restricted area around a ship
-        /// </summary>
-        /// <param name="row">The row where the ship is placed</param>
-        /// <param name="column">The column where the ship is placed</param>
-        public void AddRestrictedArea(int row, int column)
-        {
-            if (row > 0 && field[row - 1, column] == (int)FieldState.Water)
-            {
-                field[row - 1, column] = (int)FieldState.Restricted;
-            }
-            if (row < gameSetting.FieldSize - 1 && field[row + 1, column] == (int)FieldState.Water)
-            {
-                field[row + 1, column] = (int)FieldState.Restricted;
-            }
-            if (column > 0 && field[row, column - 1] == (int)FieldState.Water)
-            {
-                field[row, column - 1] = (int)FieldState.Restricted;
-            }
-            if (column < gameSetting.FieldSize - 1 && field[row, column + 1] == (int)FieldState.Water)
-            {
-                field[row, column + 1] = (int)FieldState.Restricted;
-            }
-            if (row > 0 && column > 0 && field[row - 1, column - 1] == (int)FieldState.Water)
-            {
-                field[row - 1, column - 1] = (int)FieldState.Restricted;
-            }
-            if (row < gameSetting.FieldSize - 1 && column < gameSetting.FieldSize - 1 && field[row + 1, column + 1] == (int)FieldState.Water)
-            {
-                field[row + 1, column + 1] = (int)FieldState.Restricted;
-            }
-            if (row > 0 && column < gameSetting.FieldSize - 1 && field[row - 1, column + 1] == (int)FieldState.Water)
-            {
-                field[row - 1, column + 1] = (int)FieldState.Restricted;
-            }
-            if (row < gameSetting.FieldSize - 1 && column > 0 && field[row + 1, column - 1] == (int)FieldState.Water)
-            {
-                field[row + 1, column - 1] = (int)FieldState.Restricted;
-            }
-        }
-
-        /// <summary>
-        /// Remove all restricted areas from the field
-        /// </summary>
-        public void RemoveRestictedArea()
-        {
-            for (int i = 0; i < gameSetting.FieldSize; i++)
-            {
-                for (int j = 0; j < gameSetting.FieldSize; j++)
+                for (int i = -1; i <= len; i++)
                 {
-                    if (field[i, j] == (int)FieldState.Restricted)
+                    for (int j = -1; j <= 1; j++)
                     {
-                        field[i, j] = (int)FieldState.Water;
+                        int row = ship.row + j;
+                        int column = ship.column + i;
+                        if (row >= 0 && row < gameSetting.FieldSize && column >= 0 && column < gameSetting.FieldSize)
+                        {
+                            board[row, column] += add ? 1 : -1;
+                        }
                     }
                 }
             }
-            for (int i = 0; i < gameSetting.FieldSize; i++)
+            else
             {
-                for (int j = 0; j < gameSetting.FieldSize; j++)
+                for (int i = -1; i <= len; i++)
                 {
-                    if (field[i, j] == (int)FieldState.Ship)
+                    for (int j = -1; j <= 1; j++)
                     {
-                        AddRestrictedArea(i, j);
+                        int row = ship.row + i;
+                        int column = ship.column + j;
+                        if (row >= 0 && row < gameSetting.FieldSize && column >= 0 && column < gameSetting.FieldSize)
+                        {
+                            board[row, column] += add ? 1 : -1;
+                        }
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// Reset the field
-        /// </summary>
-        public void Reset()
+        public FieldState[,] GetBoardState()
         {
+            FieldState[,] boardState = new FieldState[gameSetting.FieldSize, gameSetting.FieldSize];
             for (int i = 0; i < gameSetting.FieldSize; i++)
             {
                 for (int j = 0; j < gameSetting.FieldSize; j++)
                 {
-                    field[i, j] = (int)FieldState.Water;
+                    if (board[i, j] > 0)
+                    {
+                        boardState[i, j] = FieldState.Blocked;
+                    }
+                    else
+                    {
+                        boardState[i, j] = FieldState.Water;
+                    }
                 }
             }
-            lastShip = null;
-
-        }   
+            if (markedShip != null)
+            {
+                if (markedShip.shipOrientation == Ship.ShipOrientation.Horizontal)
+                {
+                    for (int i = 0; i < (int)markedShip.shipType; i++)
+                    {
+                        boardState[markedShip.row, markedShip.column + i] = FieldState.Marked;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < (int)markedShip.shipType; i++)
+                    {
+                        boardState[markedShip.row + i, markedShip.column] = FieldState.Marked;
+                    }
+                }
+            }
+            foreach (Ship ship in ships)
+            {
+                if (ship.shipOrientation == Ship.ShipOrientation.Horizontal)
+                {
+                    for (int i = 0; i < (int)ship.shipType; i++)
+                    {
+                        boardState[ship.row, ship.column + i] = FieldState.Ship;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < (int)ship.shipType; i++)
+                    {
+                        boardState[ship.row + i, ship.column] = FieldState.Ship;
+                    }
+                }
+            }
+            return boardState;
+        }
 
         /// <summary>
         /// Dump the field to the console
@@ -342,7 +311,7 @@ namespace Battleship.Lobby
             {
                 for (int j = 0; j < gameSetting.FieldSize; j++)
                 {
-                    Debug.Write(field[i, j] + " ");
+                    Debug.Write(board[i, j] + " ");
                 }
                 Debug.WriteLine("");
             }
