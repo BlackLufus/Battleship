@@ -75,13 +75,19 @@ namespace Battleship.Lobby
                 currentShip = Get(row, col, type, orientation);
             }
 
+            bool dragShipValuesChanged = false;
+
+            if (currentShip.row != row || currentShip.column != col || currentShip.shipOrientation != orientation)
+                dragShipValuesChanged = true;
+
             currentShip.row = row;
             currentShip.column = col;
             currentShip.shipOrientation = orientation;
 
             isValidPosition = IsValidPosition(currentShip);
 
-            OnChangedEvent?.Invoke();
+            if (dragShipValuesChanged)
+                OnChangedEvent?.Invoke();
 
             return isValidPosition;
         }
@@ -142,8 +148,8 @@ namespace Battleship.Lobby
             int totalIterations = 0;
             int iteration = 0;
             int maxIteration = 1000;
-            int resetIteration = 0;
-            int maxResetIteration = 250;
+            int totalEpisodes = 0;
+            int maxTotalEpisodes = 250;
 
             Reset();
 
@@ -164,9 +170,9 @@ namespace Battleship.Lobby
                     iteration = 0;
                     index++;
                 }
-                else if (resetIteration > maxResetIteration)
+                else if (totalEpisodes > maxTotalEpisodes)
                 {
-                    Debug.WriteLine("Set ships randomly state: FAILED (Iterations: " + totalIterations + " & ResetIteration " + resetIteration + ")");
+                    Debug.WriteLine("Set ships randomly state: FAILED (Iterations: " + totalIterations + " & Episodes " + totalEpisodes + ")");
                     Reset();
                     return null;
                 }
@@ -175,10 +181,10 @@ namespace Battleship.Lobby
                     Reset();
                     index = 0;
                     iteration = 0;
-                    resetIteration++;
+                    totalEpisodes++;
                 }
             }
-            Debug.WriteLine("Set ships randomly state: SUCCESSFUL (Iterations: " + totalIterations + " & ResetIteration " + resetIteration + ")");
+            Debug.WriteLine("Set ships randomly state: SUCCESSFUL (Iterations: " + totalIterations + " & Episodes " + totalEpisodes + ")");
             return ships;
         }
 

@@ -40,6 +40,15 @@ namespace Battelship.Lobby
         private readonly DragShipManager simpleDragDrop;
         private readonly List<DragShip> draggers = [];
 
+        private FieldState[,] cellState;
+        private StackPanel[,] cellPanels;
+
+        private readonly Brush WaterBrush = (Brush)new BrushConverter().ConvertFrom("#22000000");
+        private readonly Brush MarkedBrush = (Brush)new BrushConverter().ConvertFrom("#44ff0000");
+
+        private readonly ImageSource RestrictionImage =
+    new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png"));
+
         public FleetManagerPage(GameSetting gameSetting, MQTTService? mqttService = null)
         {
             this.gameSetting = gameSetting;
@@ -94,6 +103,9 @@ namespace Battelship.Lobby
                 DragAndDropGrid.ColumnDefinitions.Add(new ColumnDefinition());
             }
 
+            cellState = new FieldState[gameSetting.BoardSize, gameSetting.BoardSize];
+            cellPanels = new StackPanel[gameSetting.BoardSize, gameSetting.BoardSize];
+
             // Füge in jede Zelle ein Bild hinzu
             for (int row = 0; row < gameSetting.BoardSize; row++)
             {
@@ -114,8 +126,9 @@ namespace Battelship.Lobby
                     ImageGrid.Children.Add(image);
 
                     StackPanel stackPanel = new StackPanel();
+                    cellPanels[row, col] = stackPanel;
                     var bc = new BrushConverter();
-                    stackPanel.Background = bc.ConvertFrom("#22000000") as Brush;
+                    stackPanel.Background = WaterBrush;
                     Grid.SetRow(stackPanel, row);
                     Grid.SetColumn(stackPanel, col);
                     DragAndDropGrid.Children.Add(stackPanel);
@@ -159,9 +172,12 @@ namespace Battelship.Lobby
             {
                 for (int y = 0; y < gameSetting.BoardSize; y++)
                 {
-                    // Find the StackPanel at the specific row and column
-                    StackPanel stackPanel = (StackPanel)DragAndDropGrid.Children.Cast<UIElement>().First(e => Grid.GetRow(e) == x && Grid.GetColumn(e) == y);
-                    UpdateBoard(stackPanel, boardState[x, y]);
+                    // Update content of a specific Cell
+                    if (cellState[x, y] != boardState[x, y])
+                    {
+                        cellState[x, y] = boardState[x, y];
+                        UpdateCell(cellPanels[x, y], boardState[x, y]);
+                    }
                 }
             }
         }
@@ -171,31 +187,31 @@ namespace Battelship.Lobby
         /// </summary>
         /// <param name="element">The StackPanel element representing the cell</param>
         /// <param name="fieldState">The state of the field</param>
-        private static void UpdateBoard(StackPanel element, BattleField.FieldState fieldState)
+        private void UpdateCell(StackPanel element, BattleField.FieldState fieldState)
         {
             if (fieldState == BattleField.FieldState.Marked)
             {
                 //element.Background = Brushes.Green;
-                element.Background = new BrushConverter().ConvertFrom("#44ff0000") as Brush;
+                element.Background = MarkedBrush;
                 element.Children.Clear();
             }
             else if (fieldState == BattleField.FieldState.Water)
             {
-                element.Background = new BrushConverter().ConvertFrom("#22000000") as Brush;
+                element.Background = WaterBrush;
                 element.Children.Clear();
             }
             else if (fieldState == BattleField.FieldState.Ship)
             {
                 //element.Background = Brushes.Red;
-                element.Background = new BrushConverter().ConvertFrom("#22000000") as Brush;
+                element.Background = WaterBrush;
                 element.Children.Clear();
             }
             else
             {
-                element.Background = new BrushConverter().ConvertFrom("#22000000") as Brush;
+                element.Background = WaterBrush;
                 Image image = new()
                 {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png")),
+                    Source = RestrictionImage,
                     Margin = new Thickness(4, 4, 4, 4),
                 };
                 element.Children.Add(image);

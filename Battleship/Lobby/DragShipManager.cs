@@ -73,12 +73,25 @@ namespace Battleship.Lobby
                 Debug.WriteLine(battleField.Mark(ship.row, ship.col, ship.type, ship.orientation).ToString());
         }
 
+        DateTime last = DateTime.Now;
+
         /// <summary>
         /// Moves the currently dragged ship to the given mouse position
         /// </summary>
         /// <param name="mousePos">The mouse position</param>
         public void Move(Point mousePos)
         {
+            int fps = 60;
+            double delta = 1000 / fps;
+            DateTime now = DateTime.Now;
+            var diffInMillies = (now - last).TotalMilliseconds;
+
+            if (diffInMillies < delta)
+                return;
+
+            last = now;
+            Debug.WriteLine($"Event verarbeitet: {diffInMillies}ms seit letztem Lauf");
+
             if (currentDrag == null) return;
 
             // Calculate new position
@@ -132,46 +145,36 @@ namespace Battleship.Lobby
     }
 
     // DragShip class to hold drag information about a ship being dragged
-    public class DragShip
+    public class DragShip(Canvas canvas, Image img, Ship.ShipType type) : IDisposable
     {
-        public Canvas canvas;
-        public Image img;
+        public Canvas canvas = canvas;
+        public Image img = img;
         public int row;
         public int col;
-        public Ship.ShipType type;
+        public Ship.ShipType type = type;
         public Ship.ShipOrientation orientation = Ship.ShipOrientation.Horizontal;
 
         public Point offset;
         public Point mousePos;
 
-        public readonly int startTopOffset;
-        public readonly int startLeftOffset;
-
-        public DragShip(Canvas canvas, Image img, ShipType type)
+        // Set starting offsets based on ship type
+        public readonly int startTopOffset = type switch
         {
-            this.canvas = canvas;
-            this.img = img;
-            this.type = type;
-
-            // Set starting offsets based on ship type
-            startTopOffset = type switch
-            {
-                ShipType.Battleship => 10,
-                ShipType.Cruiser => 74,
-                ShipType.Submarine => 153,
-                ShipType.Destroyer => 242,
-                _ => 0
-            };
-            // Left offsets are negative to position ships correctly
-            startLeftOffset = type switch
-            {
-                ShipType.Battleship => -140,
-                ShipType.Cruiser => -155,
-                ShipType.Submarine => -170,
-                ShipType.Destroyer => -185,
-                _ => 0
-            };
-        }
+            ShipType.Battleship => 10,
+            ShipType.Cruiser => 74,
+            ShipType.Submarine => 153,
+            ShipType.Destroyer => 242,
+            _ => 0
+        };
+        // Left offsets are negative to position ships correctly
+        public readonly int startLeftOffset = type switch
+        {
+            ShipType.Battleship => -140,
+            ShipType.Cruiser => -155,
+            ShipType.Submarine => -170,
+            ShipType.Destroyer => -185,
+            _ => 0
+        };
 
         /// <summary>
         /// Sets the current mouse position
@@ -283,6 +286,12 @@ namespace Battleship.Lobby
             Canvas.SetTop(this.img, y);
 
             mousePos = new Point(x, y);
+        }
+
+        public void Dispose()
+        {
+            canvas.Children.Remove(img);
+            img.Source = null;
         }
     }
 }
