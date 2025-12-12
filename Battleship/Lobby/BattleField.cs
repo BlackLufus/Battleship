@@ -111,6 +111,12 @@ namespace Battleship.Lobby
             }
         }
 
+        public void Remove()
+        {
+            currentShip = null;
+            OnChangedEvent?.Invoke();
+        }
+
         /// <summary>
         /// Remove all ships from the board
         /// </summary>

@@ -21,11 +21,11 @@ namespace Battleship.Lobby
     public class DragShipManager(double cellSize, BattleField battleField, Canvas canvas)
     {
         // Event when a ship is removed from the battlefield
-        public delegate void OnShipRemovedEventHandler(Dragger dragger);
+        public delegate void OnShipRemovedEventHandler(DragShip dragger);
         public event OnShipRemovedEventHandler? OnShipRemovedEvent;
 
         // Currently dragged ship
-        public Dragger? currentDrag;
+        public DragShip? currentDrag;
 
         private readonly double cellSize = cellSize;
         private readonly BattleField battleField = battleField;
@@ -34,25 +34,43 @@ namespace Battleship.Lobby
         private bool isDragging = false;
 
         /// <summary>
-        /// Starts dragging a ship from the given mouse position
+        /// Get grid position from mouse position
         /// </summary>
-        /// <param name="ship">The ship to drag</param>
-        /// <param name="mousePos">The mouse position</param>
-        public void StartDrag(Dragger ship, Point mousePos)
+        /// <param name="mousePos">Mouse position</param>
+        /// <returns>True, when successful otherwise False</returns>
+        private bool GetGridPos(Point mousePos)
         {
-            currentDrag = ship;
-            ship.offset = new Point(mousePos.X - Canvas.GetLeft(ship.element),
-                                    mousePos.Y - Canvas.GetTop(ship.element));
+            if (currentDrag == null)
+                return false;
 
             double x = mousePos.X - currentDrag.offset.X;
             double y = mousePos.Y - currentDrag.offset.Y;
 
-            int col = (int)((x + (cellSize / 2)) / cellSize);
-            int row = (int)((y + (cellSize / 2)) / cellSize);
+            currentDrag.col = (int)((x + (cellSize / 2)) / cellSize);
+            currentDrag.row = (int)((y + (cellSize / 2)) / cellSize);
 
-            Mouse.Capture(ship.element);
+            return true;
+        }
 
-            battleField.Mark(row, col, ship.type, ship.orientation);
+        /// <summary>
+        /// Starts dragging a ship from the given mouse position
+        /// </summary>
+        /// <param name="ship">The ship to drag</param>
+        /// <param name="mousePos">The mouse position</param>
+        public void StartDrag(DragShip ship, Point mousePos)
+        {
+            currentDrag = ship;
+            ship.offset = new Point(mousePos.X - Canvas.GetLeft(ship.img),
+                                    mousePos.Y - Canvas.GetTop(ship.img));
+
+            Mouse.Capture(ship.img);
+
+            if (!isDragging) isDragging = true;
+
+            var gridPos = GetGridPos(mousePos);
+            if (gridPos)
+                // Register dragger to battleField
+                Debug.WriteLine(battleField.Mark(ship.row, ship.col, ship.type, ship.orientation).ToString());
         }
 
         /// <summary>
@@ -61,7 +79,6 @@ namespace Battleship.Lobby
         /// <param name="mousePos">The mouse position</param>
         public void Move(Point mousePos)
         {
-            if (!isDragging) isDragging = true;
             if (currentDrag == null) return;
 
             // Calculate new position
@@ -69,18 +86,17 @@ namespace Battleship.Lobby
             double y = mousePos.Y - currentDrag.offset.Y;
 
             // Set new position
-            Canvas.SetLeft(currentDrag.element, x);
-            Canvas.SetTop(currentDrag.element, y);
+            Canvas.SetLeft(currentDrag.img, x);
+            Canvas.SetTop(currentDrag.img, y);
 
             // Update mouse position in dragger
             currentDrag.SetMousePosition(mousePos);
 
             // Calculate grid position
-            currentDrag.col = (int)((x + (cellSize / 2)) / cellSize);
-            currentDrag.row = (int)((y + (cellSize / 2)) / cellSize);
-
-            // Mark it on the battlefield
-            battleField.Mark(currentDrag.row, currentDrag.col, currentDrag.type, currentDrag.orientation);
+            var gridPos = GetGridPos(mousePos);
+            if (gridPos)
+                // Mark it on the battlefield
+                battleField.Mark(currentDrag.row, currentDrag.col, currentDrag.type, currentDrag.orientation);
         }
 
         /// <summary>
@@ -89,152 +105,37 @@ namespace Battleship.Lobby
         /// <param name="mousePos">The mouse position</param>
         public void EndDrag(Point mousePos)
         {
-            if (!isDragging)
-                currentDrag = null;
             if (currentDrag == null) return;
-            
+
             // Release mouse capture
             Mouse.Capture(null);
 
             // Try to add the ship to the battlefield
-            if (battleField.Add())
+            if (isDragging && battleField.Add())
             {
                 // Place ship at the grid position
-                Place(currentDrag, currentDrag.row, currentDrag.col);
+                currentDrag.Place(cellSize, currentDrag.row, currentDrag.col);
             }
             else
             {
                 // Return to start position
-                Canvas.SetTop(currentDrag.element, currentDrag.startTopOffset);
-                Canvas.SetLeft(currentDrag.element, currentDrag.startLeftOffset);
+                Canvas.SetTop(currentDrag.img, currentDrag.startTopOffset);
+                Canvas.SetLeft(currentDrag.img, currentDrag.startLeftOffset);
+                currentDrag.Rotate(cellSize, ShipOrientation.Horizontal);
+                battleField.Remove();
             }
 
             // Reset dragging state
             isDragging = false;
             currentDrag = null;
         }
-
-        /// <summary>
-        /// Rotates the currently dragged ship
-        /// </summary>
-        public void RotateCurrent()
-        {
-            if (currentDrag == null) return;
-
-            var ship = currentDrag;
-            var image = (Image)ship.element;
-
-            Point mouse = ship.mousePos;
-
-            // Old Size
-            double oldWidth = image.Width;
-            double oldHeight = image.Height;
-
-            // New Orientation and Size
-            if (ship.orientation == Ship.ShipOrientation.Vertical)
-            {
-                ship.orientation = Ship.ShipOrientation.Horizontal;
-                image.Width = cellSize * (int)ship.type;
-                image.Height = cellSize;
-            }
-            else
-            {
-                ship.orientation = Ship.ShipOrientation.Vertical;
-                image.Width = cellSize;
-                image.Height = cellSize * (int)ship.type;
-            }
-
-            // New Size
-            double newWidth = image.Width;
-            double newHeight = image.Height;
-
-            // Correct offset so that mouse stays in the same place
-            ship.offset = new Point(
-                ship.offset.X * (newWidth / oldWidth),
-                ship.offset.Y * (newHeight / oldHeight)
-            );
-
-            // Image rotation
-            image.Source = RotateImage(
-                new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + ship.type.ToString().ToLower() + ".png")),
-                (int)ship.orientation
-            );
-
-            // Set new position based on mouse position and new offset
-            SetDragPosition(ship.element, new Point(mouse.X - ship.offset.X, mouse.Y - ship.offset.Y));
-        }
-
-
-        /// <summary>
-        /// Sets the position of the dragged element, clamped to the canvas bounds
-        /// </summary>
-        /// <param name="element">The UI element to move</param>
-        /// <param name="position">The desired position</param>
-        private void SetDragPosition(UIElement element, Point position)
-        {
-            if (element == null)
-            {
-                return;
-            }
-            if (position.X < 0)
-            {
-                position.X = 0;
-            }
-            else if (position.X > canvas.Width)
-            {
-                position.X = canvas.Width;
-            }
-            if (position.Y < 0)
-            {
-                position.Y = 0;
-            }
-            else if (position.Y > canvas.Height)
-            {
-                position.Y = canvas.Height;
-            }
-
-            // Set position of the element on the canvas
-            Canvas.SetLeft(element, position.X);
-            Canvas.SetTop(element, position.Y);
-        }
-
-        /// <summary>
-        /// Rotates the given image by the specified angle
-        /// </summary>
-        /// <param name="source">The source image</param>
-        /// <param name="angle">The angle to rotate</param>
-        /// <returns>The rotated image</returns>
-        public static TransformedBitmap RotateImage(BitmapSource source, double angle)
-        {
-            TransformedBitmap transform = new();
-            transform.BeginInit(); // Initialize the transform
-            transform.Source = source; // Set the source image
-            transform.Transform = new RotateTransform(angle); // Apply rotation
-            transform.EndInit(); // Finalize the transform
-            return transform;
-        }
-
-        /// <summary>
-        /// Places the ship image at the specified grid position
-        /// </summary>
-        /// <param name="ship">The ship to place</param>
-        /// <param name="row">The grid row</param>
-        /// <param name="col">The grid column</param>
-        private void Place(Dragger ship, int row, int col)
-        {
-            double x = col * cellSize;
-            double y = row * cellSize;
-
-            // Set position on canvas
-            Canvas.SetLeft(ship.element, x);
-            Canvas.SetTop(ship.element, y);
-        }
     }
 
-    // Dragger class to hold drag information about a ship being dragged
-    public class Dragger
+    // DragShip class to hold drag information about a ship being dragged
+    public class DragShip
     {
-        public Image element;
+        public Canvas canvas;
+        public Image img;
         public int row;
         public int col;
         public Ship.ShipType type;
@@ -246,9 +147,10 @@ namespace Battleship.Lobby
         public readonly int startTopOffset;
         public readonly int startLeftOffset;
 
-        public Dragger(Image element, ShipType type)
+        public DragShip(Canvas canvas, Image img, ShipType type)
         {
-            this.element = element;
+            this.canvas = canvas;
+            this.img = img;
             this.type = type;
 
             // Set starting offsets based on ship type
@@ -278,6 +180,109 @@ namespace Battleship.Lobby
         public void SetMousePosition(Point p)
         {
             mousePos = p;
+        }
+
+        /// <summary>
+        /// Rotates the currently dragged ship
+        /// </summary>
+        public void Rotate(double cellSize, Ship.ShipOrientation newOrientation, bool ignoreDragPosition = true)
+        {
+            Debug.WriteLine("Rotate");
+
+            // Old Size
+            double oldWidth = img.Width;
+            double oldHeight = img.Height;
+
+
+            // New Orientation and Size
+            if (newOrientation == Ship.ShipOrientation.Horizontal)
+            {
+                orientation = Ship.ShipOrientation.Horizontal;
+                img.Width = cellSize * (int)type;
+                img.Height = cellSize;
+            }
+            else
+            {
+                orientation = Ship.ShipOrientation.Vertical;
+                img.Width = cellSize;
+                img.Height = cellSize * (int)type;
+            }
+
+            // New Size
+            double newWidth = img.Width;
+            double newHeight = img.Height;
+
+            // Correct offset so that mouse stays in the same place
+            offset = new Point(
+                offset.X * (newWidth / oldWidth),
+                offset.Y * (newHeight / oldHeight)
+            );
+
+            // Set new
+            // Image rotation
+            img.Source = RotateImage(
+                new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + type.ToString().ToLower() + ".png")),
+                (int)orientation
+            );
+
+            // Set new position based on mouse position and new offset
+            if (!ignoreDragPosition)
+                SetDragPosition(img, new Point(mousePos.X - offset.X, mousePos.Y - offset.Y));
+        }
+
+        /// <summary>
+        /// Sets the position of the dragged element, clamped to the canvas bounds
+        /// </summary>
+        /// <param name="element">The UI element to move</param>
+        /// <param name="position">The desired position</param>
+        private void SetDragPosition(Image img, Point imgPos)
+        {
+            if (imgPos.X < 0)
+                imgPos.X = 0;
+            else if (imgPos.X > canvas.Width)
+                imgPos.X = canvas.Width;
+            if (imgPos.Y < 0)
+                imgPos.Y = 0;
+            else if (imgPos.Y > canvas.Height)
+                imgPos.Y = canvas.Height;
+
+            // Set position of the element on the canvas
+            Canvas.SetLeft(img, imgPos.X);
+            Canvas.SetTop(img, imgPos.Y);
+        }
+
+        /// <summary>
+        /// Rotates the given image by the specified angle
+        /// </summary>
+        /// <param name="source">The source image</param>
+        /// <param name="angle">The angle to rotate</param>
+        /// <returns>The rotated image</returns>
+        public static TransformedBitmap RotateImage(BitmapSource source, double angle)
+        {
+            TransformedBitmap transform = new();
+            transform.BeginInit(); // Initialize the transform
+            transform.Source = source; // Set the source image
+            transform.Transform = new RotateTransform(angle); // Apply rotation
+            transform.EndInit(); // Finalize the transform
+            return transform;
+        }
+
+        /// <summary>
+        /// Places the ship image at the specified grid position
+        /// </summary>
+        /// <param name="ship">The ship to place</param>
+        /// <param name="row">The grid row</param>
+        /// <param name="col">The grid column</param>
+        public void Place(double cellSize, int row, int col)
+        {
+            double x = col * cellSize;
+            double y = row * cellSize;
+
+            // Set position on canvas
+            Canvas.SetLeft(this.img, x);
+            Canvas.SetTop(this.img, y);
+
+            mousePos = new Point(x, y);
         }
     }
 }

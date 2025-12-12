@@ -38,7 +38,7 @@ namespace Battelship.Lobby
         private readonly BattleField battleField;
 
         private readonly DragShipManager simpleDragDrop;
-        private readonly List<Dragger> draggers = [];
+        private readonly List<DragShip> draggers = [];
 
         public FleetManagerPage(GameSetting gameSetting, MQTTService? mqttService = null)
         {
@@ -69,7 +69,7 @@ namespace Battelship.Lobby
 
             // Initialize Battlefield
             this.battleField = new BattleField(gameSetting.FieldSize);
-            battleField.OnChangedEvent += HandleOnChange;
+            battleField.OnChangedEvent += Update;
 
             // Simple Drag and Drop Manager
             this.simpleDragDrop = new DragShipManager(gameSetting.SingleFieldSize, battleField, GameCanvas);
@@ -129,21 +129,13 @@ namespace Battelship.Lobby
         private void InitShips()
         {
             for (int i = 0; i < gameSetting.BattleshipAmount; i++)
-            {
                 AddDragShip(Ship.ShipType.Battleship);
-            }
             for (int i = 0; i < gameSetting.CruiserAmount; i++)
-            {
                 AddDragShip(Ship.ShipType.Cruiser);
-            }
             for (int i = 0; i < gameSetting.SubmarineAmount; i++)
-            {
                 AddDragShip(Ship.ShipType.Submarine);
-            }
             for (int i = 0; i < gameSetting.DestroyerAmount; i++)
-            {
                 AddDragShip(Ship.ShipType.Destroyer);
-            }
         }
 
         /// <summary>
@@ -153,9 +145,7 @@ namespace Battelship.Lobby
         {
             battleField.Reset();
             foreach (var dragger in draggers)
-            {
-                GameCanvas.Children.Remove(dragger.element);
-            }
+                GameCanvas.Children.Remove(dragger.img);
             Update();
         }
 
@@ -298,39 +288,12 @@ namespace Battelship.Lobby
             }
             foreach (Ship ship in ships)
             {
-                Dragger dragger = AddDragShip(ship.shipType);
-                draggers.Add(dragger);
+                DragShip currentDrag = AddDragShip(ship.shipType);
+                draggers.Add(currentDrag);
 
                 // Orientierung setzen
-                dragger.orientation = ship.shipOrientation;
-
-                // Größe anpassen nach Orientation
-                if (ship.shipOrientation == Ship.ShipOrientation.Horizontal)
-                {
-                    dragger.element.Width = gameSetting.SingleFieldSize * (int)ship.shipType;
-                    dragger.element.Height = gameSetting.SingleFieldSize;
-                }
-                else
-                {
-                    dragger.element.Width = gameSetting.SingleFieldSize;
-                    dragger.element.Height = gameSetting.SingleFieldSize * (int)ship.shipType;
-                }
-
-                // Bild richtig drehen
-                dragger.element.Source = DragShipManager.RotateImage(
-                    new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + ship.shipType.ToString().ToLower() + ".png")),
-                    (int)ship.shipOrientation
-                );
-
-                // Position im Canvas korrekt setzen (Column = X, Row = Y)
-                double x = ship.column * gameSetting.SingleFieldSize;
-                double y = ship.row * gameSetting.SingleFieldSize;
-
-                Canvas.SetLeft(dragger.element, x);
-                Canvas.SetTop(dragger.element, y);
-
-                // Mausposition auf die neue Position setzen (NICHT row/column vertauschen!)
-                dragger.mousePos = new Point(x, y);
+                currentDrag.Rotate(gameSetting.SingleFieldSize, ship.shipOrientation);
+                currentDrag.Place(gameSetting.SingleFieldSize, ship.row, ship.column);
             }
             Update();
         }
@@ -368,22 +331,14 @@ namespace Battelship.Lobby
         }
 
         /// <summary>
-        /// Event handler for when the battlefield changes
-        /// </summary>
-        private void HandleOnChange()
-        {
-            Update();
-        }
-
-        /// <summary>
         /// Event handler for when a ship is removed from the battlefield
         /// </summary>
         /// <param name="dragger"></param>
-        private void HangleOnShipRemoved(Dragger dragger)
+        private void HangleOnShipRemoved(DragShip dragger)
         {
             if (dragger != null)
             {
-                GameCanvas.Children.Remove(dragger.element);
+                GameCanvas.Children.Remove(dragger.img);
                 draggers.Remove(dragger);
             }
             Update();
@@ -394,32 +349,31 @@ namespace Battelship.Lobby
         /// </summary>
         /// <param name="type">The type of the ship</param>
         /// <returns>The created Dragger object</returns>
-        private Dragger AddDragShip(Ship.ShipType type)
+        private DragShip AddDragShip(Ship.ShipType type)
         {
             var img = new Image()
             {
                 Width = gameSetting.SingleFieldSize * (int)type,
                 Height = gameSetting.SingleFieldSize,
-                Source = DragShipManager.RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + type.ToString().ToLower() + ".png")), 270)
+                Source = DragShip.RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + type.ToString().ToLower() + ".png")), 270)
             };
 
-            var dragShip = new Dragger(img, type);
-            draggers.Add(dragShip);
+            var currentDrag = new DragShip(GameCanvas, img, type);
+            draggers.Add(currentDrag);
 
             GameCanvas.Children.Add(img);
 
-            Canvas.SetTop(img, dragShip.startTopOffset);
-            Canvas.SetLeft(img, dragShip.startLeftOffset);
+            Canvas.SetTop(img, currentDrag.startTopOffset);
+            Canvas.SetLeft(img, currentDrag.startLeftOffset);
 
             img.MouseLeftButtonDown += (s, e) =>
             {
-                Debug.WriteLine("Start Dragging");
-                simpleDragDrop.StartDrag(dragShip, e.GetPosition(DragAndDropGrid));
+                simpleDragDrop.StartDrag(currentDrag, e.GetPosition(DragAndDropGrid));
             };
 
             img.MouseMove += (s, e) =>
             {
-                if (dragShip == simpleDragDrop.currentDrag)
+                if (currentDrag == simpleDragDrop.currentDrag)
                     simpleDragDrop.Move(e.GetPosition(DragAndDropGrid));
             };
 
@@ -431,10 +385,16 @@ namespace Battelship.Lobby
             // rotate with right click
             img.MouseRightButtonDown += (s, e) =>
             {
-                simpleDragDrop.RotateCurrent();
+                currentDrag.Rotate(
+                    gameSetting.SingleFieldSize,
+                    currentDrag.orientation == ShipOrientation.Horizontal
+                    ? ShipOrientation.Vertical
+                    : ShipOrientation.Horizontal,
+                    false
+                );
             };
 
-            return dragShip;
+            return currentDrag;
         }
     }
 }
