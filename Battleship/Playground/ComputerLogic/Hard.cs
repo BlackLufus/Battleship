@@ -27,11 +27,11 @@ namespace Battleship.Playground.ComputerLogic
 
         private void InitializeProbability()
         {
-            probability = new int[gameSetting.FieldSize, gameSetting.FieldSize];
+            probability = new int[gameSetting.BoardSize, gameSetting.BoardSize];
 
-            for (int row = 0; row < gameSetting.FieldSize; row++)
+            for (int row = 0; row < gameSetting.BoardSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
+                for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
                     probability[row, col] = 0;
                 }
@@ -40,9 +40,9 @@ namespace Battleship.Playground.ComputerLogic
 
         private void DetermineProbability()
         {
-            for (int row = 0; row < gameSetting.FieldSize; row++)
+            for (int row = 0; row < gameSetting.BoardSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
+                for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
                     if (!playground.WasShot(row, col))
                     {
@@ -60,7 +60,7 @@ namespace Battleship.Playground.ComputerLogic
                                     }
                                     if (orientation == Orientation.Horizontal || orientation == Orientation.Both)
                                     {
-                                        if (col + (int)ship.shipType - 1 < gameSetting.FieldSize)
+                                        if (col + (int)ship.shipType - 1 < gameSetting.BoardSize)
                                         {
                                             for (int i = 0; i < (int)ship.shipType; i++)
                                             {
@@ -83,7 +83,7 @@ namespace Battleship.Playground.ComputerLogic
                                     }
                                     if (orientation == Orientation.Vertical || orientation == Orientation.Both)
                                     {
-                                        if (row + (int)ship.shipType - 1 < gameSetting.FieldSize)
+                                        if (row + (int)ship.shipType - 1 < gameSetting.BoardSize)
                                         {
                                             for (int i = 0; i < (int)ship.shipType; i++)
                                             {
@@ -157,9 +157,9 @@ namespace Battleship.Playground.ComputerLogic
             int max = 0;
             List<Shot> maxShots = [];
 
-            for (int row = 0; row < gameSetting.FieldSize; row++)
+            for (int row = 0; row < gameSetting.BoardSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
+                for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
                     if (probability![row, col] > max)
                     {
@@ -192,14 +192,14 @@ namespace Battleship.Playground.ComputerLogic
         private void Dump()
         {
             Debug.WriteLine("=============================================");
-            for (int i = 0; i < gameSetting.FieldSize + 1; i++)
+            for (int i = 0; i < gameSetting.BoardSize + 1; i++)
             {
                 Debug.Write((i.ToString().Length == 1 ? "  " + i : i.ToString().Length == 2 ? " " + i : i) + " ");
             }
             Debug.WriteLine("");
-            for (int row = 0; row < gameSetting.FieldSize; row++)
+            for (int row = 0; row < gameSetting.BoardSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize + 1; col++)
+                for (int col = 0; col < gameSetting.BoardSize + 1; col++)
                 {
                     if (col == 0)
                     {

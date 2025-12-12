@@ -39,7 +39,7 @@ namespace Battleship.Playground
         {
             this.gameSetting = gameSetting;
             this.myPlayground = myPlayground;
-            this.enemyPlayground = new Playground(gameSetting.FieldSize, []);
+            this.enemyPlayground = new Playground(gameSetting.BoardSize, []);
             this.mqttService = mqttService;
 
             InitializeComponent();
@@ -119,7 +119,7 @@ namespace Battleship.Playground
 
         private void SetupPlaygroundDefinitions()
         {
-            for (int i = 0; i < gameSetting.FieldSize; i++)
+            for (int i = 0; i < gameSetting.BoardSize; i++)
             {
                 EnemyFieldBackground.RowDefinitions.Add(new RowDefinition());
                 EnemyFieldBackground.ColumnDefinitions.Add(new ColumnDefinition());
@@ -138,9 +138,9 @@ namespace Battleship.Playground
 
         private void InitializeEnemyPlayground()
         {
-            for (int row = 0; row < gameSetting.FieldSize; row++)
+            for (int row = 0; row < gameSetting.BoardSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
+                for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
 
                     // Erstelle ein Image
@@ -154,8 +154,8 @@ namespace Battleship.Playground
                     // Enemy Field Foreground
                     Button enemyField = new()
                     {
-                        Height = gameSetting.SingleFieldSize,
-                        Width = gameSetting.SingleFieldSize,
+                        Height = gameSetting.CellSize,
+                        Width = gameSetting.CellSize,
                         Background = Brushes.Transparent,
                         BorderBrush = Brushes.Transparent,
                         BorderThickness = new Thickness(0)
@@ -168,8 +168,8 @@ namespace Battleship.Playground
                     // Enemy Field Target
                     Button enemyFieldTarget = new()
                     {
-                        Height = gameSetting.SingleFieldSize,
-                        Width = gameSetting.SingleFieldSize,
+                        Height = gameSetting.CellSize,
+                        Width = gameSetting.CellSize,
                         Background = Brushes.Transparent,
                         BorderBrush = Brushes.Transparent,
                         BorderThickness = new Thickness(0)
@@ -231,9 +231,9 @@ namespace Battleship.Playground
 
         private void InitializePlayerPlayground()
         {
-            for (int row = 0; row < gameSetting.FieldSize; row++)
+            for (int row = 0; row < gameSetting.BoardSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
+                for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
                     // My Field Background
                     Image myImage = new();
@@ -247,8 +247,8 @@ namespace Battleship.Playground
                     // My Field Foreground
                     Button myField = new()
                     {
-                        Height = gameSetting.SingleFieldSize,
-                        Width = gameSetting.SingleFieldSize,
+                        Height = gameSetting.CellSize,
+                        Width = gameSetting.CellSize,
                         Background = Brushes.Transparent,
                         BorderBrush = Brushes.Transparent,
                         BorderThickness = new Thickness(0)
@@ -261,8 +261,8 @@ namespace Battleship.Playground
                     // My Field Target
                     Button myFieldTarget = new()
                     {
-                        Height = gameSetting.SingleFieldSize,
-                        Width = gameSetting.SingleFieldSize,
+                        Height = gameSetting.CellSize,
+                        Width = gameSetting.CellSize,
                         Background = Brushes.Transparent,
                         BorderBrush = Brushes.Transparent,
                         BorderThickness = new Thickness(0)
@@ -327,8 +327,8 @@ namespace Battleship.Playground
             {
                 Image element = new()
                 {
-                    Width = gameSetting.SingleFieldSize * (ship.shipOrientation == Ship.ShipOrientation.Horizontal ? (int)ship.shipType : 1),
-                    Height = gameSetting.SingleFieldSize * (ship.shipOrientation == Ship.ShipOrientation.Vertical ? (int)ship.shipType : 1),
+                    Width = gameSetting.CellSize * (ship.shipOrientation == Ship.ShipOrientation.Horizontal ? (int)ship.shipType : 1),
+                    Height = gameSetting.CellSize * (ship.shipOrientation == Ship.ShipOrientation.Vertical ? (int)ship.shipType : 1),
                     Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + ship.shipType.ToString().ToLower() + ".png")), (int)ship.shipOrientation)
                 };
 
@@ -341,8 +341,8 @@ namespace Battleship.Playground
                     EnemyField.Children.Add(element);
                 }
 
-                Canvas.SetLeft(element, 5 + ship.column * gameSetting.SingleFieldSize);
-                Canvas.SetTop(element, ship.row * gameSetting.SingleFieldSize);
+                Canvas.SetLeft(element, 5 + ship.column * gameSetting.CellSize);
+                Canvas.SetTop(element, ship.row * gameSetting.CellSize);
             }
         }
 

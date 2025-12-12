@@ -31,8 +31,8 @@ namespace Battleship.Playground
                 Image image = new()
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/fire.png")),
-                    Width = gameSetting.SingleFieldSize - 2,
-                    Height = gameSetting.SingleFieldSize - 2,
+                    Width = gameSetting.CellSize - 2,
+                    Height = gameSetting.CellSize - 2,
                 };
                 element.Content = image;
             }
@@ -41,8 +41,8 @@ namespace Battleship.Playground
                 Image image = new()
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/red-cross.png")),
-                    Width = gameSetting.SingleFieldSize - 2,
-                    Height = gameSetting.SingleFieldSize - 2,
+                    Width = gameSetting.CellSize - 2,
+                    Height = gameSetting.CellSize - 2,
                 };
                 element.Content = image;
             }
@@ -51,8 +51,8 @@ namespace Battleship.Playground
                 Image image = new()
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png")),
-                    Width = gameSetting.SingleFieldSize - 2,
-                    Height = gameSetting.SingleFieldSize - 2,
+                    Width = gameSetting.CellSize - 2,
+                    Height = gameSetting.CellSize - 2,
                 };
                 element.Content = image;
             }
@@ -60,9 +60,9 @@ namespace Battleship.Playground
 
         public static void UpdatePlayground(GameSetting gameSetting, Grid playgroundGrid, Playground playground)
         {
-            for (int row = 0; row < gameSetting.FieldSize; row++)
+            for (int row = 0; row < gameSetting.BoardSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
+                for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
                     Button button = (Button)playgroundGrid.Children.Cast<UIElement>().First(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == col);
                     MarkField(gameSetting, button, (FieldState)playground.Field[row, col]);

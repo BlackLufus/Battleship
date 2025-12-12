@@ -14,8 +14,8 @@ namespace Battleship.Playground.ComputerLogic
 
         override protected Shot GetNextShot()
         {
-            int row = new Random().Next(0, gameSetting.FieldSize);
-            int col = new Random().Next(0, gameSetting.FieldSize);
+            int row = new Random().Next(0, gameSetting.BoardSize);
+            int col = new Random().Next(0, gameSetting.BoardSize);
 
             return new Shot(row, col);
         }

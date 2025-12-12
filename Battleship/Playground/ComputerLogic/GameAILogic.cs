@@ -106,7 +106,7 @@ namespace Battleship.Playground.ComputerLogic
                             break;
                     }
 
-                    if (row < 0 || row >= gameSetting.FieldSize || col < 0 || col >= gameSetting.FieldSize)
+                    if (row < 0 || row >= gameSetting.BoardSize || col < 0 || col >= gameSetting.BoardSize)
                     {
                         ChangeDirection();
                         continue;
@@ -208,7 +208,7 @@ namespace Battleship.Playground.ComputerLogic
             {
                 return Orientation.Both;
             }
-            if (row < 0 || row >= gameSetting.FieldSize || col < 0 || col >= gameSetting.FieldSize)
+            if (row < 0 || row >= gameSetting.BoardSize || col < 0 || col >= gameSetting.BoardSize)
             {
                 //Debug.WriteLine("Field is out of bounds");
                 return Orientation.None;
@@ -256,7 +256,7 @@ namespace Battleship.Playground.ComputerLogic
             int newRow = row + rowStep * i;
             int newCol = col + colStep * i;
 
-            while (newRow >= 0 && newRow < gameSetting.FieldSize && newCol >= 0 && newCol < gameSetting.FieldSize)
+            while (newRow >= 0 && newRow < gameSetting.BoardSize && newCol >= 0 && newCol < gameSetting.BoardSize)
             {
                 // Wenn das Feld Wasser oder Schiff ist, zähle es
                 if (!playground.WasShot(newRow, newCol))

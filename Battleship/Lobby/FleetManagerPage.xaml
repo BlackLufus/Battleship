@@ -57,26 +57,7 @@
                     </Grid>
                     <Canvas x:Name="GameCanvas" Width="300" Height="300" Background="#33000000">
                         <Image x:Name="ShipImage" Source="Pack://application:,,,/Resources/Images/ship-size-3.png" Width="30" Height="90" Canvas.Left="90" Canvas.Top="60"  />
-                        <Image x:Name="Battleship" Width="60" Height="30" Canvas.Left="-150" Canvas.Top="10">
-                            <Image.Source>
-                                <BitmapImage UriSource="Pack://application:,,,/Resources/Images/battleship.png" Rotation="Rotate270"/>
-                            </Image.Source>
-                        </Image>
-                        <Image x:Name="Cruiser" Width="90" Height="30" Canvas.Left="-170" Canvas.Top="74">
-                            <Image.Source>
-                                <BitmapImage UriSource="Pack://application:,,,/Resources/Images/cruiser.png" Rotation="Rotate270"/>
-                            </Image.Source>
-                        </Image>
-                        <Image x:Name="Submarine" Width="120" Height="30" HorizontalAlignment="Center" Canvas.Left="-180" Canvas.Top="153">
-                            <Image.Source>
-                                <BitmapImage UriSource="Pack://application:,,,/Resources/Images/Submarine.png" Rotation="Rotate270"/>
-                            </Image.Source>
-                        </Image>
-                        <Image x:Name="Destroyer" Width="150" Height="30" Canvas.Left="-195" Canvas.Top="242">
-                            <Image.Source>
-                                <BitmapImage UriSource="Pack://application:,,,/Resources/Images/destroyer.png" Rotation="Rotate270"/>
-                            </Image.Source>
-                        </Image>
+                        
                     </Canvas>
                 </Grid>
 

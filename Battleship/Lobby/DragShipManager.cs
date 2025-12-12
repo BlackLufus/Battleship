@@ -165,10 +165,10 @@ namespace Battleship.Lobby
             // Left offsets are negative to position ships correctly
             startLeftOffset = type switch
             {
-                ShipType.Battleship => -150,
-                ShipType.Cruiser => -160,
-                ShipType.Submarine => -180,
-                ShipType.Destroyer => -190,
+                ShipType.Battleship => -140,
+                ShipType.Cruiser => -155,
+                ShipType.Submarine => -170,
+                ShipType.Destroyer => -185,
                 _ => 0
             };
         }

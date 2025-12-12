@@ -10,7 +10,7 @@ namespace Battleship.Global
 {
     public class GameSetting(
         Mode gameMode,
-        int fieldSize,
+        int boardSize,
         Difficult? gameDifficult,
         bool hitBonus,
         bool restrictedArea,
@@ -31,12 +31,12 @@ namespace Battleship.Global
         public Mode GameMode { get { return gameMode; } }
 
 
-        private readonly int fieldSize = fieldSize;
-        public int FieldSize { get { return fieldSize; } }
+        private readonly int boardSize = boardSize;
+        public int BoardSize { get { return boardSize; } }
 
 
-        private readonly double singleFieldSize = 300 / (double)fieldSize;
-        public double SingleFieldSize { get { return singleFieldSize; } }
+        private readonly double cellSize = 300 / (double)boardSize;
+        public double CellSize { get { return cellSize; } }
 
 
         public enum Difficult

@@ -68,11 +68,11 @@ namespace Battelship.Lobby
             }
 
             // Initialize Battlefield
-            this.battleField = new BattleField(gameSetting.FieldSize);
+            this.battleField = new BattleField(gameSetting.BoardSize);
             battleField.OnChangedEvent += Update;
 
             // Simple Drag and Drop Manager
-            this.simpleDragDrop = new DragShipManager(gameSetting.SingleFieldSize, battleField, GameCanvas);
+            this.simpleDragDrop = new DragShipManager(gameSetting.CellSize, battleField, GameCanvas);
             this.simpleDragDrop.OnShipRemovedEvent += HangleOnShipRemoved;
 
             // Initialize Field and Ships
@@ -86,7 +86,7 @@ namespace Battelship.Lobby
         private void InitField()
         {
             // Erstelle 10 Zeilen und 10 Spalten
-            for (int i = 0; i < gameSetting.FieldSize; i++)
+            for (int i = 0; i < gameSetting.BoardSize; i++)
             {
                 ImageGrid.RowDefinitions.Add(new RowDefinition());
                 ImageGrid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -95,9 +95,9 @@ namespace Battelship.Lobby
             }
 
             // Füge in jede Zelle ein Bild hinzu
-            for (int row = 0; row < gameSetting.FieldSize; row++)
+            for (int row = 0; row < gameSetting.BoardSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
+                for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
                     // Erstelle ein Image
                     Image image = new();
@@ -155,9 +155,9 @@ namespace Battelship.Lobby
         private void Update()
         {
             var boardState = battleField.GetBoardState();
-            for (int x = 0; x < gameSetting.FieldSize; x++)
+            for (int x = 0; x < gameSetting.BoardSize; x++)
             {
-                for (int y = 0; y < gameSetting.FieldSize; y++)
+                for (int y = 0; y < gameSetting.BoardSize; y++)
                 {
                     // Find the StackPanel at the specific row and column
                     StackPanel stackPanel = (StackPanel)DragAndDropGrid.Children.Cast<UIElement>().First(e => Grid.GetRow(e) == x && Grid.GetColumn(e) == y);
@@ -244,7 +244,7 @@ namespace Battelship.Lobby
         /// <param name="e">The RoutedEventArgs</param>
         private void FinishButton_Click(object sender, RoutedEventArgs e)
         {
-            BattleField enemyBattleField = new BattleField(gameSetting.FieldSize);
+            BattleField enemyBattleField = new BattleField(gameSetting.BoardSize);
             List<Ship> ships = GetShipList();
             // enemyBattleField.Randomize(ships);
             Debug.WriteLine("FinishButton clicked");
@@ -259,7 +259,7 @@ namespace Battelship.Lobby
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Navigation.RegisterPage(new GameBoardPage(mqttService, gameSetting, new Playground(gameSetting.FieldSize, battleField.ships)));
+                        Navigation.RegisterPage(new GameBoardPage(mqttService, gameSetting, new Playground(gameSetting.BoardSize, battleField.ships)));
                     });
                 };
                 mqttService.SendReady();
@@ -267,7 +267,7 @@ namespace Battelship.Lobby
             else
             {
                 enemyBattleField.Randomize(ships);
-                Navigation.RegisterPage(new GameBoardPage(gameSetting, new Playground(gameSetting.FieldSize, battleField.ships), new Playground(gameSetting.FieldSize, enemyBattleField.ships)));
+                Navigation.RegisterPage(new GameBoardPage(gameSetting, new Playground(gameSetting.BoardSize, battleField.ships), new Playground(gameSetting.BoardSize, enemyBattleField.ships)));
             }
         }
 
@@ -292,8 +292,8 @@ namespace Battelship.Lobby
                 draggers.Add(currentDrag);
 
                 // Orientierung setzen
-                currentDrag.Rotate(gameSetting.SingleFieldSize, ship.shipOrientation);
-                currentDrag.Place(gameSetting.SingleFieldSize, ship.row, ship.column);
+                currentDrag.Rotate(gameSetting.CellSize, ship.shipOrientation);
+                currentDrag.Place(gameSetting.CellSize, ship.row, ship.column);
             }
             Update();
         }
@@ -353,8 +353,8 @@ namespace Battelship.Lobby
         {
             var img = new Image()
             {
-                Width = gameSetting.SingleFieldSize * (int)type,
-                Height = gameSetting.SingleFieldSize,
+                Width = gameSetting.CellSize * (int)type,
+                Height = gameSetting.CellSize,
                 Source = DragShip.RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + type.ToString().ToLower() + ".png")), 270)
             };
 
@@ -386,7 +386,7 @@ namespace Battelship.Lobby
             img.MouseRightButtonDown += (s, e) =>
             {
                 currentDrag.Rotate(
-                    gameSetting.SingleFieldSize,
+                    gameSetting.CellSize,
                     currentDrag.orientation == ShipOrientation.Horizontal
                     ? ShipOrientation.Vertical
                     : ShipOrientation.Horizontal,

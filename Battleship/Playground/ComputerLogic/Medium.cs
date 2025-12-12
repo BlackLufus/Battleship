@@ -17,9 +17,9 @@ namespace Battleship.Playground.ComputerLogic
             List<Shot> possibleShots = [];
 
             // Schachbrettmuster-Felder finden, die noch nicht beschossen wurden
-            for (int row = 0; row < gameSetting.FieldSize; row++)
+            for (int row = 0; row < gameSetting.BoardSize; row++)
             {
-                for (int col = 0; col < gameSetting.FieldSize; col++)
+                for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
                     if ((row + col) % 2 == 0 && !playground.WasShot(row, col)) // Gittermusterbedingung
                     {
@@ -30,9 +30,9 @@ namespace Battleship.Playground.ComputerLogic
 
             if (possibleShots.Count == 0)
             {
-                for (int row = 0; row < gameSetting.FieldSize; row++)
+                for (int row = 0; row < gameSetting.BoardSize; row++)
                 {
-                    for (int col = 0; col < gameSetting.FieldSize; col++)
+                    for (int col = 0; col < gameSetting.BoardSize; col++)
                     {
                         if (!playground.WasShot(row, col))
                         {
