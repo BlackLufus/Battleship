@@ -7,7 +7,6 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       AllowDrop="True"
-      DragOver="Page_DragOver"
       Title="FleetManager">
 
     <Grid x:Name="container">
@@ -44,28 +43,8 @@
                 </Grid>
 
                 <Canvas x:Name="ShipsCanvas" Grid.Column="0" Background="Aqua">
-                    <Image x:Name="Battleship" Width="60" Height="30" MouseDown="DragShip_MouseDown" Canvas.Left="50" Canvas.Top="10">
-                        <Image.Source>
-                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/battleship.png" Rotation="Rotate270"/>
-                        </Image.Source>
-                    </Image>
-                    <Image x:Name="Cruiser" Width="90" Height="30" MouseDown="DragShip_MouseDown" Canvas.Left="36" Canvas.Top="74">
-                        <Image.Source>
-                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/cruiser.png" Rotation="Rotate270"/>
-                        </Image.Source>
-                    </Image>
-                    <Image x:Name="Submarine" Width="120" Height="30" HorizontalAlignment="Center" MouseDown="DragShip_MouseDown" Canvas.Left="20" Canvas.Top="153">
-                        <Image.Source>
-                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/Submarine.png" Rotation="Rotate270"/>
-                        </Image.Source>
-                    </Image>
-                    <Image x:Name="Destroyer" Width="150" Height="30" MouseDown="DragShip_MouseDown" Canvas.Left="5" Canvas.Top="242">
-                        <Image.Source>
-                            <BitmapImage UriSource="Pack://application:,,,/Resources/Images/destroyer.png" Rotation="Rotate270"/>
-                        </Image.Source>
-                    </Image>
                 </Canvas>
-                
+
                 <Grid Grid.Column="1" HorizontalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="300" />
@@ -73,13 +52,34 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="300" />
                     </Grid.RowDefinitions>
-                    <Canvas Width="300" Height="300" Background="#33000000">
-                        <Image x:Name="ShipImage" Source="Pack://application:,,,/Resources/Images/ship-size-3.png" Width="30" Height="90" Canvas.Left="90" Canvas.Top="60"  />
-                    </Canvas>
                     <Grid x:Name="DragAndDropGrid" MaxWidth="300" MaxHeight="300">
 
                     </Grid>
+                    <Canvas x:Name="GameCanvas" Width="300" Height="300" Background="#33000000">
+                        <Image x:Name="ShipImage" Source="Pack://application:,,,/Resources/Images/ship-size-3.png" Width="30" Height="90" Canvas.Left="90" Canvas.Top="60"  />
+                        <Image x:Name="Battleship" Width="60" Height="30" Canvas.Left="-150" Canvas.Top="10">
+                            <Image.Source>
+                                <BitmapImage UriSource="Pack://application:,,,/Resources/Images/battleship.png" Rotation="Rotate270"/>
+                            </Image.Source>
+                        </Image>
+                        <Image x:Name="Cruiser" Width="90" Height="30" Canvas.Left="-170" Canvas.Top="74">
+                            <Image.Source>
+                                <BitmapImage UriSource="Pack://application:,,,/Resources/Images/cruiser.png" Rotation="Rotate270"/>
+                            </Image.Source>
+                        </Image>
+                        <Image x:Name="Submarine" Width="120" Height="30" HorizontalAlignment="Center" Canvas.Left="-180" Canvas.Top="153">
+                            <Image.Source>
+                                <BitmapImage UriSource="Pack://application:,,,/Resources/Images/Submarine.png" Rotation="Rotate270"/>
+                            </Image.Source>
+                        </Image>
+                        <Image x:Name="Destroyer" Width="150" Height="30" Canvas.Left="-195" Canvas.Top="242">
+                            <Image.Source>
+                                <BitmapImage UriSource="Pack://application:,,,/Resources/Images/destroyer.png" Rotation="Rotate270"/>
+                            </Image.Source>
+                        </Image>
+                    </Canvas>
                 </Grid>
+
                 <Grid Grid.Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />

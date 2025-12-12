@@ -39,7 +39,7 @@ namespace Battleship.Playground
         {
             this.gameSetting = gameSetting;
             this.myPlayground = myPlayground;
-            this.enemyPlayground = new Playground(new int[gameSetting.FieldSize, gameSetting.FieldSize], []);
+            this.enemyPlayground = new Playground(gameSetting.FieldSize, []);
             this.mqttService = mqttService;
 
             InitializeComponent();

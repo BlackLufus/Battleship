@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Battleship.Playground
 {
-    public class Playground(int[,] field, List<Ship> ships)
+    public class Playground(int boardSize, List<Ship> ships)
     {
         public enum ShotResult
         {
@@ -28,7 +28,7 @@ namespace Battleship.Playground
             Sunk = 3
         }
 
-        private readonly int[,] field = field;
+        private readonly int[,] field = new int[boardSize, boardSize];
         public int[,] Field { get { return field; } }
         private readonly List<Ship> ships = ships;
         public List<Ship> Ships { get { return ships; } }

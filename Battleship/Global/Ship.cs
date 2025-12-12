@@ -68,6 +68,18 @@
             }
         }
 
+        public bool HasPosition(int row, int column)
+        {
+            if (shipOrientation == ShipOrientation.Horizontal)
+            {
+                return this.row == row && column >= this.column && column < this.column + (int)shipType;
+            }
+            else
+            {
+                return this.column == column && row >= this.row && row < this.row + (int)shipType;
+            }
+        }
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);

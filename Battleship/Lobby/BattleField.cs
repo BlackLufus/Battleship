@@ -3,11 +3,17 @@ using System.Diagnostics;
 using static Battleship.Global.Ship;
 using System.Windows.Controls;
 using static Battleship.Playground.Playground;
+using System.Windows;
+using System.Numerics;
+using System;
+using System.Drawing;
 
 namespace Battleship.Lobby
 {
-    public class BattleField(GameSetting gameSetting)
+    // Represents the battlefield where ships are placed
+    public class BattleField(int boardSize)
     {
+        // The state of each field on the board
         public enum FieldState
         {
             Blocked = -1,
@@ -16,123 +22,110 @@ namespace Battleship.Lobby
             Marked = 2
         }
 
-        private readonly GameSetting gameSetting = gameSetting;
-        private int[,] field = new int[gameSetting.FieldSize, gameSetting.FieldSize];
-        public int[,] FieldNoRestiction
-        {
-            get
-            {
-                for (int i = 0; i < gameSetting.FieldSize; i++)
-                {
-                    for (int j = 0; j < gameSetting.FieldSize; j++)
-                    {
-                        if (field[i, j] == (int)FieldState.Blocked)
-                        {
-                            field[i, j] = (int)FieldState.Water;
-                        }
-                    }
-                }
-                return field;
-            }
-        }
+        public delegate void OnChangedEventHandler();
+        public event OnChangedEventHandler? OnChangedEvent;
 
+        private readonly int boardSize = boardSize;
 
-        private int[,] board = new int[gameSetting.FieldSize, gameSetting.FieldSize];
+        // The board representation: 0 = free, >0 = blocked
+        private int[,] board = new int[boardSize, boardSize];
+
+        // The list of ships on the board
         public List<Ship> ships = new List<Ship>();
-        public Ship? markedShip = null;
-        public bool isNewShip = false;
 
-        public Ship GetShip(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation)
+        // The current ship being placed on the board and its validity
+        public Ship? currentShip = null;
+        private bool isValidPosition = false;
+
+        /// <summary>
+        /// Get ship at position or create new ship if none exists and remove it from the field if found
+        /// </summary>
+        /// <param name="row">The row of the ship</param>
+        /// <param name="col">The column of the ship</param>
+        /// <param name="type">The type of the ship</param>
+        /// <param name="orientation">The orientation of the ship</param>
+        /// <returns>The ship at the position or a new ship</returns>
+        public Ship Get(int row, int col, ShipType type, ShipOrientation orientation)
         {
-            if (!isNewShip)
+            foreach (Ship ship in ships)
             {
-                foreach (Ship ship in ships)
+                if (ship.HasPosition(row, col))
                 {
-                    if (ship.row == row && ship.column == column)
-                    {
-                        Debug.WriteLine("Existing Ship Retrieved");
-                        Ship retrievedShip = ship;
-                        BlockSurroundingCells(ship, false);
-                        ships.Remove(ship);
-                        return retrievedShip;
-                    }
+                    Ship currentShip = ship;
+                    BlockSurroundingCells(ship, false);
+                    ships.Remove(ship);
+                    return ship;
                 }
             }
-            return new Ship(row, column, shipType, shipOrientation);
+            return new Ship(row, col, type, orientation);
         }
 
-        /**
-         * @Description Mark the board with a ship
-         * @Param row The row where the ship should be placed
-         * @Param column The column where the ship should be placed
-         * @Param shipType The type of the ship
-         * @Param shipOrientation The orientation of the ship
-         * @Return true if the ship was placed successfully, otherwise false
-         */
-        public bool Mark(int row, int column, Ship.ShipType shipType, Ship.ShipOrientation shipOrientation)
+        /// <summary>
+        /// Mark a position for the current ship
+        /// </summary>
+        /// <param name="row">The row of the ship</param>
+        /// <param name="col">The column of the ship</param>
+        /// <param name="type">The type of the ship</param>
+        /// <param name="orientation">The orientation of the ship</param>
+        /// <returns>True if the position is valid, otherwise false</returns>
+        public bool Mark(int row, int col, ShipType type, ShipOrientation orientation)
         {
-            Ship ship = GetShip(row, column, shipType, shipOrientation);
-            if (!IsBlocked(ship))
+            if (currentShip == null)
             {
-                markedShip = ship;
+                currentShip = Get(row, col, type, orientation);
+            }
+
+            currentShip.row = row;
+            currentShip.column = col;
+            currentShip.shipOrientation = orientation;
+
+            isValidPosition = IsValidPosition(currentShip);
+
+            OnChangedEvent?.Invoke();
+
+            return isValidPosition;
+        }
+
+        /// <summary>
+        /// Add the current ship to the field
+        /// </summary>
+        /// <returns>True if the ship was placed successfully, otherwise false</returns>
+        public bool Add()
+        {
+            if (currentShip == null)
+                return false;
+
+            if (!IsValidPosition(currentShip))
+            {
+                currentShip = null;
+                isValidPosition = false;
+                return false;
+            }
+            else
+            {
+                BlockSurroundingCells(currentShip);
+                ships.Add(currentShip);
+                currentShip = null;
+                OnChangedEvent?.Invoke();
                 return true;
             }
-            return false;
         }
 
-        /**
-         * @Description Add a ship the board
-         * @Return true if the ship was placed successfully, otherwise false
-         */
-        public Ship? Add()
-        {
-            isNewShip = false;
-            if (markedShip != null)
-            {
-                ships.Add(markedShip);
-                BlockSurroundingCells(markedShip);
-                markedShip = null;
-                return ships.Last();
-            }
-            markedShip = null;
-            return null;
-        }
-
-        /**
-         * @Description Remove a ship the board
-         * @Return true if the ship was placed successfully, otherwise false
-         */
-        public bool Remove()
-        {
-            if (markedShip != null)
-            {
-                markedShip = null;
-                return true;
-            }
-            return false;
-        }
-
-        public bool RemoveLast()
-        {
-            if (markedShip != null)
-            {
-                markedShip = null;
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * @Description Remove all ships from the board
-         * @Return true if the ship was placed successfully, otherwise false
-         */
+        /// <summary>
+        /// Remove all ships from the board
+        /// </summary>
         public void Reset()
         {
-            board = new int[gameSetting.FieldSize, gameSetting.FieldSize];
+            board = new int[boardSize, boardSize];
             ships.Clear();
         }
 
-        public List<Ship> Randomize(List<Ship> shipList)
+        /// <summary>
+        /// Randomly place ships on the board
+        /// </summary>
+        /// <param name="shipList">The list of ships to place</param>
+        /// <returns>The list of placed ships or null if placement failed</returns>
+        public List<Ship>? Randomize(List<Ship> shipList)
         {
             int index = 0;
 
@@ -146,18 +139,22 @@ namespace Battleship.Lobby
             int resetIteration = 0;
             int maxResetIteration = 250;
 
+            Reset();
+
             while (shipList.Count > index)
             {
                 iteration++;
                 totalIterations++;
-                int row = randomRow.Next(0, gameSetting.FieldSize);
-                int column = randomColumn.Next(0, gameSetting.FieldSize);
+                int row = randomRow.Next(0, boardSize);
+                int col = randomColumn.Next(0, boardSize);
                 Ship.ShipOrientation orientation = randomOrientation.Next(0, 2) == 0 ? Ship.ShipOrientation.Horizontal : Ship.ShipOrientation.Vertical;
 
-                isNewShip = true;
-                if (Mark(row, column, shipList[index].shipType, orientation))
+                Ship tmp = new Ship(row, col, shipList[index].shipType, orientation);
+
+                if (IsValidPosition(tmp))
                 {
-                    Add();
+                    BlockSurroundingCells(tmp);
+                    ships.Add(tmp);
                     iteration = 0;
                     index++;
                 }
@@ -179,54 +176,73 @@ namespace Battleship.Lobby
             return ships;
         }
 
-        public bool IsBlocked(Ship ship)
+        /// <summary>
+        /// Check if the ship can be placed at the given position
+        /// </summary>
+        /// <param name="ship">The ship to check</param>
+        /// <returns>True if the position is valid, otherwise false</returns>
+        public bool IsValidPosition(Ship ship)
         {
             int len = (int)ship.shipType;
+            // Horizontal
             if (ship.shipOrientation == Ship.ShipOrientation.Horizontal)
             {
-                if (ship.column < 0 || ship.column + len > gameSetting.FieldSize)
-                {
-                    return true;
-                }
                 for (int i = 0; i < len; i++)
                 {
-                    if (board[ship.row, ship.column + i] > 0)
-                    {
-                        return true;
-                    }
+                    int r = ship.row;
+                    int c = ship.column + i;
+
+                    // If cell is not on the board at all
+                    if (r < 0 || r >= boardSize ||
+                        c < 0 || c >= boardSize)
+                        return false;
+
+                    // If cell is blocked
+                    if (board[r, c] > 0)
+                        return false;
                 }
+
+                return true;
             }
-            else if (ship.shipOrientation == Ship.ShipOrientation.Vertical)
+            // Vertical
+            for (int i = 0; i < len; i++)
             {
-                if (ship.row < 0 || ship.row + len > gameSetting.FieldSize)
-                {
-                    return true;
-                }
-                for (int i = 0; i < len; i++)
-                {
-                    if (board[ship.row + i, ship.column] > 0)
-                    {
-                        return true;
-                    }
-                }
+                int r = ship.row + i;
+                int c = ship.column;
+
+                if (r < 0 || r >= boardSize ||
+                    c < 0 || c >= boardSize)
+                    return false;
+
+                if (board[r, c] > 0)
+                    return false;
             }
-            return false;
+            return true;
         }
 
+        /// <summary>
+        /// Block or unblock surrounding cells of a ship
+        /// </summary>
+        /// <param name="ship">The ship to block surrounding cells for</param>
+        /// <param name="add">True to block, false to unblock</param>
         public void BlockSurroundingCells(Ship ship, bool add = true)
         {
             int len = (int)ship.shipType;
-            if (ship.shipOrientation == Ship.ShipOrientation.Horizontal)
+            int delta = add ? 1 : -1;
+
+            if (ship.shipOrientation == ShipOrientation.Horizontal)
             {
                 for (int i = -1; i <= len; i++)
                 {
                     for (int j = -1; j <= 1; j++)
                     {
-                        int row = ship.row + j;
-                        int column = ship.column + i;
-                        if (row >= 0 && row < gameSetting.FieldSize && column >= 0 && column < gameSetting.FieldSize)
+                        int r = ship.row + j;
+                        int c = ship.column + i;
+
+                        if (r >= 0 && r < boardSize &&
+                            c >= 0 && c < boardSize)
                         {
-                            board[row, column] += add ? 1 : -1;
+                            board[r, c] += delta;
                         }
                     }
                 }
@@ -237,23 +253,29 @@ namespace Battleship.Lobby
                 {
                     for (int j = -1; j <= 1; j++)
                     {
-                        int row = ship.row + i;
-                        int column = ship.column + j;
-                        if (row >= 0 && row < gameSetting.FieldSize && column >= 0 && column < gameSetting.FieldSize)
+                        int r = ship.row + i;
+                        int c = ship.column + j;
+
+                        if (r >= 0 && r < boardSize &&
+                            c >= 0 && c < boardSize)
                         {
-                            board[row, column] += add ? 1 : -1;
+                            board[r, c] += delta;
                         }
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Get the current state of the board
+        /// </summary>
+        /// <returns>The current state of the board</returns>
         public FieldState[,] GetBoardState()
         {
-            FieldState[,] boardState = new FieldState[gameSetting.FieldSize, gameSetting.FieldSize];
-            for (int i = 0; i < gameSetting.FieldSize; i++)
+            FieldState[,] boardState = new FieldState[boardSize, boardSize];
+            for (int i = 0; i < boardSize; i++)
             {
-                for (int j = 0; j < gameSetting.FieldSize; j++)
+                for (int j = 0; j < boardSize; j++)
                 {
                     if (board[i, j] > 0)
                     {
@@ -265,20 +287,20 @@ namespace Battleship.Lobby
                     }
                 }
             }
-            if (markedShip != null)
+            if (currentShip != null && isValidPosition)
             {
-                if (markedShip.shipOrientation == Ship.ShipOrientation.Horizontal)
+                if (currentShip.shipOrientation == Ship.ShipOrientation.Horizontal)
                 {
-                    for (int i = 0; i < (int)markedShip.shipType; i++)
+                    for (int i = 0; i < (int)currentShip.shipType; i++)
                     {
-                        boardState[markedShip.row, markedShip.column + i] = FieldState.Marked;
+                        boardState[currentShip.row, currentShip.column + i] = FieldState.Marked;
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < (int)markedShip.shipType; i++)
+                    for (int i = 0; i < (int)currentShip.shipType; i++)
                     {
-                        boardState[markedShip.row + i, markedShip.column] = FieldState.Marked;
+                        boardState[currentShip.row + i, currentShip.column] = FieldState.Marked;
                     }
                 }
             }
@@ -307,9 +329,9 @@ namespace Battleship.Lobby
         /// </summary>
         public void Dump()
         {
-            for (int i = 0; i < gameSetting.FieldSize; i++)
+            for (int i = 0; i < boardSize; i++)
             {
-                for (int j = 0; j < gameSetting.FieldSize; j++)
+                for (int j = 0; j < boardSize; j++)
                 {
                     Debug.Write(board[i, j] + " ");
                 }
