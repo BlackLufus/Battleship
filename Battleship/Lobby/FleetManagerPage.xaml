@@ -42,7 +42,7 @@
                     </Grid>
                 </Grid>
 
-                <Canvas x:Name="ShipsCanvas" Grid.Column="0" Background="Aqua">
+                <Canvas x:Name="ShipsCanvas" Grid.Column="0" Background="#aa000000">
                 </Canvas>
 
                 <Grid Grid.Column="1" HorizontalAlignment="Center">
