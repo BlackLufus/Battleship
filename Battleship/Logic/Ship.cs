@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Intrinsics.X86;
 
-namespace Battleship.Logic.Models
+namespace Battleship.Logic
 {
     public class Ship : IDisposable
     {

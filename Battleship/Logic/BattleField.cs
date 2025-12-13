@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using static Battleship.Logic.Models.Ship;
+using static Battleship.Logic.Ship;
 using System.Windows.Controls;
 using static Battleship.Logic.Playground;
 using System.Windows;
@@ -7,7 +7,7 @@ using System.Numerics;
 using System;
 using System.Drawing;
 
-namespace Battleship.Logic.Models
+namespace Battleship.Logic
 {
     // Represents the battlefield where ships are placed
     public class BattleField(int boardSize)
@@ -46,7 +46,7 @@ namespace Battleship.Logic.Models
             {
                 if (ships.Contains(ship))
                 {
-                    BlockSurroundingCells(ship, false);
+                    BoardCells.BlockSurroundingCells(board, boardSize, ship, false);
                     ships.Remove(ship);
                 }
                 currentShip = ship;
@@ -74,7 +74,7 @@ namespace Battleship.Logic.Models
             }
             else
             {
-                BlockSurroundingCells(ship);
+                BoardCells.BlockSurroundingCells(board, boardSize, ship);
                 ships.Add(ship);
                 currentShip = null;
                 OnStateChangeEvent?.Invoke();
@@ -132,7 +132,7 @@ namespace Battleship.Logic.Models
                 // Is ship on a valid position?
                 if (IsValidPosition(ship))
                 {
-                    BlockSurroundingCells(ship);
+                    BoardCells.BlockSurroundingCells(board, boardSize, ship);
                     ships.Add(ship);
                     iteration = 0;
                     index++;
@@ -199,52 +199,6 @@ namespace Battleship.Logic.Models
                     return false;
             }
             return true;
-        }
-
-        /// <summary>
-        /// Block or unblock surrounding cells of a ship
-        /// </summary>
-        /// <param name="ship">The ship to block surrounding cells for</param>
-        /// <param name="add">True to block, false to unblock</param>
-        public void BlockSurroundingCells(Ship ship, bool add = true)
-        {
-            int len = (int)ship.type;
-            int delta = add ? 1 : -1;
-
-            if (ship.orientation == ShipOrientation.Horizontal)
-            {
-                for (int i = -1; i <= len; i++)
-                {
-                    for (int j = -1; j <= 1; j++)
-                    {
-                        int r = ship.row + j;
-                        int c = ship.col + i;
-
-                        if (r >= 0 && r < boardSize &&
-                            c >= 0 && c < boardSize)
-                        {
-                            board[r, c] += delta;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for (int i = -1; i <= len; i++)
-                {
-                    for (int j = -1; j <= 1; j++)
-                    {
-                        int r = ship.row + i;
-                        int c = ship.col + j;
-
-                        if (r >= 0 && r < boardSize &&
-                            c >= 0 && c < boardSize)
-                        {
-                            board[r, c] += delta;
-                        }
-                    }
-                }
-            }
         }
 
         /// <summary>

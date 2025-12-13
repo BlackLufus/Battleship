@@ -12,9 +12,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using static Battleship.Logic.Models.Ship;
+using static Battleship.Logic.Ship;
 
-namespace Battleship.Logic.Models
+namespace Battleship.Logic
 {
     // Simple drag and drop handler for ships
     public class DragShipManager(double cellSize, BattleField battleField)
