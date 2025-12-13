@@ -49,6 +49,8 @@ namespace Battelship.Lobby
         private readonly ImageSource RestrictionImage =
             new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png"));
 
+        private readonly ImageSource WaterImage = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
+
         public FleetManagerPage(GameSetting gameSetting, MQTTService? mqttService = null)
         {
             this.gameSetting = gameSetting;
@@ -84,6 +86,9 @@ namespace Battelship.Lobby
             // Initialize DragShipManager
             this.dragShipManager = new DragShipManager(gameSetting.CellSize, battleField);
 
+            cellState = new FieldState[gameSetting.BoardSize, gameSetting.BoardSize];
+            cellPanels = new StackPanel[gameSetting.BoardSize, gameSetting.BoardSize];
+
             // Initialize Field and Ships
             InitField();
             InitShips();
@@ -94,7 +99,7 @@ namespace Battelship.Lobby
         /// </summary>
         private void InitField()
         {
-            // Erstelle 10 Zeilen und 10 Spalten
+            // Add Row and Column Definitions
             for (int i = 0; i < gameSetting.BoardSize; i++)
             {
                 ImageGrid.RowDefinitions.Add(new RowDefinition());
@@ -103,34 +108,37 @@ namespace Battelship.Lobby
                 DragAndDropGrid.ColumnDefinitions.Add(new ColumnDefinition());
             }
 
-            cellState = new FieldState[gameSetting.BoardSize, gameSetting.BoardSize];
-            cellPanels = new StackPanel[gameSetting.BoardSize, gameSetting.BoardSize];
-
             // Füge in jede Zelle ein Bild hinzu
             for (int row = 0; row < gameSetting.BoardSize; row++)
             {
                 for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
-                    // Erstelle ein Image
-                    Image image = new();
+                    // Water Grid
+                    Image image = new Image
+                    {
+                        Source = WaterImage
+                    };
 
-                    // Lade das Bild (hier ein Beispielbild aus dem Projektverzeichnis)
-                    BitmapImage bitmap = new(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
-                    image.Source = bitmap;
-
-                    // Setze das Bild in die entsprechende Zelle
+                    // Position in Grid
                     Grid.SetRow(image, row);
                     Grid.SetColumn(image, col);
 
-                    // Füge das Bild zum Grid hinzu
+                    // Add to Grid
                     ImageGrid.Children.Add(image);
 
-                    StackPanel stackPanel = new StackPanel();
+
+                    // Cell State Grid
+                    StackPanel stackPanel = new StackPanel()
+                    {
+                        Background = WaterBrush
+                    };
                     cellPanels[row, col] = stackPanel;
-                    var bc = new BrushConverter();
-                    stackPanel.Background = WaterBrush;
+
+                    // Position in Grid
                     Grid.SetRow(stackPanel, row);
                     Grid.SetColumn(stackPanel, col);
+
+                    // Add to Grid
                     DragAndDropGrid.Children.Add(stackPanel);
                 }
             }
@@ -149,6 +157,10 @@ namespace Battelship.Lobby
             }
         }
 
+        /// <summary>
+        /// Get basic drag ships, depending on settings in gameSettings object
+        /// </summary>
+        /// <returns>A list of DragShip objects</returns>
         private List<DragShip> GetBasicShipList()
         {
             List<DragShip> tempDragShips = [];
