@@ -1,4 +1,6 @@
-﻿namespace Battleship.Global
+﻿using System.Runtime.Intrinsics.X86;
+
+namespace Battleship.Global
 {
     public class Ship : IDisposable
     {
@@ -48,24 +50,12 @@
             {
                 return false;
             }
-            else if (orientation == ShipOrientation.Horizontal)
+            else if (HasPosition(row, col))
             {
-                if (this.row == row && col >= this.col && col < this.col + (int)type)
-                {
-                    shots.Add((row, col));
-                    return true;
-                }
-                return false;
+                shots.Add((row, col));
+                return true;
             }
-            else
-            {
-                if (this.col == col && row >= this.row && row < this.row + (int)type)
-                {
-                    shots.Add((row, col));
-                    return true;
-                }
-                return false;
-            }
+            return false;
         }
 
         public bool HasPosition(int row, int col)
