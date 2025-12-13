@@ -20,10 +20,6 @@ namespace Battleship.Lobby
     // Simple drag and drop handler for ships
     public class DragShipManager(double cellSize, BattleField battleField)
     {
-        // Event when a ship is removed from the battlefield
-        public delegate void OnShipRemovedEventHandler(DragShip dragger);
-        public event OnShipRemovedEventHandler? OnShipRemovedEvent;
-
         // Variables provided by class constructor
         private readonly double cellSize = cellSize;
         private readonly BattleField battleField = battleField;
@@ -71,7 +67,7 @@ namespace Battleship.Lobby
             var gridPos = GetGridPos(dragShip, mousePos);
             if (gridPos)
                 // Register dragger to battleField
-                battleField.Mark(dragShip.row, dragShip.col, dragShip.type, dragShip.orientation).ToString();
+                battleField.Mark(dragShip).ToString();
         }
 
         /// <summary>
@@ -106,7 +102,7 @@ namespace Battleship.Lobby
             {
                 //Debug.WriteLine($"x {x} y {y} row {currentDrag.row} col {currentDrag.col}");
                 // Mark it on the battlefield
-                battleField.Mark(dragShip.row, dragShip.col, dragShip.type, dragShip.orientation);
+                battleField.Mark(dragShip);
             }
         }
 
@@ -120,18 +116,17 @@ namespace Battleship.Lobby
             Mouse.Capture(null);
 
             // Try to add the ship to the battlefield
-            if (dragShip.IsDragging && battleField.Add())
+            if (dragShip.IsDragging && battleField.Place(dragShip))
             {
                 // Place ship at the grid position
-                dragShip.Place(cellSize);
+                dragShip.Place();
             }
             else
             {
                 // Return to start position
                 Canvas.SetTop(dragShip.img, dragShip.startTopOffset);
                 Canvas.SetLeft(dragShip.img, dragShip.startLeftOffset);
-                dragShip.Rotate(cellSize, ShipOrientation.Horizontal);
-                battleField.Remove();
+                dragShip.Rotate(ShipOrientation.Horizontal);
             }
 
             // Reset dragging state
@@ -140,10 +135,11 @@ namespace Battleship.Lobby
     }
 
     // DragShip class to hold drag information about a ship being dragged
-    public class DragShip(Canvas canvas, Image img, Ship.ShipType type) : Ship(type, Ship.ShipOrientation.Horizontal)
+    public class DragShip : Ship
     {
-        public Canvas canvas = canvas;
-        public Image img = img;
+        private readonly Canvas canvas;
+        private readonly double cellSize;
+        public Image img;
 
         // True is DragShip is selected and dragged
         public bool IsDragging = false;
@@ -152,23 +148,75 @@ namespace Battleship.Lobby
         public Point mousePos;
 
         // Set starting offsets based on ship type
-        public readonly int startTopOffset = type switch
-        {
-            ShipType.Battleship => 10,
-            ShipType.Cruiser => 74,
-            ShipType.Submarine => 153,
-            ShipType.Destroyer => 242,
-            _ => 0
-        };
+        public readonly int startTopOffset;
+
         // Left offsets are negative to position ships correctly
-        public readonly int startLeftOffset = type switch
+        public readonly int startLeftOffset;
+
+        public DragShip(Canvas canvas, double cellSize, Ship.ShipType type) : base(type, Ship.ShipOrientation.Horizontal)
         {
-            ShipType.Battleship => -140,
-            ShipType.Cruiser => -155,
-            ShipType.Submarine => -170,
-            ShipType.Destroyer => -185,
-            _ => 0
-        };
+            this.canvas = canvas;
+            this.cellSize = cellSize;
+
+            this.img = new Image()
+            {
+                Width = cellSize * (int)type,
+                Height = cellSize,
+                Source = DragShip.RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + type.ToString().ToLower() + ".png")), 270)
+            };
+
+            startTopOffset = type switch
+            {
+                ShipType.Battleship => 10,
+                ShipType.Cruiser => 74,
+                ShipType.Submarine => 153,
+                ShipType.Destroyer => 242,
+                _ => 0
+            };
+
+            startLeftOffset = type switch
+            {
+                ShipType.Battleship => -140,
+                ShipType.Cruiser => -155,
+                ShipType.Submarine => -170,
+                ShipType.Destroyer => -185,
+                _ => 0
+            };
+        }
+
+        public void Show(DragShipManager dragShipManager)
+        {
+            canvas.Children.Add(img);
+
+            Place(startLeftOffset, startTopOffset);
+
+            img.MouseLeftButtonDown += (s, e) =>
+            {
+                dragShipManager.StartDrag(this, e.GetPosition(canvas));
+            };
+
+            img.MouseMove += (s, e) =>
+            {
+                if (IsDragging)
+                    dragShipManager.Move(this, e.GetPosition(canvas));
+            };
+
+            img.MouseLeftButtonUp += (s, e) =>
+            {
+                dragShipManager.EndDrag(this, e.GetPosition(canvas));
+            };
+
+            // rotate with right click
+            img.MouseRightButtonDown += (s, e) =>
+            {
+                Rotate(
+                    this.orientation == ShipOrientation.Horizontal
+                    ? ShipOrientation.Vertical
+                    : ShipOrientation.Horizontal,
+                    false
+                );
+            };
+        }
 
         /// <summary>
         /// Sets the current mouse position
@@ -182,7 +230,7 @@ namespace Battleship.Lobby
         /// <summary>
         /// Rotates the currently dragged ship
         /// </summary>
-        public void Rotate(double cellSize, Ship.ShipOrientation newOrientation, bool ignoreDragPosition = true)
+        public void Rotate(Ship.ShipOrientation newOrientation, bool ignoreDragPosition = true)
         {
 
             // Old Size
@@ -223,7 +271,7 @@ namespace Battleship.Lobby
 
             // Set new position based on mouse position and new offset
             if (!ignoreDragPosition)
-                SetDragPosition(img, new Point(mousePos.X - offset.X, mousePos.Y - offset.Y));
+                SetDragPosition(new Point(mousePos.X - offset.X, mousePos.Y - offset.Y));
         }
 
         /// <summary>
@@ -231,7 +279,7 @@ namespace Battleship.Lobby
         /// </summary>
         /// <param name="element">The UI element to move</param>
         /// <param name="position">The desired position</param>
-        private void SetDragPosition(Image img, Point imgPos)
+        private void SetDragPosition(Point imgPos)
         {
             if (imgPos.X < 0)
                 imgPos.X = 0;
@@ -269,22 +317,16 @@ namespace Battleship.Lobby
         /// <param name="ship">The ship to place</param>
         /// <param name="row">The grid row</param>
         /// <param name="col">The grid column</param>
-        public void Place(double cellSize)
+        public void Place(double? left = null, double ? top = null)
         {
             double x = col * cellSize;
             double y = row * cellSize;
 
             // Set position on canvas
-            Canvas.SetLeft(this.img, x);
-            Canvas.SetTop(this.img, y);
+            Canvas.SetLeft(this.img, (double)(left == null ? x : left));
+            Canvas.SetTop(this.img, (double)(top == null ? y : top));
 
             mousePos = new Point(x, y);
-        }
-
-        public void Dispose()
-        {
-            canvas.Children.Remove(img);
-            img.Source = null;
         }
     }
 }

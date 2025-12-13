@@ -22,72 +22,41 @@ namespace Battleship.Lobby
             Marked = 2
         }
 
-        public delegate void OnChangedEventHandler();
-        public event OnChangedEventHandler? OnChangedEvent;
+        // Event on board state changed
+        public delegate void OnStateChangeEventHandler();
+        public event OnStateChangeEventHandler? OnStateChangeEvent;
 
         private readonly int boardSize = boardSize;
-
-        // The board representation: 0 = free, >0 = blocked
         private int[,] board = new int[boardSize, boardSize];
 
         // The list of ships on the board
-        public List<Ship> ships = new List<Ship>();
+        private readonly List<Ship> ships = [];
 
         // The current ship being placed on the board and its validity
         public Ship? currentShip = null;
 
-        /// <summary>
-        /// Get ship at position or create new ship if none exists and remove it from the field if found
-        /// </summary>
-        /// <param name="row">The row of the ship</param>
-        /// <param name="col">The.col of the ship</param>
-        /// <param name="type">The type of the ship</param>
-        /// <param name="orientation">The orientation of the ship</param>
-        /// <returns>The ship at the position or a new ship</returns>
-        public Ship Get(int row, int col, ShipType type, ShipOrientation orientation)
-        {
-            foreach (Ship ship in ships)
-            {
-                if (ship.HasPosition(row, col))
-                {
-                    Ship currentShip = ship;
-                    BlockSurroundingCells(ship, false);
-                    ships.Remove(ship);
-                    return ship;
-                }
-            }
-            return new Ship(row, col, type, orientation);
-        }
 
         /// <summary>
         /// Mark a position for the current ship
         /// </summary>
-        /// <param name="row">The row of the ship</param>
-        /// <param name="col">The.col of the ship</param>
-        /// <param name="type">The type of the ship</param>
-        /// <param name="orientation">The orientation of the ship</param>
+        /// <param name="ship">The ship object</param>
         /// <returns>True if the position is valid, otherwise false</returns>
-        public bool Mark(int row, int col, ShipType type, ShipOrientation orientation)
+        public bool Mark(Ship ship)
         {
             if (currentShip == null)
             {
-                currentShip = Get(row, col, type, orientation);
-                OnChangedEvent?.Invoke();
+                if (ships.Contains(ship))
+                {
+                    BlockSurroundingCells(ship, false);
+                    ships.Remove(ship);
+                }
+                currentShip = ship;
+                OnStateChangeEvent?.Invoke();
             }
-
-            bool dragShipValuesChanged = false;
-
-            if (currentShip.row != row || currentShip.col != col || currentShip.orientation != orientation)
-                dragShipValuesChanged = true;
-
-            currentShip.row = row;
-            currentShip.col = col;
-            currentShip.orientation = orientation;
 
             bool isValidPosition = IsValidPosition(currentShip);
 
-            if (dragShipValuesChanged)
-                OnChangedEvent?.Invoke();
+            OnStateChangeEvent?.Invoke();
 
             return isValidPosition;
         }
@@ -95,31 +64,23 @@ namespace Battleship.Lobby
         /// <summary>
         /// Add the current ship to the field
         /// </summary>
+        /// <param name="ship">The ship object</param>
         /// <returns>True if the ship was placed successfully, otherwise false</returns>
-        public bool Add()
+        public bool Place(Ship ship)
         {
-            if (currentShip == null)
-                return false;
-
-            if (!IsValidPosition(currentShip))
+            if (!IsValidPosition(ship))
             {
                 currentShip = null;
                 return false;
             }
             else
             {
-                BlockSurroundingCells(currentShip);
-                ships.Add(currentShip);
+                BlockSurroundingCells(ship);
+                ships.Add(ship);
                 currentShip = null;
-                OnChangedEvent?.Invoke();
+                OnStateChangeEvent?.Invoke();
                 return true;
             }
-        }
-
-        public void Remove()
-        {
-            currentShip = null;
-            OnChangedEvent?.Invoke();
         }
 
         /// <summary>
@@ -136,7 +97,7 @@ namespace Battleship.Lobby
         /// </summary>
         /// <param name="shipList">The list of ships to place</param>
         /// <returns>The list of placed ships or null if placement failed</returns>
-        public List<Ship>? Randomize(List<Ship> shipList)
+        public bool Randomize(List<Ship> shipList)
         {
             int index = 0;
 
@@ -154,27 +115,37 @@ namespace Battleship.Lobby
 
             while (shipList.Count > index)
             {
+                // Increment for iteration and total iterations
                 iteration++;
                 totalIterations++;
+
+                // Set Random values for row, col and orientation
                 int row = randomRow.Next(0, boardSize);
                 int col = randomColumn.Next(0, boardSize);
                 Ship.ShipOrientation orientation = randomOrientation.Next(0, 2) == 0 ? Ship.ShipOrientation.Horizontal : Ship.ShipOrientation.Vertical;
+                
+                // Set attributes for ship
+                var ship = shipList[index];
+                ship.row = row;
+                ship.col = col;
+                ship.orientation = orientation;
 
-                Ship tmp = new Ship(row, col, shipList[index].type, orientation);
-
-                if (IsValidPosition(tmp))
+                // Is ship on a valid position?
+                if (IsValidPosition(ship))
                 {
-                    BlockSurroundingCells(tmp);
-                    ships.Add(tmp);
+                    BlockSurroundingCells(ship);
+                    ships.Add(ship);
                     iteration = 0;
                     index++;
                 }
+                // Check if total episodes exceed max total episodes
                 else if (totalEpisodes > maxTotalEpisodes)
                 {
                     Debug.WriteLine("Set ships randomly state: FAILED (Iterations: " + totalIterations + " & Episodes " + totalEpisodes + ")");
                     Reset();
-                    return null;
+                    return false;
                 }
+                // Check if iteration exceed max iterations
                 else if (iteration > maxIteration)
                 {
                     Reset();
@@ -184,7 +155,7 @@ namespace Battleship.Lobby
                 }
             }
             Debug.WriteLine("Set ships randomly state: SUCCESSFUL (Iterations: " + totalIterations + " & Episodes " + totalEpisodes + ")");
-            return ships;
+            return true;
         }
 
         /// <summary>
