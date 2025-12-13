@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using static Battleship.Logic.Ship;
 using System.Windows.Controls;
-using static Battleship.Logic.Playground;
 using System.Windows;
 using System.Numerics;
 using System;
@@ -9,17 +8,18 @@ using System.Drawing;
 
 namespace Battleship.Logic
 {
-    // Represents the battlefield where ships are placed
-    public class BattleField(int boardSize)
+    // The state of each field on the board
+    public enum FieldState
     {
-        // The state of each field on the board
-        public enum FieldState
-        {
-            Blocked = -1,
-            Water = 0,
-            Ship = 1,
-            Marked = 2
-        }
+        Blocked = -1,
+        Water = 0,
+        Ship = 1,
+        Marked = 2
+    }
+
+    // Represents the battlefield where ships are placed
+    public class DragShipBoard(int boardSize)
+    {
 
         // Event on board state changed
         public delegate void OnStateChangeEventHandler();

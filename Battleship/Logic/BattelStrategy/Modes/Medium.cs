@@ -7,10 +7,10 @@ using Battleship.Logic.Global;
 
 namespace Battleship.Logic.BattelStrategy.Modes
 {
-    public class Medium(GameSetting gameSetting, Playground playground) : GameAILogic(gameSetting, playground)
+    public class Medium(GameSetting gameSetting, PlaygroundBoardLogic boardLogic) : GameAILogic(gameSetting, boardLogic)
     {
         private readonly GameSetting gameSetting = gameSetting;
-        private readonly Playground playground = playground;
+        private readonly PlaygroundBoardLogic boardLogic = boardLogic;
 
         protected override Shot GetNextShot()
         {
@@ -21,7 +21,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
             {
                 for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
-                    if ((row + col) % 2 == 0 && !playground.WasShot(row, col)) // Gittermusterbedingung
+                    if ((row + col) % 2 == 0 && !boardLogic.WasShot(row, col)) // Gittermusterbedingung
                     {
                         possibleShots.Add(new Shot(row, col)); // Füge das Feld zu möglichen Schüssen hinzu
                     }
@@ -34,7 +34,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
                 {
                     for (int col = 0; col < gameSetting.BoardSize; col++)
                     {
-                        if (!playground.WasShot(row, col))
+                        if (!boardLogic.WasShot(row, col))
                         {
                             possibleShots.Add(new Shot(row, col)); // Füge jedes nicht beschossene Feld hinzu
                         }

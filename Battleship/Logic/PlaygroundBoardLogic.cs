@@ -1,40 +1,44 @@
-﻿using Battleship.Logic.Global;
+﻿using Battleship.Logic.BattelStrategy.Modes;
+using Battleship.Logic.Global;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Shapes;
 
 namespace Battleship.Logic
 {
-    public class BoardLogic
+    public enum CellState
     {
-        public enum ShotResult
-        {
-            Miss = -1,
-            None = 0,
-            Hit = 2,
-            Sunk = 3
-        }
+        BLOCKED = -2,
+        MISS = -1,
+        WATER = 0,
+        SHIP = 1,
+        HIT = 2,
+        SUNK = 3
+    }
 
-        public enum CellState
-        {
-            BLOCKED = -2,
-            MISS = -1,
-            WATER = 0,
-            SHIP = 1,
-            HIT = 2,
-            SUNK = 3
-        }
+    public enum ShotResult
+    {
+        Miss = -1,
+        None = 0,
+        Hit = 2,
+        Sunk = 3
+    }
 
+    public class PlaygroundBoardLogic
+    {
         private readonly int boardSize;
         private readonly List<DragShip> dragShips;
+        public List<Ship> Ships => dragShips.Cast<Ship>().ToList();
 
         private readonly List<(int x, int y)> shots = [];
         private readonly int[,] board;
 
-        public BoardLogic(int boardSize, List<DragShip> dragShips)
+        public PlaygroundBoardLogic(int boardSize, List<DragShip> dragShips)
         {
             this.boardSize = boardSize;
             this.dragShips = dragShips;
@@ -42,10 +46,22 @@ namespace Battleship.Logic
             board = new int[boardSize, boardSize];
         }
 
-        public ShotResult Shot(int row, int col)
+        public void Show(Canvas? canvas = null)
         {
-            if (row < 0 || row >= boardSize ||  
-                col < 0 || col >= boardSize ||
+            foreach (DragShip ship in dragShips)
+            {
+                if (canvas != null)
+                    ship.updateCanvas(canvas);
+                ship.Show();
+            }
+        }
+
+        public ShotResult Shoot(int row, int col)
+        {
+            if (row < 0 || row >= boardSize ||
+                col < 0 || col >= boardSize)
+                return ShotResult.None;
+            if (board[row, col] > 0 ||
                 shots.Contains((row, col)))
                 return ShotResult.None;
             shots.Add((row, col));
@@ -64,9 +80,26 @@ namespace Battleship.Logic
             return ShotResult.Miss;
         }
 
+        public bool WasShot(int row, int col)
+        {
+            foreach (DragShip ship in dragShips)
+            {
+                if (ship.Shots.Contains((row, col)))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public bool IsAllSunk()
         {
             return dragShips.All(ship => ship.IsSunk);
+        }
+
+        public int DeterminedSmallestShipSize()
+        {
+            return dragShips.Where(ship => !ship.IsSunk).Min(ship => (int)ship.type);
         }
 
         public CellState[,] GetBoardState()
@@ -85,6 +118,10 @@ namespace Battleship.Logic
                         boardState[i, j] = CellState.WATER;
                     }
                 }
+            }
+            foreach ((int, int) shot in shots)
+            {
+                boardState[shot.Item1, shot.Item2] = CellState.MISS;
             }
             foreach (Ship ship in dragShips)
             {

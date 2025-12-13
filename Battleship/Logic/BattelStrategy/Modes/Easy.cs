@@ -7,10 +7,10 @@ using Battleship.Logic.Global;
 
 namespace Battleship.Logic.BattelStrategy.Modes
 {
-    public class Easy(GameSetting gameSetting, Playground playground) : GameAILogic(gameSetting, playground)
+    public class Easy(GameSetting gameSetting, PlaygroundBoardLogic boardLogic) : GameAILogic(gameSetting, boardLogic)
     {
         private readonly GameSetting gameSetting = gameSetting;
-        private readonly Playground playground = playground;
+        private readonly PlaygroundBoardLogic boardLogic = boardLogic;
 
         override protected Shot GetNextShot()
         {

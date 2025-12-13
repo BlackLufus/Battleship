@@ -1,5 +1,4 @@
 ﻿using Battleship.Logic.Global;
-using Battleship.Logic.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +10,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Battleship.Logic.BattelStrategy.Modes
 {
-    public abstract class GameAILogic(GameSetting gameSetting, Playground playground)
+    public abstract class GameAILogic(GameSetting gameSetting, PlaygroundBoardLogic boardLogic)
     {
         protected enum Orientation
         {
@@ -30,7 +29,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
         }
 
         private readonly GameSetting gameSetting = gameSetting;
-        private readonly Playground playground = playground;
+        private readonly PlaygroundBoardLogic boardLogic = boardLogic;
 
         private Shot? firstShot = null;
         private Shot? lastShot = null;
@@ -66,16 +65,16 @@ namespace Battleship.Logic.BattelStrategy.Modes
                             shipOrientation = null;
                         }
 
-                        Playground.ShotResult shotResult = playground.Shoot(nextShot.Row, nextShot.Col, gameSetting.RestrictedArea || gameSetting.GameDifficult > GameSetting.Difficult.Easy || gameSetting.GameDifficult == GameSetting.Difficult.Easy && new Random().Next(0, 3) == 0);
-                        if (shotResult != Playground.ShotResult.None)
+                        ShotResult shotResult = boardLogic.Shoot(nextShot.Row, nextShot.Col);
+                        if (shotResult != ShotResult.None)
                         {
-                            if (shotResult == Playground.ShotResult.Miss)
+                            if (shotResult == ShotResult.Miss)
                             {
                                 return false;
                             }
                             else
                             {
-                                if (shotResult == Playground.ShotResult.Hit && gameSetting.GameDifficult != GameSetting.Difficult.VeryEasy)
+                                if (shotResult == ShotResult.Hit && gameSetting.GameDifficult != GameSetting.Difficult.VeryEasy)
                                 {
                                     firstShot = new Shot(nextShot.Row, nextShot.Col);
                                 }
@@ -114,18 +113,18 @@ namespace Battleship.Logic.BattelStrategy.Modes
                     }
                     else
                     {
-                        Playground.ShotResult shotResult = playground.Shoot(row, col, gameSetting.RestrictedArea || gameSetting.GameDifficult > GameSetting.Difficult.Easy || gameSetting.GameDifficult == GameSetting.Difficult.Easy && new Random().Next(0, 3) == 0);
+                        ShotResult shotResult = boardLogic.Shoot(row, col);
 
-                        if (shotResult != Playground.ShotResult.None)
+                        if (shotResult != ShotResult.None)
                         {
-                            if (shotResult == Playground.ShotResult.Miss)
+                            if (shotResult == ShotResult.Miss)
                             {
                                 ChangeDirection();
                                 return false;
                             }
                             else
                             {
-                                if (shotResult == Playground.ShotResult.Hit)
+                                if (shotResult == ShotResult.Hit)
                                 {
                                     lastShot = new Shot(row, col);
                                     // Bestimme die Orientierung basierend auf den Schüssen
@@ -216,13 +215,13 @@ namespace Battleship.Logic.BattelStrategy.Modes
             }
 
             // Wenn das Feld Wasser oder Schiff ist, mache weiter
-            if (playground.WasShot(row, col))
+            if (boardLogic.WasShot(row, col))
             {
                 //Debug.WriteLine("Field is not water or ship");
                 return Orientation.None;
             }
 
-            int shipSize = i != 0 ? i : playground.DeterminedSmallestShipSize();
+            int shipSize = i != 0 ? i : boardLogic.DeterminedSmallestShipSize();
 
             int vertical = CheckDirection(row + 1, col, 1, 0) + CheckDirection(row - 1, col, -1, 0) + 1;
             int horizontal = CheckDirection(row, col + 1, 0, 1) + CheckDirection(row, col - 1, 0, -1) + 1;
@@ -260,7 +259,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
             while (newRow >= 0 && newRow < gameSetting.BoardSize && newCol >= 0 && newCol < gameSetting.BoardSize)
             {
                 // Wenn das Feld Wasser oder Schiff ist, zähle es
-                if (!playground.WasShot(newRow, newCol))
+                if (!boardLogic.WasShot(newRow, newCol))
                 {
                     count++;
                 }

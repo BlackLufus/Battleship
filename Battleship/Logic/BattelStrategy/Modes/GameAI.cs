@@ -11,16 +11,16 @@ namespace Battleship.Logic.BattelStrategy.Modes
     public class GameAI
     {
         private readonly GameSetting gameSetting;
-        private readonly Playground playground;
+        private readonly PlaygroundBoardLogic boardLogic;
 
         private Easy? easy;
         private Medium? medium;
         private Hard? hard;
 
-        public GameAI(GameSetting gameSetting, Playground playground)
+        public GameAI(GameSetting gameSetting, PlaygroundBoardLogic boardLogic)
         {
             this.gameSetting = gameSetting;
-            this.playground = playground;
+            this.boardLogic = boardLogic;
 
             Setup();
         }
@@ -30,19 +30,19 @@ namespace Battleship.Logic.BattelStrategy.Modes
             switch (gameSetting.GameDifficult)
             {
                 case GameSetting.Difficult.VeryEasy:
-                    easy = new Easy(gameSetting, playground);
+                    easy = new Easy(gameSetting, boardLogic);
                     break;
                 case GameSetting.Difficult.Easy:
-                    easy = new Easy(gameSetting, playground);
+                    easy = new Easy(gameSetting, boardLogic);
                     break;
                 case GameSetting.Difficult.Medium:
-                    medium = new Medium(gameSetting, playground);
+                    medium = new Medium(gameSetting, boardLogic);
                     break;
                 case GameSetting.Difficult.Hard:
-                    hard = new Hard(gameSetting, playground);
+                    hard = new Hard(gameSetting, boardLogic);
                     break;
                 case GameSetting.Difficult.VeryHard:
-                    hard = new Hard(gameSetting, playground, true);
+                    hard = new Hard(gameSetting, boardLogic, true);
                     break;
             }
         }

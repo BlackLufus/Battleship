@@ -46,28 +46,22 @@ namespace Battleship.Logic
 
         public bool Hit(int row, int col)
         {
-            if (shots.Contains((row, col)))
-            {
+            if (!HasPosition(row, col))
                 return false;
-            }
-            else if (HasPosition(row, col))
-            {
-                shots.Add((row, col));
-                return true;
-            }
-            return false;
+
+            if (shots.Contains((row, col)))
+                return false;
+
+            shots.Add((row, col));
+            return true;
         }
 
         public bool HasPosition(int row, int col)
         {
             if (orientation == ShipOrientation.Horizontal)
-            {
                 return this.row == row && col >= this.col && col < this.col + (int)type;
-            }
             else
-            {
                 return this.col == col && row >= this.row && row < this.row + (int)type;
-            }
         }
 
         public void Dispose()

@@ -13,15 +13,15 @@ namespace Battleship.Logic.BattelStrategy.Modes
     public class Hard : GameAILogic
     {
         private readonly GameSetting gameSetting;
-        private readonly Playground playground;
+        private readonly PlaygroundBoardLogic boardLogic;
         private int[,]? probability;
         private int nextClaivoyantShot = 0;
         private readonly bool claivoyantAbilities;
 
-        public Hard(GameSetting gameSetting, Playground playground, bool claivoyantAbilities = false) : base(gameSetting, playground)
+        public Hard(GameSetting gameSetting, PlaygroundBoardLogic boardLogic, bool claivoyantAbilities = false) : base(gameSetting, boardLogic)
         {
             this.gameSetting = gameSetting;
-            this.playground = playground;
+            this.boardLogic = boardLogic;
             this.claivoyantAbilities = claivoyantAbilities;
         }
 
@@ -44,9 +44,9 @@ namespace Battleship.Logic.BattelStrategy.Modes
             {
                 for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
-                    if (!playground.WasShot(row, col))
+                    if (!boardLogic.WasShot(row, col))
                     {
-                        foreach (var ship in playground.Ships)
+                        foreach (var ship in boardLogic.Ships)
                         {
                             if (!ship.IsSunk)
                             {
@@ -64,7 +64,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
                                         {
                                             for (int i = 0; i < (int)ship.type; i++)
                                             {
-                                                if (!playground.WasShot(row, col + i))
+                                                if (!boardLogic.WasShot(row, col + i))
                                                 {
                                                     probability![row, col + i]++;
                                                 }
@@ -74,7 +74,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
                                         {
                                             for (int i = 0; i < (int)ship.type; i++)
                                             {
-                                                if (!playground.WasShot(row, col - i))
+                                                if (!boardLogic.WasShot(row, col - i))
                                                 {
                                                     probability![row, col - i]++;
                                                 }
@@ -87,7 +87,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
                                         {
                                             for (int i = 0; i < (int)ship.type; i++)
                                             {
-                                                if (!playground.WasShot(row + i, col))
+                                                if (!boardLogic.WasShot(row + i, col))
                                                 {
                                                     probability![row + i, col]++;
                                                 }
@@ -97,7 +97,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
                                         {
                                             for (int i = 0; i < (int)ship.type; i++)
                                             {
-                                                if (!playground.WasShot(row - i, col))
+                                                if (!boardLogic.WasShot(row - i, col))
                                                 {
                                                     probability![row - i, col]++;
                                                 }
@@ -114,8 +114,8 @@ namespace Battleship.Logic.BattelStrategy.Modes
 
         private Shot ClairvoyantShot()
         {
-            int index = new Random().Next(0, playground.Ships.FindAll(ship => !ship.IsSunk).Count);
-            Ship ship = playground.Ships.FindAll(ship => !ship.IsSunk)[index];
+            int index = new Random().Next(0, boardLogic.Ships.FindAll(ship => !ship.IsSunk).Count);
+            Ship ship = boardLogic.Ships.FindAll(ship => !ship.IsSunk)[index];
 
             if (ship.orientation == Ship.ShipOrientation.Vertical)
             {
@@ -126,7 +126,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
                     row = new Random().Next(ship.row, ship.row + (int)ship.type - 1);
                     col = ship.col;
                 }
-                while (playground.WasShot(row, col));
+                while (boardLogic.WasShot(row, col));
                 return new Shot(row, col);
             }
             else
@@ -138,7 +138,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
                     row = ship.row;
                     col = new Random().Next(ship.col, ship.col + (int)ship.type - 1);
                 }
-                while (playground.WasShot(row, col));
+                while (boardLogic.WasShot(row, col));
                 return new Shot(row, col);
             }
         }
