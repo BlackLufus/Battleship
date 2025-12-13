@@ -1,7 +1,7 @@
 ﻿using Battleship.Lobby;
+using Battleship.Logic;
 using Battleship.Logic.BattelStrategy;
 using Battleship.Logic.Global;
-using Battleship.Logic.Models;
 using Battleship.Logic.Network;
 using Battleship.Logic.Services;
 using Battleship.Resources.Components;
@@ -23,8 +23,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
-using static Battleship.Logic.Models.BattleField;
-using static Battleship.Logic.Models.Ship;
 
 namespace Battelship.Lobby
 {
@@ -37,7 +35,7 @@ namespace Battelship.Lobby
         private readonly MQTTService? mqttService;
 
         private readonly GameSetting gameSetting;
-        private readonly BattleField battleField;
+        private readonly DragShipBoard battleField;
 
         private FieldState[,] cellState;
         private StackPanel[,] cellPanels;
@@ -49,7 +47,7 @@ namespace Battelship.Lobby
         private readonly Brush MarkedBrush = (Brush)new BrushConverter().ConvertFrom("#44ff0000");
 
         private readonly ImageSource RestrictionImage =
-    new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png"));
+            new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png"));
 
         public FleetManagerPage(GameSetting gameSetting, MQTTService? mqttService = null)
         {
@@ -80,7 +78,7 @@ namespace Battelship.Lobby
             }
 
             // Initialize Battlefield
-            this.battleField = new BattleField(gameSetting.BoardSize);
+            this.battleField = new DragShipBoard(gameSetting.BoardSize);
             battleField.OnStateChangeEvent += Update;
 
             // Initialize DragShipManager
@@ -207,19 +205,19 @@ namespace Battelship.Lobby
         /// </summary>
         /// <param name="element">The StackPanel element representing the cell</param>
         /// <param name="fieldState">The state of the field</param>
-        private void UpdateCell(StackPanel element, BattleField.FieldState fieldState)
+        private void UpdateCell(StackPanel element, FieldState fieldState)
         {
-            if (fieldState == BattleField.FieldState.Marked)
+            if (fieldState == FieldState.Marked)
             {
                 element.Background = MarkedBrush;
                 element.Children.Clear();
             }
-            else if (fieldState == BattleField.FieldState.Water)
+            else if (fieldState == FieldState.Water)
             {
                 element.Background = WaterBrush;
                 element.Children.Clear();
             }
-            else if (fieldState == BattleField.FieldState.Ship)
+            else if (fieldState == FieldState.Ship)
             {
                 element.Background = WaterBrush;
                 element.Children.Clear();
@@ -256,14 +254,14 @@ namespace Battelship.Lobby
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Navigation.RegisterPage(new GamePage(mqttService, gameSetting, new BoardLogic(gameSetting.BoardSize, friendlyShips)));
+                        //Navigation.RegisterPage(new GamePage(mqttService, gameSetting, dragShips));
                     });
                 };
                 mqttService.SendReady();
             }
             else
             {
-                BattleField enemyBattleField = new BattleField(gameSetting.BoardSize);
+                DragShipBoard enemyBattleField = new DragShipBoard(gameSetting.BoardSize);
                 var basicShipList = GetBasicShipList();
                 
                 bool isRandomizedSucceed = false;
@@ -272,7 +270,7 @@ namespace Battelship.Lobby
                     isRandomizedSucceed = enemyBattleField.Randomize(basicShipList.Cast<Ship>().ToList());
                 while (!isRandomizedSucceed);
 
-                Navigation.RegisterPage(new GamePage(gameSetting, new BoardLogic(gameSetting.BoardSize, friendlyShips), new BoardLogic(gameSetting.BoardSize, basicShipList.Cast<Ship>().ToList())));
+                Navigation.RegisterPage(new GamePage(gameSetting, dragShips, basicShipList));
             }
         }
 

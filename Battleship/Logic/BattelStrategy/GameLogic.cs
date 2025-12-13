@@ -50,8 +50,6 @@ namespace Battleship.Logic.BattelStrategy
             GameAI computerLogic = new(gameSetting, friendlyBoard);
             bool gameEnded = false;
 
-            Debug.WriteLine("Start");
-
             try
             {
                 while (!gameEnded)
@@ -69,7 +67,7 @@ namespace Battleship.Logic.BattelStrategy
                         //Debug.WriteLine("Hit: " + hit);
 
                         // ⬇️ wieder UI-Thread
-                        OnEnemyShotEvent?.Invoke();
+                        OnFriendlyShotEvent?.Invoke();
 
                         if (!gameSetting.HitBonus || !hit)
                         {
@@ -104,7 +102,7 @@ namespace Battleship.Logic.BattelStrategy
             ShotResult result = enemyBoard.Shoot(row, col);
             if (result == ShotResult.Miss)
                 turn = TurnType.EnemyTurn;
-            OnFriendlyShotEvent?.Invoke();
+            OnEnemyShotEvent?.Invoke();
         }
     }
 }

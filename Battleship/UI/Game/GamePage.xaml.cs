@@ -2,9 +2,12 @@
 using Battleship.Logic.BattelStrategy;
 using Battleship.Logic.Global;
 using Battleship.Logic.Network;
+using Battleship.Resources.Components;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,35 +29,54 @@ namespace Battleship.UI.Game
     {
         private readonly MQTTService? mqttService;
         private readonly GameSetting gameSetting;
-        private readonly BoardLogic friendlyBoard;
-        private readonly BoardLogic enemyBoard;
+        private readonly PlaygroundBoardLogic friendlyBoard;
+        private readonly PlaygroundBoardLogic enemyBoard;
 
         private readonly GameLogic gameLogic;
 
-        public GamePage(MQTTService mqttService, GameSetting gameSetting, BoardLogic friendlyBoard, bool myTurn = false)
+        private readonly StackPanel[,] friendlyCellPanel;
+        private readonly CellState[,] friendlyCellState;
+        private readonly StackPanel[,] enemyCellPanel;
+        private readonly CellState[,] enemyCellState;
+
+        private readonly ImageSource WaterImage =
+            new BitmapImage(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
+
+        private readonly ImageSource FireImage =
+            new BitmapImage(new Uri("pack://application:,,,/Resources/Images/fire.png"));
+
+        private readonly ImageSource RedCrossImage =
+            new BitmapImage(new Uri("pack://application:,,,/Resources/Images/red-cross.png"));
+
+        private readonly ImageSource RestrictionImage =
+            new BitmapImage(new Uri("pack://application:,,,/Resources/Images/restriction.png"));
+
+        private readonly ImageSource TargetImage =
+            new BitmapImage(new Uri("pack://application:,,,/Resources/Images/target.png"));
+
+        public GamePage(GameSetting gameSetting, List<DragShip> friednlyDragShips, List<DragShip> enemyDragShips)
         {
             this.gameSetting = gameSetting;
-            this.friendlyBoard = friendlyBoard;
-            this.enemyBoard = new BoardLogic(gameSetting.BoardSize, []);
-            this.mqttService = mqttService;
+            friendlyCellPanel = new StackPanel[gameSetting.BoardSize, gameSetting.BoardSize];
+            friendlyCellState = new CellState[gameSetting.BoardSize, gameSetting.BoardSize];
+            enemyCellPanel = new StackPanel[gameSetting.BoardSize, gameSetting.BoardSize];
+            enemyCellState = new CellState[gameSetting.BoardSize, gameSetting.BoardSize];
 
             InitializeComponent();
 
-            SetOpponentUsername(mqttService.OpponentUsername);
-            SetMyUsername(Variables.Username);
+            this.friendlyBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, friednlyDragShips);
+            this.friendlyBoard.Show(FriendlyShipCanvas);
+            this.enemyBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, enemyDragShips);
+            this.enemyBoard.Show(EnemyShipCanvas);
 
-            PrepareGame();
-        }
+            InitPlaygroundBoard(EnemyWaterGrid, EnemyCellGrid, EnemyTargetGrid, enemyCellPanel);
+            InitPlaygroundBoard(FriendlyWaterGrid, FriendlyCellGrid, FriendlyTargetGrid, friendlyCellPanel);
 
-        public GamePage(GameSetting gameSetting, BoardLogic friendlyBoard, BoardLogic enemyBoard)
-        {
-            this.gameSetting = gameSetting;
-            this.friendlyBoard = friendlyBoard;
-            this.enemyBoard = enemyBoard;
-
-            InitializeComponent();
-
-            PrepareGame();
+            gameLogic = new GameLogic(gameSetting, enemyBoard, friendlyBoard);
+            gameLogic.OnEnemyShotEvent += OnEnemyShotEvent;
+            gameLogic.OnFriendlyShotEvent += OnFriendlyShotEvent;
+            gameLogic.OnGameEndedEvent += OnGameEndedEvent;
+            gameLogic.Start();
         }
 
         private void SetOpponentUsername(string username)
@@ -67,227 +89,164 @@ namespace Battleship.UI.Game
             MyUsername.Content = username;
         }
 
-        private void PrepareGame()
+        private void InitPlaygroundBoard(Grid waterGrid, Grid CellState, Grid targetGrid, StackPanel[,] cellPanel)
         {
-            CleanUp();
-            SetupPlaygroundDefinitions();
-            InitializeEnemyPlayground();
-            InitializePlayerPlayground();
-        }
-
-        private void CleanUp()
-        {
-            EnemyFieldBackground.Children.Clear();
-            EnemyFieldBackground.RowDefinitions.Clear();
-            EnemyFieldBackground.ColumnDefinitions.Clear();
-            EnemyFieldForeground.Children.Clear();
-            EnemyFieldForeground.RowDefinitions.Clear();
-            EnemyFieldForeground.ColumnDefinitions.Clear();
-            EnemyFieldTarget.Children.Clear();
-            EnemyFieldTarget.RowDefinitions.Clear();
-            EnemyFieldTarget.ColumnDefinitions.Clear();
-            MyFieldBackground.Children.Clear();
-            MyFieldBackground.RowDefinitions.Clear();
-            MyFieldBackground.ColumnDefinitions.Clear();
-            MyFieldForeground.Children.Clear();
-            MyFieldForeground.RowDefinitions.Clear();
-            MyFieldForeground.ColumnDefinitions.Clear();
-            MyFieldTarget.Children.Clear();
-            MyFieldTarget.RowDefinitions.Clear();
-            MyFieldTarget.ColumnDefinitions.Clear();
-        }
-
-        private void SetupPlaygroundDefinitions()
-        {
+            // Erstelle 10 Zeilen und 10 Spalten
             for (int i = 0; i < gameSetting.BoardSize; i++)
             {
-                EnemyFieldBackground.RowDefinitions.Add(new RowDefinition());
-                EnemyFieldBackground.ColumnDefinitions.Add(new ColumnDefinition());
-                EnemyFieldForeground.RowDefinitions.Add(new RowDefinition());
-                EnemyFieldForeground.ColumnDefinitions.Add(new ColumnDefinition());
-                EnemyFieldTarget.RowDefinitions.Add(new RowDefinition());
-                EnemyFieldTarget.ColumnDefinitions.Add(new ColumnDefinition());
-                MyFieldBackground.RowDefinitions.Add(new RowDefinition());
-                MyFieldBackground.ColumnDefinitions.Add(new ColumnDefinition());
-                MyFieldForeground.RowDefinitions.Add(new RowDefinition());
-                MyFieldForeground.ColumnDefinitions.Add(new ColumnDefinition());
-                MyFieldTarget.RowDefinitions.Add(new RowDefinition());
-                MyFieldTarget.ColumnDefinitions.Add(new ColumnDefinition());
+                waterGrid.RowDefinitions.Add(new RowDefinition());
+                waterGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                CellState.RowDefinitions.Add(new RowDefinition());
+                CellState.ColumnDefinitions.Add(new ColumnDefinition());
+                targetGrid.RowDefinitions.Add(new RowDefinition());
+                targetGrid.ColumnDefinitions.Add(new ColumnDefinition());
             }
-        }
 
-        private void InitializeEnemyPlayground()
-        {
+            // Füge in jede Zelle ein Bild hinzu
             for (int row = 0; row < gameSetting.BoardSize; row++)
             {
                 for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
-
-                    // Erstelle ein Image
-                    Image enemieImage = new();
-                    BitmapImage enemieImageBitmap = new(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
-                    enemieImage.Source = enemieImageBitmap;
-                    Grid.SetRow(enemieImage, row);
-                    Grid.SetColumn(enemieImage, col);
-                    EnemyFieldBackground.Children.Add(enemieImage);
-
-                    // Enemy Field Foreground
-                    Button enemyField = new()
+                    // Water Grid
+                    Image image = new()
                     {
-                        Height = gameSetting.CellSize,
-                        Width = gameSetting.CellSize,
-                        Background = Brushes.Transparent,
-                        BorderBrush = Brushes.Transparent,
-                        BorderThickness = new Thickness(0)
-                    };
-                    Grid.SetRow(enemyField, row);
-                    Grid.SetColumn(enemyField, col);
-                    EnemyFieldForeground.Children.Add(enemyField);
-
-
-                    // Enemy Field Target
-                    Button enemyFieldTarget = new()
-                    {
-                        Height = gameSetting.CellSize,
-                        Width = gameSetting.CellSize,
-                        Background = Brushes.Transparent,
-                        BorderBrush = Brushes.Transparent,
-                        BorderThickness = new Thickness(0)
+                        Source = WaterImage
                     };
 
-                    enemyFieldTarget.MouseEnter += (sender, e) =>
+                    // Position in Grid
+                    Grid.SetRow(image, row);
+                    Grid.SetColumn(image, col);
+
+                    // Add to Grid
+                    waterGrid.Children.Add(image);
+
+
+                    // Cell State Grid
+                    StackPanel stackPanel = new StackPanel();
+                    cellPanel[row, col] = stackPanel;
+
+                    // Position in Grid
+                    Grid.SetRow(stackPanel, row);
+                    Grid.SetColumn(stackPanel, col);
+
+                    // Add to Grid
+                    CellState.Children.Add(stackPanel);
+
+
+                    // Target Grid
+                    Border cell = new Border()
                     {
-                        int row = Grid.GetRow(enemyFieldTarget);
-                        int col = Grid.GetColumn(enemyFieldTarget);
-                        Grid grid = new();
-                        grid.Children.Add(new Image
-                        {
-                            Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/target.png"))
-                        });
-                        enemyFieldTarget.Content = grid;
+                        Tag = new Point(row, col),
+                        Background = Brushes.Transparent
                     };
-                    enemyFieldTarget.MouseLeave += (sender, e) =>
-                    {
-                        int row = Grid.GetRow(enemyFieldTarget);
-                        int col = Grid.GetColumn(enemyFieldTarget);
-                        //if (enemyPlayground.Field[row, col] != 0 && enemyPlayground.Field[row, col] != 1)
-                        //{
-                        //    Grid grid = new()
-                        //    {
-                        //        Background = Brushes.Transparent,
-                        //    };
-                        //    enemyFieldTarget.Content = grid;
-                        //}
-                        //else
-                        //{
-                        //    enemyFieldTarget.Content = null;
-                        //}
-                    };
-                    enemyFieldTarget.PreviewMouseDown += (sender, e) =>
-                    {
-                        enemyFieldTarget.Background = new BrushConverter().ConvertFrom("#44FFFFFF") as Brush;
-                    };
-                    enemyFieldTarget.PreviewMouseUp += (sender, e) =>
-                    {
-                        enemyFieldTarget.Background = Brushes.Transparent;
-                    };
-                    enemyFieldTarget.Click += (sender, e) =>
-                    {
-                        if (gameSetting.GameMode == GameSetting.Mode.PlayerVsPlayer)
-                        {
-                            gameLogic!.Shot(EnemyFieldForeground, enemyField);
-                        }
-                        else
-                        {
-                            gameLogic!.Shot(EnemyFieldForeground, enemyField);
-                        }
-                    };
-                    Grid.SetRow(enemyFieldTarget, row);
-                    Grid.SetColumn(enemyFieldTarget, col);
-                    EnemyFieldTarget.Children.Add(enemyFieldTarget);
+
+                    // Add Event listeners
+                    cell.MouseEnter += OnMouseEnter;
+                    cell.MouseLeave += OnMouseLeave;
+                    cell.PreviewMouseDown += OnPreviewMouseDown;
+                    cell.PreviewMouseUp += OnPreviewMouseUp;
+
+                    // Position in Grid
+                    Grid.SetRow(cell, row);
+                    Grid.SetColumn(cell, col);
+
+                    // Add to Grid
+                    targetGrid.Children.Add(cell);
                 }
             }
         }
 
-        private void InitializePlayerPlayground()
+        private void UpdateCell(StackPanel element, CellState state)
         {
-            for (int row = 0; row < gameSetting.BoardSize; row++)
+            if (state == CellState.HIT || state == CellState.SUNK)
             {
-                for (int col = 0; col < gameSetting.BoardSize; col++)
+                Image image = new()
                 {
-                    // My Field Background
-                    Image myImage = new();
-                    BitmapImage myBitmap = new(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
-                    myImage.Source = myBitmap;
-                    Grid.SetRow(myImage, row);
-                    Grid.SetColumn(myImage, col);
-                    MyFieldBackground.Children.Add(myImage);
+                    Source = FireImage,
+                };
+                element.Children.Add(image);
+            }
+            else if (state == CellState.MISS)
+            {
+                Image image = new()
+                {
+                    Source = RedCrossImage,
+                };
+                element.Children.Add(image);
+            }
+            else if (state == CellState.BLOCKED && gameSetting.RestrictedArea)
+            {
+                Image image = new()
+                {
+                    Source = RestrictionImage,
+                };
+                element.Children.Add(image);
+            }
+        }
 
+        private void OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            Border cell = (Border)sender;
+            var image = new Image
+            {
+                Source = TargetImage,
+                Stretch = Stretch.Uniform
+            };
+            cell.Child = image;
+        }
 
-                    // My Field Foreground
-                    Button myField = new()
-                    {
-                        Height = gameSetting.CellSize,
-                        Width = gameSetting.CellSize,
-                        Background = Brushes.Transparent,
-                        BorderBrush = Brushes.Transparent,
-                        BorderThickness = new Thickness(0)
-                    };
-                    Grid.SetRow(myField, row);
-                    Grid.SetColumn(myField, col);
-                    MyFieldForeground.Children.Add(myField);
+        private void OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            Border cell = (Border) sender;
+            cell.Background = Brushes.Transparent;
+            cell.Child = null;
+        }
 
+        private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Border cell = (Border)sender;
+            Point p = (Point)cell.Tag;
+            gameLogic.Shoot((int)p.X, (int)p.Y);
+            cell.Background = new BrushConverter().ConvertFrom("#44FFFFFF") as Brush;
+        }
 
-                    // My Field Target
-                    Button myFieldTarget = new()
+        private void OnPreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Border cell = (Border)sender;
+            cell.Background = Brushes.Transparent;
+        }
+
+        private void OnEnemyShotEvent()
+        {
+            CellState[,] newCellState = enemyBoard.GetBoardState();
+            update(newCellState, enemyCellState, enemyCellPanel);
+        }
+
+        private void OnFriendlyShotEvent()
+        {
+            CellState[,] newCellState = friendlyBoard.GetBoardState();
+            update(newCellState, friendlyCellState, friendlyCellPanel);
+        }
+
+        private void update(CellState[,] newCellState, CellState[,] currentCellState, StackPanel[,] cellPanels)
+        {
+            for (int x = 0; x < gameSetting.BoardSize; x++)
+            {
+                for (int y = 0; y < gameSetting.BoardSize; y++)
+                {
+                    // Update content of a specific Cell
+                    if (currentCellState[x, y] != newCellState[x, y])
                     {
-                        Height = gameSetting.CellSize,
-                        Width = gameSetting.CellSize,
-                        Background = Brushes.Transparent,
-                        BorderBrush = Brushes.Transparent,
-                        BorderThickness = new Thickness(0)
-                    };
-                    myFieldTarget.MouseEnter += (sender, e) =>
-                    {
-                        int row = Grid.GetRow(myFieldTarget);
-                        int col = Grid.GetColumn(myFieldTarget);
-                        Grid grid = new();
-                        grid.Children.Add(new Image
-                        {
-                            Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/target.png"))
-                        });
-                        myFieldTarget.Content = grid;
-                    };
-                    myFieldTarget.MouseLeave += (sender, e) =>
-                    {
-                        int row = Grid.GetRow(myFieldTarget);
-                        int col = Grid.GetColumn(myFieldTarget);
-                        //if (friendlyBoard.Field[row, col] != 0 && friendlyBoard.Field[row, col] != 1)
-                        //{
-                        //    Grid grid = new()
-                        //    {
-                        //        Background = Brushes.Transparent,
-                        //    };
-                        //    myFieldTarget.Content = grid;
-                        //}
-                        //else
-                        //{
-                        //    myFieldTarget.Content = null;
-                        //}
-                    };
-                    myFieldTarget.PreviewMouseDown += (sender, e) =>
-                    {
-                        myFieldTarget.Background = new BrushConverter().ConvertFrom("#44FFFFFF") as Brush;
-                    };
-                    myFieldTarget.PreviewMouseUp += (sender, e) =>
-                    {
-                        myFieldTarget.Background = Brushes.Transparent;
-                    };
-                    Grid.SetRow(myFieldTarget, row);
-                    Grid.SetColumn(myFieldTarget, col);
-                    MyFieldTarget.Children.Add(myFieldTarget);
+                        currentCellState[x, y] = newCellState[x, y];
+                        UpdateCell(cellPanels[x, y], newCellState[x, y]);
+                    }
                 }
             }
+        }
+
+        private void OnGameEndedEvent()
+        {
+            Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Game Over", "Das spiel ist zu ende, danke fürs Spielen");
         }
     }
 }

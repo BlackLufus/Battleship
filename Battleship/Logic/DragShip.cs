@@ -93,6 +93,8 @@ namespace Battleship.Logic
                 // rotate with right click
                 img.MouseRightButtonDown += (s, e) =>
                 {
+                    if (!IsDragging)
+                        return;
                     Rotate(
                         orientation == ShipOrientation.Horizontal
                         ? ShipOrientation.Vertical

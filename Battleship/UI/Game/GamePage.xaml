@@ -43,10 +43,10 @@
                             <ColumnDefinition Width="320" />
                         </Grid.ColumnDefinitions>
                         <Border Grid.Row="1" Grid.Column="0" Height="340" Width="310" Background="#888" CornerRadius="10" ClipToBounds="True" HorizontalAlignment="Right">
-                            <StackPanel>
+                            <StackPanel Height="340" Width="300">
                                 <Grid Height="35">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="0" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="5" />
                                         <ColumnDefinition Width="*" />
@@ -54,112 +54,54 @@
                                     <Label Grid.Column="1" Content="Gegner:" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
                                     <Label Grid.Column="3" x:Name="OpponentUsername" Content="Spieler 1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
                                 </Grid>
-                                <Grid VerticalAlignment="Bottom">
-                                    <Grid x:Name="EnemyFieldBackground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True" Background="Red">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                        </Grid.RowDefinitions>
+                                <Grid VerticalAlignment="Center">
+                                    <Grid Grid.Column="1" HorizontalAlignment="Center" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="300" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid.Clip>
-                                            <RectangleGeometry Rect="0, 0, 300, 300" RadiusX="8" RadiusY="8" />
-                                        </Grid.Clip>
-                                        <Image Grid.Row="0" Grid.Column="0" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
-                                        <Image Grid.Row="0" Grid.Column="1" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
-                                        <Image Grid.Row="0" Grid.Column="9" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
-                                        <Image Grid.Row="1" Grid.Column="0" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
-                                        <Image Grid.Row="1" Grid.Column="1" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="300" />
+                                        </Grid.RowDefinitions>
+                                        <Grid x:Name="EnemyWaterGrid" Background="#FF002684">
+                                            <!-- Enemy Level 1: Water Grid -->
+                                        </Grid>
                                     </Grid>
-                                    <Canvas x:Name="EnemyField">
 
+                                    <Canvas x:Name="EnemyShipCanvas" Grid.Column="0">
+                                        <!-- Enemy Level 2: Drag Ships -->
                                     </Canvas>
-                                    <Grid x:Name="EnemyFieldForeground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                        </Grid.RowDefinitions>
+
+                                    <Grid Grid.Column="1" HorizontalAlignment="Center">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="300" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid.Clip>
-                                            <RectangleGeometry Rect="0, 0, 300, 300" RadiusX="8" RadiusY="8" />
-                                        </Grid.Clip>
-                                        <Grid Background="#8fff" />
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="300" />
+                                        </Grid.RowDefinitions>
+                                        <Grid x:Name="EnemyCellGrid" MaxWidth="300" MaxHeight="300">
+                                            <!-- Enemy Level 3: Cell State Grid -->
+                                        </Grid>
                                     </Grid>
-                                    <Grid x:Name="EnemyFieldTarget" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                        </Grid.RowDefinitions>
+
+                                    <Grid Grid.Column="1" HorizontalAlignment="Center">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="300" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid.Clip>
-                                            <RectangleGeometry Rect="0, 0, 300, 300" RadiusX="8" RadiusY="8" />
-                                        </Grid.Clip>
-                                        <Grid Background="#8fff" />
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="300" />
+                                        </Grid.RowDefinitions>
+                                        <Grid x:Name="EnemyTargetGrid" MaxWidth="300" MaxHeight="300">
+                                            <!-- Enemy Level 4: Enemy Target Grid -->
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </StackPanel>
                         </Border>
                         <Border Grid.Row="1" Grid.Column="2" Height="340" Width="310" Background="#888" CornerRadius="10" ClipToBounds="True" HorizontalAlignment="Left">
-                            <StackPanel>
+                            <StackPanel Height="340" Width="300">
                                 <Grid Height="35">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="0" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="5" />
                                         <ColumnDefinition Width="*" />
@@ -167,103 +109,45 @@
                                     <Label Grid.Column="1" Content="Dein Feld:" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
                                     <Label Grid.Column="3" x:Name="MyUsername" Content="Spieler 2" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
                                 </Grid>
-                                <Grid VerticalAlignment="Bottom">
-                                    <Grid x:Name="MyFieldBackground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True" Background="Red">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                        </Grid.RowDefinitions>
+                                <Grid VerticalAlignment="Center">
+                                    <Grid Grid.Column="1" HorizontalAlignment="Center" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="300" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid.Clip>
-                                            <RectangleGeometry Rect="0, 0, 300, 300" RadiusX="8" RadiusY="8" />
-                                        </Grid.Clip>
-                                        <Image Grid.Row="0" Grid.Column="0" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
-                                        <Image Grid.Row="0" Grid.Column="1" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
-                                        <Image Grid.Row="0" Grid.Column="9" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
-                                        <Image Grid.Row="1" Grid.Column="0" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
-                                        <Image Grid.Row="1" Grid.Column="1" Source="pack://application:,,,/Resources/Images/water-field.png" Width="30" Height="30" Stretch="Fill" />
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="300" />
+                                        </Grid.RowDefinitions>
+                                        <Grid x:Name="FriendlyWaterGrid" Background="#FF002684">
+                                            <!-- Enemy Level 1: Water Grid -->
+                                        </Grid>
                                     </Grid>
-                                    <Canvas x:Name="MyField">
 
+                                    <Canvas x:Name="FriendlyShipCanvas" Grid.Column="0">
+                                        <!-- Enemy Level 2: Drag Ship Grid -->
                                     </Canvas>
-                                    <Grid x:Name="MyFieldForeground" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                        </Grid.RowDefinitions>
+
+                                    <Grid Grid.Column="1" HorizontalAlignment="Center">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="300" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid.Clip>
-                                            <RectangleGeometry Rect="0, 0, 300, 300" RadiusX="8" RadiusY="8" />
-                                        </Grid.Clip>
-                                        <Grid Background="#8fff" />
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="300" />
+                                        </Grid.RowDefinitions>
+                                        <Grid x:Name="FriendlyCellGrid" MaxWidth="300" MaxHeight="300">
+                                            <!-- Enemy Level 3: Cell State Grid -->
+                                        </Grid>
                                     </Grid>
-                                    <Grid x:Name="MyFieldTarget" Height="300" Width="300" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                            <RowDefinition Height="30" />
-                                        </Grid.RowDefinitions>
+
+                                    <Grid Grid.Column="1" HorizontalAlignment="Center">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="300" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid.Clip>
-                                            <RectangleGeometry Rect="0, 0, 300, 300" RadiusX="8" RadiusY="8" />
-                                        </Grid.Clip>
-                                        <Grid Background="#8fff" />
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="300" />
+                                        </Grid.RowDefinitions>
+                                        <Grid x:Name="FriendlyTargetGrid" MaxWidth="300" MaxHeight="300">
+                                            <!-- Enemy Level 4: Enemy Target Grid -->
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </StackPanel>
