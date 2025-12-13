@@ -327,9 +327,9 @@ namespace Battleship.Playground
             {
                 Image element = new()
                 {
-                    Width = gameSetting.CellSize * (ship.shipOrientation == Ship.ShipOrientation.Horizontal ? (int)ship.shipType : 1),
-                    Height = gameSetting.CellSize * (ship.shipOrientation == Ship.ShipOrientation.Vertical ? (int)ship.shipType : 1),
-                    Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + ship.shipType.ToString().ToLower() + ".png")), (int)ship.shipOrientation)
+                    Width = gameSetting.CellSize * (ship.orientation == Ship.ShipOrientation.Horizontal ? (int)ship.type : 1),
+                    Height = gameSetting.CellSize * (ship.orientation == Ship.ShipOrientation.Vertical ? (int)ship.type : 1),
+                    Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + ship.type.ToString().ToLower() + ".png")), (int)ship.orientation)
                 };
 
                 if (myField)
@@ -341,7 +341,7 @@ namespace Battleship.Playground
                     EnemyField.Children.Add(element);
                 }
 
-                Canvas.SetLeft(element, 5 + ship.column * gameSetting.CellSize);
+                Canvas.SetLeft(element, 5 + ship.col * gameSetting.CellSize);
                 Canvas.SetTop(element, ship.row * gameSetting.CellSize);
             }
         }

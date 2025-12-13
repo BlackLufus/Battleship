@@ -50,7 +50,7 @@ namespace Battleship.Playground.ComputerLogic
                         {
                             if (!ship.IsSunk)
                             {
-                                Orientation orientation = DetermineShipOrientation(row, col, (int)ship.shipType);
+                                Orientation orientation = DetermineShipOrientation(row, col, (int)ship.type);
 
                                 if (orientation != Orientation.None)
                                 {
@@ -60,9 +60,9 @@ namespace Battleship.Playground.ComputerLogic
                                     }
                                     if (orientation == Orientation.Horizontal || orientation == Orientation.Both)
                                     {
-                                        if (col + (int)ship.shipType - 1 < gameSetting.BoardSize)
+                                        if (col + (int)ship.type - 1 < gameSetting.BoardSize)
                                         {
-                                            for (int i = 0; i < (int)ship.shipType; i++)
+                                            for (int i = 0; i < (int)ship.type; i++)
                                             {
                                                 if (!playground.WasShot(row, col + i))
                                                 {
@@ -70,9 +70,9 @@ namespace Battleship.Playground.ComputerLogic
                                                 }
                                             }
                                         }
-                                        if (col - (int)ship.shipType + 1 >= 0)
+                                        if (col - (int)ship.type + 1 >= 0)
                                         {
-                                            for (int i = 0; i < (int)ship.shipType; i++)
+                                            for (int i = 0; i < (int)ship.type; i++)
                                             {
                                                 if (!playground.WasShot(row, col - i))
                                                 {
@@ -83,9 +83,9 @@ namespace Battleship.Playground.ComputerLogic
                                     }
                                     if (orientation == Orientation.Vertical || orientation == Orientation.Both)
                                     {
-                                        if (row + (int)ship.shipType - 1 < gameSetting.BoardSize)
+                                        if (row + (int)ship.type - 1 < gameSetting.BoardSize)
                                         {
-                                            for (int i = 0; i < (int)ship.shipType; i++)
+                                            for (int i = 0; i < (int)ship.type; i++)
                                             {
                                                 if (!playground.WasShot(row + i, col))
                                                 {
@@ -93,9 +93,9 @@ namespace Battleship.Playground.ComputerLogic
                                                 }
                                             }
                                         }
-                                        if (row - (int)ship.shipType + 1 >= 0)
+                                        if (row - (int)ship.type + 1 >= 0)
                                         {
-                                            for (int i = 0; i < (int)ship.shipType; i++)
+                                            for (int i = 0; i < (int)ship.type; i++)
                                             {
                                                 if (!playground.WasShot(row - i, col))
                                                 {
@@ -117,14 +117,14 @@ namespace Battleship.Playground.ComputerLogic
             int index = new Random().Next(0, playground.Ships.FindAll(ship => !ship.IsSunk).Count);
             Ship ship = playground.Ships.FindAll(ship => !ship.IsSunk)[index];
 
-            if (ship.shipOrientation == Ship.ShipOrientation.Vertical)
+            if (ship.orientation == Ship.ShipOrientation.Vertical)
             {
                 int row = 0;
                 int col = 0;
                 do
                 {
-                    row = new Random().Next(ship.row, ship.row + (int)ship.shipType - 1);
-                    col = ship.column;
+                    row = new Random().Next(ship.row, ship.row + (int)ship.type - 1);
+                    col = ship.col;
                 }
                 while (playground.WasShot(row, col));
                 return new Shot(row, col);
@@ -136,7 +136,7 @@ namespace Battleship.Playground.ComputerLogic
                 do
                 {
                     row = ship.row;
-                    col = new Random().Next(ship.column, ship.column + (int)ship.shipType - 1);
+                    col = new Random().Next(ship.col, ship.col + (int)ship.type - 1);
                 }
                 while (playground.WasShot(row, col));
                 return new Shot(row, col);

@@ -18,65 +18,65 @@
         }
 
         public int row;
-        public int column;
-        public ShipType shipType;
-        public ShipOrientation shipOrientation;
+        public int col;
+        public ShipType type;
+        public ShipOrientation orientation;
 
         private readonly List<(int, int)> shots = [];
 
-        public int Health => (int)shipType - shots.Count;
+        public int Health => (int)type - shots.Count;
         public List<(int, int)> Shots => shots;
         public bool IsSunk => Health == 0;
 
-        public Ship(ShipType shipType, ShipOrientation shipOrientation)
+        public Ship(ShipType type, ShipOrientation orientation)
         {
-            this.shipType = shipType;
-            this.shipOrientation = shipOrientation;
+            this.type = type;
+            this.orientation = orientation;
         }
 
-        public Ship(int row, int column, ShipType shipType, ShipOrientation shipOrientation)
+        public Ship(int row, int col, ShipType type, ShipOrientation orientation)
         {
             this.row = row;
-            this.column = column;
-            this.shipType = shipType;
-            this.shipOrientation = shipOrientation;
+            this.col = col;
+            this.type = type;
+            this.orientation = orientation;
         }
 
-        public bool Hit(int row, int column)
+        public bool Hit(int row, int col)
         {
-            if (shots.Contains((row, column)))
+            if (shots.Contains((row, col)))
             {
                 return false;
             }
-            else if (shipOrientation == ShipOrientation.Horizontal)
+            else if (orientation == ShipOrientation.Horizontal)
             {
-                if (this.row == row && column >= this.column && column < this.column + (int)shipType)
+                if (this.row == row && col >= this.col && col < this.col + (int)type)
                 {
-                    shots.Add((row, column));
+                    shots.Add((row, col));
                     return true;
                 }
                 return false;
             }
             else
             {
-                if (this.column == column && row >= this.row && row < this.row + (int)shipType)
+                if (this.col == col && row >= this.row && row < this.row + (int)type)
                 {
-                    shots.Add((row, column));
+                    shots.Add((row, col));
                     return true;
                 }
                 return false;
             }
         }
 
-        public bool HasPosition(int row, int column)
+        public bool HasPosition(int row, int col)
         {
-            if (shipOrientation == ShipOrientation.Horizontal)
+            if (orientation == ShipOrientation.Horizontal)
             {
-                return this.row == row && column >= this.column && column < this.column + (int)shipType;
+                return this.row == row && col >= this.col && col < this.col + (int)type;
             }
             else
             {
-                return this.column == column && row >= this.row && row < this.row + (int)shipType;
+                return this.col == col && row >= this.row && row < this.row + (int)type;
             }
         }
 

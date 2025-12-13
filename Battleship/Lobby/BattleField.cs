@@ -40,7 +40,7 @@ namespace Battleship.Lobby
         /// Get ship at position or create new ship if none exists and remove it from the field if found
         /// </summary>
         /// <param name="row">The row of the ship</param>
-        /// <param name="col">The column of the ship</param>
+        /// <param name="col">The.col of the ship</param>
         /// <param name="type">The type of the ship</param>
         /// <param name="orientation">The orientation of the ship</param>
         /// <returns>The ship at the position or a new ship</returns>
@@ -63,7 +63,7 @@ namespace Battleship.Lobby
         /// Mark a position for the current ship
         /// </summary>
         /// <param name="row">The row of the ship</param>
-        /// <param name="col">The column of the ship</param>
+        /// <param name="col">The.col of the ship</param>
         /// <param name="type">The type of the ship</param>
         /// <param name="orientation">The orientation of the ship</param>
         /// <returns>True if the position is valid, otherwise false</returns>
@@ -77,12 +77,12 @@ namespace Battleship.Lobby
 
             bool dragShipValuesChanged = false;
 
-            if (currentShip.row != row || currentShip.column != col || currentShip.shipOrientation != orientation)
+            if (currentShip.row != row || currentShip.col != col || currentShip.orientation != orientation)
                 dragShipValuesChanged = true;
 
             currentShip.row = row;
-            currentShip.column = col;
-            currentShip.shipOrientation = orientation;
+            currentShip.col = col;
+            currentShip.orientation = orientation;
 
             bool isValidPosition = IsValidPosition(currentShip);
 
@@ -160,7 +160,7 @@ namespace Battleship.Lobby
                 int col = randomColumn.Next(0, boardSize);
                 Ship.ShipOrientation orientation = randomOrientation.Next(0, 2) == 0 ? Ship.ShipOrientation.Horizontal : Ship.ShipOrientation.Vertical;
 
-                Ship tmp = new Ship(row, col, shipList[index].shipType, orientation);
+                Ship tmp = new Ship(row, col, shipList[index].type, orientation);
 
                 if (IsValidPosition(tmp))
                 {
@@ -194,14 +194,14 @@ namespace Battleship.Lobby
         /// <returns>True if the position is valid, otherwise false</returns>
         public bool IsValidPosition(Ship ship)
         {
-            int len = (int)ship.shipType;
+            int len = (int)ship.type;
             // Horizontal
-            if (ship.shipOrientation == Ship.ShipOrientation.Horizontal)
+            if (ship.orientation == Ship.ShipOrientation.Horizontal)
             {
                 for (int i = 0; i < len; i++)
                 {
                     int r = ship.row;
-                    int c = ship.column + i;
+                    int c = ship.col + i;
 
                     // If cell is not on the board at all
                     if (r < 0 || r >= boardSize ||
@@ -219,7 +219,7 @@ namespace Battleship.Lobby
             for (int i = 0; i < len; i++)
             {
                 int r = ship.row + i;
-                int c = ship.column;
+                int c = ship.col;
 
                 if (r < 0 || r >= boardSize ||
                     c < 0 || c >= boardSize)
@@ -238,17 +238,17 @@ namespace Battleship.Lobby
         /// <param name="add">True to block, false to unblock</param>
         public void BlockSurroundingCells(Ship ship, bool add = true)
         {
-            int len = (int)ship.shipType;
+            int len = (int)ship.type;
             int delta = add ? 1 : -1;
 
-            if (ship.shipOrientation == ShipOrientation.Horizontal)
+            if (ship.orientation == ShipOrientation.Horizontal)
             {
                 for (int i = -1; i <= len; i++)
                 {
                     for (int j = -1; j <= 1; j++)
                     {
                         int r = ship.row + j;
-                        int c = ship.column + i;
+                        int c = ship.col + i;
 
                         if (r >= 0 && r < boardSize &&
                             c >= 0 && c < boardSize)
@@ -265,7 +265,7 @@ namespace Battleship.Lobby
                     for (int j = -1; j <= 1; j++)
                     {
                         int r = ship.row + i;
-                        int c = ship.column + j;
+                        int c = ship.col + j;
 
                         if (r >= 0 && r < boardSize &&
                             c >= 0 && c < boardSize)
@@ -300,35 +300,35 @@ namespace Battleship.Lobby
             }
             if (currentShip != null && IsValidPosition(currentShip))
             {
-                if (currentShip.shipOrientation == Ship.ShipOrientation.Horizontal)
+                if (currentShip.orientation == Ship.ShipOrientation.Horizontal)
                 {
-                    for (int i = 0; i < (int)currentShip.shipType; i++)
+                    for (int i = 0; i < (int)currentShip.type; i++)
                     {
-                        boardState[currentShip.row, currentShip.column + i] = FieldState.Marked;
+                        boardState[currentShip.row, currentShip.col + i] = FieldState.Marked;
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < (int)currentShip.shipType; i++)
+                    for (int i = 0; i < (int)currentShip.type; i++)
                     {
-                        boardState[currentShip.row + i, currentShip.column] = FieldState.Marked;
+                        boardState[currentShip.row + i, currentShip.col] = FieldState.Marked;
                     }
                 }
             }
             foreach (Ship ship in ships)
             {
-                if (ship.shipOrientation == Ship.ShipOrientation.Horizontal)
+                if (ship.orientation == Ship.ShipOrientation.Horizontal)
                 {
-                    for (int i = 0; i < (int)ship.shipType; i++)
+                    for (int i = 0; i < (int)ship.type; i++)
                     {
-                        boardState[ship.row, ship.column + i] = FieldState.Ship;
+                        boardState[ship.row, ship.col + i] = FieldState.Ship;
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < (int)ship.shipType; i++)
+                    for (int i = 0; i < (int)ship.type; i++)
                     {
-                        boardState[ship.row + i, ship.column] = FieldState.Ship;
+                        boardState[ship.row + i, ship.col] = FieldState.Ship;
                     }
                 }
             }

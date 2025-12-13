@@ -81,7 +81,7 @@ namespace Battelship.Lobby
             battleField.OnChangedEvent += Update;
 
             // Simple Drag and Drop Manager
-            this.simpleDragDrop = new DragShipManager(gameSetting.CellSize, battleField, GameCanvas);
+            this.simpleDragDrop = new DragShipManager(gameSetting.CellSize, battleField);
             this.simpleDragDrop.OnShipRemovedEvent += HangleOnShipRemoved;
 
             // Initialize Field and Ships
@@ -304,12 +304,12 @@ namespace Battelship.Lobby
             }
             foreach (Ship ship in ships)
             {
-                DragShip currentDrag = AddDragShip(ship.shipType);
+                DragShip currentDrag = AddDragShip(ship.type);
                 draggers.Add(currentDrag);
 
                 // Orientierung setzen
-                currentDrag.Rotate(gameSetting.CellSize, ship.shipOrientation);
-                currentDrag.Place(gameSetting.CellSize, ship.row, ship.column);
+                currentDrag.Rotate(gameSetting.CellSize, ship.orientation);
+                currentDrag.Place(gameSetting.CellSize, ship.row, ship.col);
             }
             Update();
         }

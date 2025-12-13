@@ -78,11 +78,11 @@ namespace Battleship.Playground
 
         private void MarkRestictedArea(Ship ship)
         {
-            if (ship.shipOrientation == Ship.ShipOrientation.Horizontal)
+            if (ship.orientation == Ship.ShipOrientation.Horizontal)
             {
                 for (int row = ship.row - 1; row <= ship.row + 1; row++)
                 {
-                    for (int col = ship.column - 1; col <= ship.column + (int)ship.shipType; col++)
+                    for (int col = ship.col - 1; col <= ship.col + (int)ship.type; col++)
                     {
                         if (row >= 0 && row < field.GetLength(0) && col >= 0 && col < field.GetLength(1) && field[row, col] == (int)FieldState.Water)
                         {
@@ -93,9 +93,9 @@ namespace Battleship.Playground
             }
             else
             {
-                for (int row = ship.row - 1; row <= ship.row + (int)ship.shipType; row++)
+                for (int row = ship.row - 1; row <= ship.row + (int)ship.type; row++)
                 {
-                    for (int col = ship.column - 1; col <= ship.column + 1; col++)
+                    for (int col = ship.col - 1; col <= ship.col + 1; col++)
                     {
                         if (row >= 0 && row < field.GetLength(0) && col >= 0 && col < field.GetLength(1) && field[row, col] == (int)FieldState.Water)
                         {
@@ -113,7 +113,7 @@ namespace Battleship.Playground
 
         public int DeterminedSmallestShipSize()
         {
-            return ships.Where(ship => !ship.IsSunk).Min(ship => (int)ship.shipType);
+            return ships.Where(ship => !ship.IsSunk).Min(ship => (int)ship.type);
         }
 
         public void Dump()
@@ -150,33 +150,33 @@ namespace Battleship.Playground
                 {
                     Debug.WriteLine("Merge Ship with TOP ship");
                     newShip.row = Math.Min(newShip.row, ship.row);
-                    newShip.shipType = (Ship.ShipType)((int)ship.shipType + (int)newShip.shipType);
+                    newShip.type = (Ship.ShipType)((int)ship.type + (int)newShip.type);
                     newShip.Shots.AddRange(ship.Shots);
-                    newShip.shipOrientation = Ship.ShipOrientation.Vertical;
+                    newShip.orientation = Ship.ShipOrientation.Vertical;
                     oldShips.Add(ship);
                 }
                 if (ship.Shots.Contains((row + 1, col)))
                 {
                     Debug.WriteLine("Merge Ship with BOTTOM ship");
-                    newShip.shipType = (Ship.ShipType)((int)ship.shipType + (int)newShip.shipType);
+                    newShip.type = (Ship.ShipType)((int)ship.type + (int)newShip.type);
                     newShip.Shots.AddRange(ship.Shots);
-                    newShip.shipOrientation = Ship.ShipOrientation.Vertical;
+                    newShip.orientation = Ship.ShipOrientation.Vertical;
                     oldShips.Add(ship);
                 }
                 if (ship.Shots.Contains((row, col - 1)))
                 {
                     Debug.WriteLine("Merge Ship with LEFT ship");
-                    newShip.column = Math.Min(newShip.column, ship.column);
-                    newShip.shipType = (Ship.ShipType)((int)ship.shipType + (int)newShip.shipType);
-                    newShip.shipOrientation = Ship.ShipOrientation.Horizontal;
+                    newShip.col = Math.Min(newShip.col, ship.col);
+                    newShip.type = (Ship.ShipType)((int)ship.type + (int)newShip.type);
+                    newShip.orientation = Ship.ShipOrientation.Horizontal;
                     newShip.Shots.AddRange(ship.Shots);
                     oldShips.Add(ship);
                 }
                 if (ship.Shots.Contains((row, col + 1)))
                 {
                     Debug.WriteLine("Merge Ship with RIGHT ship");
-                    newShip.shipType = (Ship.ShipType)((int)ship.shipType + (int)newShip.shipType);
-                    newShip.shipOrientation = Ship.ShipOrientation.Horizontal;
+                    newShip.type = (Ship.ShipType)((int)ship.type + (int)newShip.type);
+                    newShip.orientation = Ship.ShipOrientation.Horizontal;
                     newShip.Shots.AddRange(ship.Shots);
                     oldShips.Add(ship);
                 }
@@ -195,7 +195,7 @@ namespace Battleship.Playground
             Debug.WriteLine("Ships -> " + ships.Count);
             foreach (Ship ship in ships)
             {
-                Debug.WriteLine("Ship -> " + ship.shipType + ", Positionen: " + string.Join(", ", ship.Shots));
+                Debug.WriteLine("Ship -> " + ship.type + ", Positionen: " + string.Join(", ", ship.Shots));
             }
         }
     }
