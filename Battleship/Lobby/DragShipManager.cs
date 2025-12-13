@@ -24,9 +24,6 @@ namespace Battleship.Lobby
         public delegate void OnShipRemovedEventHandler(DragShip dragger);
         public event OnShipRemovedEventHandler? OnShipRemovedEvent;
 
-        // Currently dragged ship
-        public DragShip? currentDrag;
-
         // Variables provided by class constructor
         private readonly double cellSize = cellSize;
         private readonly BattleField battleField = battleField;
@@ -37,25 +34,22 @@ namespace Battleship.Lobby
         // Stores the datetime object of the last update
         private DateTime last = DateTime.Now;
 
-        // Show if user is dragging a dragship
-        private bool isDragging = false;
-
 
         /// <summary>
         /// Get grid position from mouse position
         /// </summary>
         /// <param name="mousePos">Mouse position</param>
         /// <returns>True, when successful otherwise False</returns>
-        private bool GetGridPos(Point mousePos)
+        private bool GetGridPos(DragShip dragShip, Point mousePos)
         {
-            if (currentDrag == null)
+            if (dragShip == null)
                 return false;
 
-            double x = mousePos.X - currentDrag.offset.X;
-            double y = mousePos.Y - currentDrag.offset.Y;
+            double x = mousePos.X - dragShip.offset.X;
+            double y = mousePos.Y - dragShip.offset.Y;
 
-            currentDrag.col = (int)Math.Round(x / cellSize);
-            currentDrag.row = (int)Math.Round(y / cellSize);
+            dragShip.col = (int)Math.Round(x / cellSize);
+            dragShip.row = (int)Math.Round(y / cellSize);
 
             return true;
         }
@@ -65,27 +59,26 @@ namespace Battleship.Lobby
         /// </summary>
         /// <param name="ship">The ship to drag</param>
         /// <param name="mousePos">The mouse position</param>
-        public void StartDrag(DragShip ship, Point mousePos)
+        public void StartDrag(DragShip dragShip, Point mousePos)
         {
-            currentDrag = ship;
-            ship.offset = new Point(mousePos.X - Canvas.GetLeft(ship.img),
-                                    mousePos.Y - Canvas.GetTop(ship.img));
+            dragShip.offset = new Point(mousePos.X - Canvas.GetLeft(dragShip.img),
+                                    mousePos.Y - Canvas.GetTop(dragShip.img));
 
-            Mouse.Capture(ship.img);
+            Mouse.Capture(dragShip.img);
 
-            if (!isDragging) isDragging = true;
+            if (!dragShip.IsDragging) dragShip.IsDragging = true;
 
-            var gridPos = GetGridPos(mousePos);
+            var gridPos = GetGridPos(dragShip, mousePos);
             if (gridPos)
                 // Register dragger to battleField
-                battleField.Mark(ship.row, ship.col, ship.type, ship.orientation).ToString();
+                battleField.Mark(dragShip.row, dragShip.col, dragShip.type, dragShip.orientation).ToString();
         }
 
         /// <summary>
         /// Moves the currently dragged ship to the given mouse position
         /// </summary>
         /// <param name="mousePos">The mouse position</param>
-        public void Move(Point mousePos)
+        public void Move(DragShip dragShip, Point mousePos)
         {
             double delta = 1000 / fps;
             DateTime now = DateTime.Now;
@@ -95,28 +88,25 @@ namespace Battleship.Lobby
                 return;
 
             last = now;
-            //Debug.WriteLine($"Event verarbeitet: {diffInMillies}ms seit letztem Lauf");
-
-            if (currentDrag == null) return;
 
             // Calculate new position
-            double x = mousePos.X - currentDrag.offset.X;
-            double y = mousePos.Y - currentDrag.offset.Y;
+            double x = mousePos.X - dragShip.offset.X;
+            double y = mousePos.Y - dragShip.offset.Y;
 
             // Set new position
-            Canvas.SetLeft(currentDrag.img, x);
-            Canvas.SetTop(currentDrag.img, y);
+            Canvas.SetLeft(dragShip.img, x);
+            Canvas.SetTop(dragShip.img, y);
 
             // Update mouse position in dragger
-            currentDrag.SetMousePosition(mousePos);
+            dragShip.SetMousePosition(mousePos);
 
             // Calculate grid position
-            var gridPos = GetGridPos(mousePos);
+            var gridPos = GetGridPos(dragShip, mousePos);
             if (gridPos)
             {
                 //Debug.WriteLine($"x {x} y {y} row {currentDrag.row} col {currentDrag.col}");
                 // Mark it on the battlefield
-                battleField.Mark(currentDrag.row, currentDrag.col, currentDrag.type, currentDrag.orientation);
+                battleField.Mark(dragShip.row, dragShip.col, dragShip.type, dragShip.orientation);
             }
         }
 
@@ -124,43 +114,39 @@ namespace Battleship.Lobby
         /// Ends the dragging of the current ship at the given mouse position
         /// </summary>
         /// <param name="mousePos">The mouse position</param>
-        public void EndDrag(Point mousePos)
+        public void EndDrag(DragShip dragShip, Point mousePos)
         {
-            if (currentDrag == null) return;
-
             // Release mouse capture
             Mouse.Capture(null);
 
             // Try to add the ship to the battlefield
-            if (isDragging && battleField.Add())
+            if (dragShip.IsDragging && battleField.Add())
             {
                 // Place ship at the grid position
-                currentDrag.Place(cellSize, currentDrag.row, currentDrag.col);
+                dragShip.Place(cellSize);
             }
             else
             {
                 // Return to start position
-                Canvas.SetTop(currentDrag.img, currentDrag.startTopOffset);
-                Canvas.SetLeft(currentDrag.img, currentDrag.startLeftOffset);
-                currentDrag.Rotate(cellSize, ShipOrientation.Horizontal);
+                Canvas.SetTop(dragShip.img, dragShip.startTopOffset);
+                Canvas.SetLeft(dragShip.img, dragShip.startLeftOffset);
+                dragShip.Rotate(cellSize, ShipOrientation.Horizontal);
                 battleField.Remove();
             }
 
             // Reset dragging state
-            isDragging = false;
-            currentDrag = null;
+            dragShip.IsDragging = false;
         }
     }
 
     // DragShip class to hold drag information about a ship being dragged
-    public class DragShip(Canvas canvas, Image img, Ship.ShipType type) : IDisposable
+    public class DragShip(Canvas canvas, Image img, Ship.ShipType type) : Ship(type, Ship.ShipOrientation.Horizontal)
     {
         public Canvas canvas = canvas;
         public Image img = img;
-        public int row;
-        public int col;
-        public Ship.ShipType type = type;
-        public Ship.ShipOrientation orientation = Ship.ShipOrientation.Horizontal;
+
+        // True is DragShip is selected and dragged
+        public bool IsDragging = false;
 
         public Point offset;
         public Point mousePos;
@@ -283,7 +269,7 @@ namespace Battleship.Lobby
         /// <param name="ship">The ship to place</param>
         /// <param name="row">The grid row</param>
         /// <param name="col">The grid column</param>
-        public void Place(double cellSize, int row, int col)
+        public void Place(double cellSize)
         {
             double x = col * cellSize;
             double y = row * cellSize;
