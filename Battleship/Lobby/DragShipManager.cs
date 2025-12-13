@@ -18,7 +18,7 @@ using static Battleship.Global.Ship;
 namespace Battleship.Lobby
 {
     // Simple drag and drop handler for ships
-    public class DragShipManager(double cellSize, BattleField battleField, Canvas canvas)
+    public class DragShipManager(double cellSize, BattleField battleField)
     {
         // Event when a ship is removed from the battlefield
         public delegate void OnShipRemovedEventHandler(DragShip dragger);
@@ -27,11 +27,19 @@ namespace Battleship.Lobby
         // Currently dragged ship
         public DragShip? currentDrag;
 
+        // Variables provided by class constructor
         private readonly double cellSize = cellSize;
         private readonly BattleField battleField = battleField;
-        private readonly Canvas canvas = canvas;
 
+        // Represents the number of updates send per second or the number of frames are rendered per second
+        private readonly int fps = 120;
+
+        // Stores the datetime object of the last update
+        private DateTime last = DateTime.Now;
+
+        // Show if user is dragging a dragship
         private bool isDragging = false;
+
 
         /// <summary>
         /// Get grid position from mouse position
@@ -46,8 +54,8 @@ namespace Battleship.Lobby
             double x = mousePos.X - currentDrag.offset.X;
             double y = mousePos.Y - currentDrag.offset.Y;
 
-            currentDrag.col = (int)((x + (cellSize / 2)) / cellSize);
-            currentDrag.row = (int)((y + (cellSize / 2)) / cellSize);
+            currentDrag.col = (int)Math.Round(x / cellSize);
+            currentDrag.row = (int)Math.Round(y / cellSize);
 
             return true;
         }
@@ -70,10 +78,8 @@ namespace Battleship.Lobby
             var gridPos = GetGridPos(mousePos);
             if (gridPos)
                 // Register dragger to battleField
-                Debug.WriteLine(battleField.Mark(ship.row, ship.col, ship.type, ship.orientation).ToString());
+                battleField.Mark(ship.row, ship.col, ship.type, ship.orientation).ToString();
         }
-
-        DateTime last = DateTime.Now;
 
         /// <summary>
         /// Moves the currently dragged ship to the given mouse position
@@ -81,7 +87,6 @@ namespace Battleship.Lobby
         /// <param name="mousePos">The mouse position</param>
         public void Move(Point mousePos)
         {
-            int fps = 60;
             double delta = 1000 / fps;
             DateTime now = DateTime.Now;
             var diffInMillies = (now - last).TotalMilliseconds;
@@ -90,7 +95,7 @@ namespace Battleship.Lobby
                 return;
 
             last = now;
-            Debug.WriteLine($"Event verarbeitet: {diffInMillies}ms seit letztem Lauf");
+            //Debug.WriteLine($"Event verarbeitet: {diffInMillies}ms seit letztem Lauf");
 
             if (currentDrag == null) return;
 
@@ -108,8 +113,11 @@ namespace Battleship.Lobby
             // Calculate grid position
             var gridPos = GetGridPos(mousePos);
             if (gridPos)
+            {
+                //Debug.WriteLine($"x {x} y {y} row {currentDrag.row} col {currentDrag.col}");
                 // Mark it on the battlefield
                 battleField.Mark(currentDrag.row, currentDrag.col, currentDrag.type, currentDrag.orientation);
+            }
         }
 
         /// <summary>
@@ -190,7 +198,6 @@ namespace Battleship.Lobby
         /// </summary>
         public void Rotate(double cellSize, Ship.ShipOrientation newOrientation, bool ignoreDragPosition = true)
         {
-            Debug.WriteLine("Rotate");
 
             // Old Size
             double oldWidth = img.Width;

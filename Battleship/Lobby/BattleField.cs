@@ -35,7 +35,6 @@ namespace Battleship.Lobby
 
         // The current ship being placed on the board and its validity
         public Ship? currentShip = null;
-        private bool isValidPosition = false;
 
         /// <summary>
         /// Get ship at position or create new ship if none exists and remove it from the field if found
@@ -73,6 +72,7 @@ namespace Battleship.Lobby
             if (currentShip == null)
             {
                 currentShip = Get(row, col, type, orientation);
+                OnChangedEvent?.Invoke();
             }
 
             bool dragShipValuesChanged = false;
@@ -84,7 +84,7 @@ namespace Battleship.Lobby
             currentShip.column = col;
             currentShip.shipOrientation = orientation;
 
-            isValidPosition = IsValidPosition(currentShip);
+            bool isValidPosition = IsValidPosition(currentShip);
 
             if (dragShipValuesChanged)
                 OnChangedEvent?.Invoke();
@@ -104,7 +104,6 @@ namespace Battleship.Lobby
             if (!IsValidPosition(currentShip))
             {
                 currentShip = null;
-                isValidPosition = false;
                 return false;
             }
             else
@@ -299,7 +298,7 @@ namespace Battleship.Lobby
                     }
                 }
             }
-            if (currentShip != null && isValidPosition)
+            if (currentShip != null && IsValidPosition(currentShip))
             {
                 if (currentShip.shipOrientation == Ship.ShipOrientation.Horizontal)
                 {
