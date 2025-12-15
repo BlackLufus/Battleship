@@ -26,52 +26,25 @@ namespace Battelship.Lobby
     /// </summary>
     public partial class GameSettingsPage : Page
     {
-        private MQTTService? mqttService;
-        private bool isWaiting = false;
-        private HostSocketService? hostSocketService;
+        ExchangeHandler? exchangeHandler;
+
         private GameSetting.Mode mode;
         private static GameSettingsPage? instance;
-        private List<(string, object)> sizeList = [
-            ("5x5", 5),
-            ("6x6", 6),
-            ("7x7", 7),
-            ("8x8", 8),
-            ("9x9", 9),
-            ("10x10", 10),
-            ("11x11", 11),
-            ("12x12", 12),
-            ("13x13", 13),
-            ("14x14", 14),
-            ("15x15", 15),
-            ("16x16", 16),
-            ("17x17", 17),
-            ("18x18", 18),
-            ("19x19", 19),
-            ("20x20", 20),
-            ("21x21", 21),
-            ("22x22", 22),
-            ("23x23", 23),
-            ("24x24", 24),
-            ("25x25", 25),
-            ("26x26", 26),
-            ("27x27", 27),
-            ("28x28", 28),
-            ("29x29", 29),
-            ("30x30", 30),
-        ];
+
+        private List<(string, object)> sizeList = Enumerable.Range(5, 26).Select(i => ($"{i}x{i}", (object)i)).ToList();
 
         public List<(string, object)> SizeList
         {
             get { return sizeList; }
             set { sizeList = value; }
         }
+
         private List<(string, object)> difficultList = [
             ("Sehr Leicht", GameSetting.Difficult.VeryEasy),
             ("Leicht", GameSetting.Difficult.Easy),
             ("Mittel", GameSetting.Difficult.Medium),
             ("Schwer", GameSetting.Difficult.Hard),
-            ("Sehr schwer", GameSetting.Difficult.VeryHard),
-            //("Unmöglich", GameSetting.Difficult.Impossible)
+            ("Sehr schwer", GameSetting.Difficult.VeryHard)
         ];
 
         public List<(string, object)> DifficultList
@@ -85,9 +58,7 @@ namespace Battelship.Lobby
             get
             {
                 if (instance == null)
-                {
                     instance = new GameSettingsPage();
-                }
                 return instance;
             }
         }
@@ -100,92 +71,55 @@ namespace Battelship.Lobby
             this.DataContext = this;
         }
 
-        public GameSettingsPage(MQTTService mqttService)
+        public GameSettingsPage(ExchangeHandler exchangeHandler)
         {
-            this.mqttService = mqttService;
-            mqttService.OnClientConnected += () =>
-            {
-                Debug.WriteLine("Connected");
-                if (isWaiting)
-                {
-                    isWaiting = false;
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        ApplyButton_Click(null, null);
-                    });
-                }
-            };
-            mqttService.OnDisconnected += () =>
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Disconnected", "The other player has disconnected");
-                    Navigation.NavigateAndClear(new MenuPage());
-                });
-            };
-            mode = GameSetting.Mode.PlayerVsPlayer;
-            Debug.WriteLine("PlayerVsPlayer");
+            this.exchangeHandler = exchangeHandler;
+            this.exchangeHandler.OnTimeout += HandleTimeout;
+            this.exchangeHandler.OnDisconnect += HandleDisconnect;
+            this.exchangeHandler.OnSettingsAck += HandleSettingsAck;
 
-            InitializeComponent();
-
-            // Setze das DataContext, damit das Binding funktioniert
-            this.DataContext = this;
-        }
-
-        public GameSettingsPage(HostSocketService hostSocketService)
-        {
-            this.hostSocketService = hostSocketService;
             mode = GameSetting.Mode.PlayerVsPlayer;
 
             InitializeComponent();
 
-            // Setze das DataContext, damit das Binding funktioniert
             this.DataContext = this;
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        private void HandleTimeout()
         {
-            Navigation.NavigateBack();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Timeout", "Dein Gegner antwortet nicht mehr.");
+                Navigation.NavigateAndClear(new MenuPage());
+            });
         }
 
-        private void ApplyButton_Click(object sender, RoutedEventArgs e)
+        private void HandleDisconnect()
         {
-            if (mode != GameSetting.Mode.PlayerVsPlayer)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                foreach (RadioButton radio in ((StackPanel)GameModeGroup.Content).Children)
-                {
-                    if (radio.IsChecked == true)
-                    {
-                        mode = radio.Content.Equals("Normal") ? GameSetting.Mode.PlayerVsComputer : GameSetting.Mode.ComputerVsComputer;
-                    }
-                }
-            }
-            else if (mqttService != null)
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Spiel zu Ende", "Dein Gegner hat das Spiel verlassen");
+                Navigation.NavigateAndClear(new MenuPage());
+            });
+        }
+
+        private void HandleSettingsAck()
+        {
+            if (this.exchangeHandler == null)
+                return;
+
+            exchangeHandler.OnTimeout -= HandleTimeout;
+            exchangeHandler.OnDisconnect -= HandleDisconnect;
+            exchangeHandler.OnSettingsAck -= HandleSettingsAck;
+
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                if (mqttService.IsOpponentConnected)
-                {
-                    mqttService.SendGameSettings(
-                        (int)FieldSize.SelectedValue,
-                        FieldHitBonus.IsChecked,
-                        FieldRestricedArea.IsChecked,
-                        0,
-                        BattleshipAmount.Value,
-                        CruiserAmount.Value,
-                        SubmarineAmount.Value,
-                        DestroyerAmount.Value
-                    );
-                }
-                else
-                {
-                    isWaiting = true;
-                    Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Warte auf Verbindung", "Warte auf Verbindung des Gegners");
-                    return;
-                }
-            }
-            else if (hostSocketService != null)
-            {
-                hostSocketService.Send(new LobbyServiceMessage(LobbyServiceMessage.MessageType.FieldSize, (string)FieldSize.SelectedValue));
-            }
+                ApplySettings();
+            });
+        }
+
+        private void ApplySettings()
+        {
             Debug.WriteLine("SelectedValue: " + mode);
             Debug.WriteLine("SelectedValue: " + FieldSize.SelectedValue);
             Debug.WriteLine("SelectedValue: " + FieldDifficult.SelectedValue);
@@ -195,6 +129,8 @@ namespace Battelship.Lobby
             Debug.WriteLine("SelectedValue: " + CruiserAmount.Value);
             Debug.WriteLine("SelectedValue: " + SubmarineAmount.Value);
             Debug.WriteLine("SelectedValue: " + DestroyerAmount.Value);
+
+            // Open fleet manager page
             Navigation.NavigateTo(new FleetManagerPage(
                 new GameSetting(
                     mode,
@@ -207,8 +143,47 @@ namespace Battelship.Lobby
                     SubmarineAmount.Value,
                     DestroyerAmount.Value
                 ),
-                mqttService
+                exchangeHandler
             ));
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            Navigation.NavigateBack();
+        }
+
+        private void ApplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Multiplayer procedure
+            if (mode == GameSetting.Mode.PlayerVsPlayer)
+            {
+                if (exchangeHandler == null)
+                    return;
+
+                exchangeHandler.SendSettings(
+                    (int)FieldSize.SelectedValue,
+                    FieldHitBonus.IsChecked,
+                    FieldRestricedArea.IsChecked,
+                    0,
+                    BattleshipAmount.Value,
+                    CruiserAmount.Value,
+                    SubmarineAmount.Value,
+                    DestroyerAmount.Value
+                );
+                return;
+            }
+            // Singleplayer procedure
+            else
+            {
+                foreach (RadioButton radio in ((StackPanel)GameModeGroup.Content).Children)
+                {
+                    if (radio.IsChecked == true)
+                    {
+                        mode = radio.Content.Equals("Normal") ? GameSetting.Mode.PlayerVsComputer : GameSetting.Mode.ComputerVsComputer;
+                    }
+                }
+                ApplySettings();
+            }
         }
     }
 }

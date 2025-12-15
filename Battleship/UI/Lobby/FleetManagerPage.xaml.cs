@@ -32,7 +32,7 @@ namespace Battelship.Lobby
     /// </summary>
     public partial class FleetManagerPage : Page
     {
-        private readonly MQTTService? mqttService;
+        private readonly ExchangeHandler? exchangeHandler;
 
         private readonly GameSetting gameSetting;
         private readonly DragShipBoard battleField;
@@ -51,22 +51,22 @@ namespace Battelship.Lobby
 
         private readonly ImageSource WaterImage = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/water-field.png"));
 
-        public FleetManagerPage(GameSetting gameSetting, MQTTService? mqttService = null)
+        public FleetManagerPage(GameSetting gameSetting, ExchangeHandler? exchangeHandler = null)
         {
+            Debug.WriteLine("\n\n==========================================");
+            Debug.WriteLine("Das ist ein test2");
+            Debug.WriteLine("==========================================\n\n");
+
             this.gameSetting = gameSetting;
-            this.mqttService = mqttService;
+            this.exchangeHandler = exchangeHandler;
 
             // Handle disconnection event
-            if (mqttService != null)
+            if (this.exchangeHandler != null)
             {
-                mqttService.OnDisconnected += () =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Disconnected", "The other player has disconnected");
-                        Navigation.NavigateAndClear(new MenuPage());
-                    });
-                };
+                this.exchangeHandler.OnTimeout += HandleTimeout;
+                this.exchangeHandler.OnDisconnect += HandleDisconnect;
+                this.exchangeHandler.OnReady += HandleReadyState;
+                this.exchangeHandler.OnReadyAck += HandleReadyState;
             }
 
             // Initialize component
@@ -246,6 +246,59 @@ namespace Battelship.Lobby
             }
         }
 
+        private void HandleTimeout()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Timeout", "Dein Gegner antwortet nicht mehr.");
+                Navigation.NavigateAndClear(new MenuPage());
+            });
+        }
+
+        private void HandleDisconnect()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Spiel zu Ende", "Dein Gegner hat das Spiel verlassen");
+                Navigation.NavigateAndClear(new MenuPage());
+            });
+        }
+
+        private void HandleReadyState(bool readyToStart)
+        {
+            if (exchangeHandler == null)
+                return;
+
+            if (readyToStart)
+            {
+                exchangeHandler.OnTimeout -= HandleTimeout;
+                exchangeHandler.OnDisconnect -= HandleDisconnect;
+                exchangeHandler.OnReady -= HandleReadyState;
+                exchangeHandler.OnReadyAck -= HandleReadyState;
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var basicShipList = GetBasicShipList();
+                    int[] enemyShipData = exchangeHandler.EnemyShipData;
+                    for (int i = 0; i < basicShipList.Count; i++)
+                    {
+                        Ship ship = basicShipList[i];
+
+                        ship.type = (Ship.ShipType)enemyShipData[4 * i + 0];
+                        ship.orientation = (Ship.ShipOrientation)enemyShipData[4 * i + 1];
+                        ship.row = enemyShipData[4 * i + 2];
+                        ship.col = enemyShipData[4 * i + 3];
+                    }
+                    Navigation.RegisterPage(new GamePage(exchangeHandler, gameSetting, dragShips, basicShipList));
+                });
+            }
+        }
+
+        private void HandleEnemyShipsData(int[] data)
+        {
+
+        }
+
         /// <summary>
         /// Event handler for the Finish button click
         /// </summary>
@@ -255,29 +308,18 @@ namespace Battelship.Lobby
         {
             List<Ship> friendlyShips = dragShips.Cast<Ship>().ToList();
             Debug.WriteLine("FinishButton clicked");
-            Debug.WriteLine("mqttService: " + mqttService);
-            if (mqttService != null)
+            Debug.WriteLine("exchangeHandler: " + exchangeHandler);
+            if (exchangeHandler != null)
             {
-                if (!mqttService.IsOpponentReady)
-                {
-                    Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Warte auf Gegner", "Warte bis der Gegner fertig ist");
-                }
-                mqttService.OnStartGame += () =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        //Navigation.RegisterPage(new GamePage(mqttService, gameSetting, dragShips));
-                    });
-                };
-                mqttService.SendReady();
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Warte auf Gegner", "Warte bis der Gegner fertig ist");
+                exchangeHandler.SendReady(friendlyShips);
             }
             else
             {
                 DragShipBoard enemyBattleField = new DragShipBoard(gameSetting.BoardSize);
                 var basicShipList = GetBasicShipList();
-                
-                bool isRandomizedSucceed = false;
 
+                bool isRandomizedSucceed;
                 do
                     isRandomizedSucceed = enemyBattleField.Randomize(basicShipList.Cast<Ship>().ToList());
                 while (!isRandomizedSucceed);
@@ -341,7 +383,6 @@ namespace Battelship.Lobby
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Navigation.NavigateAndClear(new MenuPage());
-            mqttService?.Disconnected();
         }
     }
 }

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static Battleship.Resources.Components.Dialog;
 
 namespace Battleship.Logic.BattelStrategy
 {
@@ -31,6 +32,7 @@ namespace Battleship.Logic.BattelStrategy
         public delegate void FriendlyShotEventHandler();
         public event FriendlyShotEventHandler? OnFriendlyShotEvent;
 
+        private readonly ExchangeHandler? exchangeHandler;
         private readonly GameSetting gameSetting;
 
         private readonly PlaygroundBoardLogic enemyBoard;
@@ -45,7 +47,22 @@ namespace Battleship.Logic.BattelStrategy
             this.friendlyBoard = friendlyBoard;
         }
 
-        public async void Start()
+        public GameLogic(ExchangeHandler exchangeHandler, GameSetting gameSetting, PlaygroundBoardLogic enemyBoard, PlaygroundBoardLogic friendlyBoard)
+        {
+            this.exchangeHandler = exchangeHandler;
+            this.exchangeHandler.OnShoot += HandleShoot;
+            this.exchangeHandler.OnMiss += HandleMiss;
+            this.exchangeHandler.OnHit += HandleHit;
+            this.exchangeHandler.OnSunk += HandleSunk;
+            this.exchangeHandler.OnTimeout += HandleTimeout;
+            this.exchangeHandler.OnDisconnect += HandleDisconnect;
+
+            this.gameSetting = gameSetting;
+            this.enemyBoard = enemyBoard;
+            this.friendlyBoard = friendlyBoard;
+        }
+
+        public async void StartSinglePlayerMode()
         {
             GameAI computerLogic = new(gameSetting, friendlyBoard);
             bool gameEnded = false;
@@ -95,14 +112,84 @@ namespace Battleship.Logic.BattelStrategy
             }
         }
 
+        public void StartMultiPlayerMode()
+        {
+            if (exchangeHandler != null)
+                turn = exchangeHandler.IsHost ? TurnType.MyTurn : TurnType.EnemyTurn;
+        }
+
         public void Shoot(int row, int col)
         {
             if (turn == TurnType.EnemyTurn)
                 return;
-            ShotResult result = enemyBoard.Shoot(row, col);
+
+            if (exchangeHandler == null)
+            {
+                ShotResult result = enemyBoard.Shoot(row, col);
+
+                if (result == ShotResult.Miss)
+                    turn = TurnType.EnemyTurn;
+
+                OnEnemyShotEvent?.Invoke();
+            }
+            else
+            {
+                exchangeHandler.SendShoot(row, col);
+            }
+        }
+
+        private void HandleShoot(int row, int col)
+        {
+            if (exchangeHandler == null)
+                return;
+
+            if (turn == TurnType.MyTurn)
+                return;
+
+            ShotResult result = friendlyBoard.Shoot(row, col);
+
             if (result == ShotResult.Miss)
-                turn = TurnType.EnemyTurn;
+            {
+                turn = TurnType.MyTurn;
+                exchangeHandler.SendMiss(row, col);
+            }
+            else if (result == ShotResult.Hit)
+                exchangeHandler.SendHit(row, col);
+            else if (result == ShotResult.Sunk)
+                exchangeHandler.SendSunk(row, col);
+
+            OnFriendlyShotEvent?.Invoke();
+
+        }
+
+        private void HandleMiss(int row, int col)
+        {
+            turn = TurnType.EnemyTurn;
+
+            enemyBoard.Shoot(row, col, true);
             OnEnemyShotEvent?.Invoke();
+        }
+
+        private void HandleHit(int row, int col)
+        {
+            enemyBoard.Shoot(row, col, true);
+            OnEnemyShotEvent?.Invoke();
+        }
+
+        private void HandleSunk(int row, int col)
+        {
+            enemyBoard.Shoot(row, col, true);
+            OnEnemyShotEvent?.Invoke();
+        }
+
+        private void HandleTimeout()
+        {
+
+        }
+
+        private void HandleDisconnect()
+        {
+
         }
     }
 }

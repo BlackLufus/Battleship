@@ -27,12 +27,11 @@ namespace Battleship.UI.Game
     /// </summary>
     public partial class GamePage : Page
     {
-        private readonly MQTTService? mqttService;
+        private readonly GameLogic gameLogic;
+
         private readonly GameSetting gameSetting;
         private readonly PlaygroundBoardLogic friendlyBoard;
         private readonly PlaygroundBoardLogic enemyBoard;
-
-        private readonly GameLogic gameLogic;
 
         private readonly StackPanel[,] friendlyCellPanel;
         private readonly CellState[,] friendlyCellState;
@@ -69,14 +68,39 @@ namespace Battleship.UI.Game
             this.enemyBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, enemyDragShips);
             this.enemyBoard.Show(EnemyShipCanvas);
 
-            InitPlaygroundBoard(EnemyWaterGrid, EnemyCellGrid, EnemyTargetGrid, enemyCellPanel);
-            InitPlaygroundBoard(FriendlyWaterGrid, FriendlyCellGrid, FriendlyTargetGrid, friendlyCellPanel);
+            InitPlaygroundBoard(EnemyWaterGrid, EnemyCellGrid, EnemyTargetGrid, enemyCellPanel, false);
+            InitPlaygroundBoard(FriendlyWaterGrid, FriendlyCellGrid, FriendlyTargetGrid, friendlyCellPanel, true);
 
             gameLogic = new GameLogic(gameSetting, enemyBoard, friendlyBoard);
             gameLogic.OnEnemyShotEvent += OnEnemyShotEvent;
             gameLogic.OnFriendlyShotEvent += OnFriendlyShotEvent;
             gameLogic.OnGameEndedEvent += OnGameEndedEvent;
-            gameLogic.Start();
+            gameLogic.StartSinglePlayerMode();
+        }
+
+        public GamePage(ExchangeHandler exchangeHandler, GameSetting gameSetting, List<DragShip> friednlyDragShips, List<DragShip> enemyDragShips)
+        {
+            this.gameSetting = gameSetting;
+            friendlyCellPanel = new StackPanel[gameSetting.BoardSize, gameSetting.BoardSize];
+            friendlyCellState = new CellState[gameSetting.BoardSize, gameSetting.BoardSize];
+            enemyCellPanel = new StackPanel[gameSetting.BoardSize, gameSetting.BoardSize];
+            enemyCellState = new CellState[gameSetting.BoardSize, gameSetting.BoardSize];
+
+            InitializeComponent();
+
+            this.friendlyBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, friednlyDragShips);
+            this.friendlyBoard.Show(FriendlyShipCanvas, true);
+            this.enemyBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, enemyDragShips);
+            this.enemyBoard.Show(EnemyShipCanvas, false);
+
+            InitPlaygroundBoard(EnemyWaterGrid, EnemyCellGrid, EnemyTargetGrid, enemyCellPanel, false);
+            InitPlaygroundBoard(FriendlyWaterGrid, FriendlyCellGrid, FriendlyTargetGrid, friendlyCellPanel, true);
+
+            gameLogic = new GameLogic(exchangeHandler, gameSetting, enemyBoard, friendlyBoard);
+            gameLogic.OnEnemyShotEvent += OnEnemyShotEvent;
+            gameLogic.OnFriendlyShotEvent += OnFriendlyShotEvent;
+            gameLogic.OnGameEndedEvent += OnGameEndedEvent;
+            gameLogic.StartMultiPlayerMode();
         }
 
         private void SetOpponentUsername(string username)
@@ -89,7 +113,7 @@ namespace Battleship.UI.Game
             MyUsername.Content = username;
         }
 
-        private void InitPlaygroundBoard(Grid waterGrid, Grid CellState, Grid targetGrid, StackPanel[,] cellPanel)
+        private void InitPlaygroundBoard(Grid waterGrid, Grid CellState, Grid targetGrid, StackPanel[,] cellPanel, bool friendlyBoard)
         {
             // Erstelle 10 Zeilen und 10 Spalten
             for (int i = 0; i < gameSetting.BoardSize; i++)
@@ -143,8 +167,11 @@ namespace Battleship.UI.Game
                     // Add Event listeners
                     cell.MouseEnter += OnMouseEnter;
                     cell.MouseLeave += OnMouseLeave;
-                    cell.PreviewMouseDown += OnPreviewMouseDown;
-                    cell.PreviewMouseUp += OnPreviewMouseUp;
+                    if (!friendlyBoard)
+                    {
+                        cell.PreviewMouseDown += OnPreviewMouseDown;
+                        cell.PreviewMouseUp += OnPreviewMouseUp;
+                    }
 
                     // Position in Grid
                     Grid.SetRow(cell, row);
@@ -197,7 +224,7 @@ namespace Battleship.UI.Game
 
         private void OnMouseLeave(object sender, MouseEventArgs e)
         {
-            Border cell = (Border) sender;
+            Border cell = (Border)sender;
             cell.Background = Brushes.Transparent;
             cell.Child = null;
         }
@@ -218,17 +245,23 @@ namespace Battleship.UI.Game
 
         private void OnEnemyShotEvent()
         {
-            CellState[,] newCellState = enemyBoard.GetBoardState();
-            update(newCellState, enemyCellState, enemyCellPanel);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                CellState[,] newCellState = enemyBoard.GetBoardState();
+                UpdateUI(newCellState, enemyCellState, enemyCellPanel);
+            });
         }
 
         private void OnFriendlyShotEvent()
         {
-            CellState[,] newCellState = friendlyBoard.GetBoardState();
-            update(newCellState, friendlyCellState, friendlyCellPanel);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                CellState[,] newCellState = friendlyBoard.GetBoardState();
+                UpdateUI(newCellState, friendlyCellState, friendlyCellPanel);
+            });
         }
 
-        private void update(CellState[,] newCellState, CellState[,] currentCellState, StackPanel[,] cellPanels)
+        private void UpdateUI(CellState[,] newCellState, CellState[,] currentCellState, StackPanel[,] cellPanels)
         {
             for (int x = 0; x < gameSetting.BoardSize; x++)
             {

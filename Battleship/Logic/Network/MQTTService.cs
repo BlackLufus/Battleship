@@ -1,336 +1,164 @@
-﻿using Battelship.Lobby;
-using Battelship;
+﻿using Battelship;
+using Battelship.Lobby;
 using Battleship.Lobby;
-using mqtt;
+using Battleship.Logic.BattelStrategy.Modes;
+using Battleship.Logic.Global;
+using Mqtt.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.IO;
 
 namespace Battleship.Logic.Network
 {
+    public class TopicCategory
+    {
+        public string Value { get; private set; }
+
+        private TopicCategory(string value)
+        {
+            Value = value;
+        }
+
+        public static readonly TopicCategory PING = new TopicCategory("Ping");
+        public static readonly TopicCategory CONNECT = new TopicCategory("Connect");
+        public static readonly TopicCategory CONNACK = new TopicCategory("ConnAck");
+        public static readonly TopicCategory SETTINGS = new TopicCategory("Settings");
+        public static readonly TopicCategory SETTINGSACK = new TopicCategory("SettingsAck");
+        public static readonly TopicCategory READY = new TopicCategory("Ready");
+        public static readonly TopicCategory READYACK = new TopicCategory("ReadyAck");
+        public static readonly TopicCategory SHOOT = new TopicCategory("Shoot");
+        public static readonly TopicCategory MISS = new TopicCategory("Miss");
+        public static readonly TopicCategory HIT = new TopicCategory("Hit");
+        public static readonly TopicCategory SUNK = new TopicCategory("Sunk");
+        public static readonly TopicCategory MESSAGE = new TopicCategory("Message");
+        public static readonly TopicCategory MESSAGEACK = new TopicCategory("MessageAck");
+        public static readonly TopicCategory DISCONNECT = new TopicCategory("DISCONNECT");
+
+        public override string ToString()
+        {
+            return Value;
+        }
+
+        public static TopicCategory Get(string value)
+        {
+            return value switch
+            {
+                "Ping" => PING,
+                "Connect" => CONNECT,
+                "ConnAck" => CONNACK,
+                "Settings" => SETTINGS,
+                "SettingsAck" => SETTINGSACK,
+                "Ready" => READY,
+                "ReadyAck" => READYACK,
+                "Shoot" => SHOOT,
+                "Miss" => MISS,
+                "Hit" => HIT,
+                "Sunk" => SUNK,
+                "Message" => MESSAGE,
+                "MessageAck" => MESSAGEACK,
+                _ => throw new ArgumentException($"Unknown TopicCategory: {value}"),
+            };
+        }
+    }
+
     public class MQTTService
     {
+        public delegate void DataReceivedDelegate(TopicCategory category, string data);
+        public event DataReceivedDelegate? OnDataReceived;
+
         private readonly string address = "broker-cn.emqx.io";
         private readonly int port = 1883;
 
-        private CancellationTokenSource? cts;
-        private Task? pingTask;
-        private DateTime lastPing;
-
-        private string topic;
-
-        private readonly Mqtt client;
-        public Mqtt Client => client;
+        private readonly MqttClient mqttClient;
 
         private readonly string username;
-        private readonly string password;
+        private readonly string gameId;
+        private readonly bool isHost;
+        private readonly string key;
 
-        public readonly bool IsHost;
-        private bool isReady = false;
-        public bool IsMyTurn = false;//new Random().Next(0, 2) == 0;
-
-        private string? opponentUsername = null;
-        public string OpponentUsername => opponentUsername ?? "";
-        public bool IsOpponentConnected => opponentUsername != null;
-        private bool isOpponentReady = false;
-        public bool IsOpponentReady => isOpponentReady;
-
-        // Event Types for MQTT and their values
-        public enum EventType
+        public MQTTService(string gameId, string key, string username, bool isHost)
         {
-            Ping, // [ping]
-            Connect, // [Username]
-            Accept, // [Username]
-            Disconnect, // []
-            GameSettings, // [Size, HitBonus, RestrictedArea, BattleshipAmount, CruiserAmount, SubmarineAmount, DestroyerAmount, CarrierAmount]
-            Ready, // []
-            StartGame, // [Turn]
-            Shoot, // [X, Y]
-            Hit, // [X, Y]
-            Miss, // [X, Y]
-            Sunk, // [X, Y]
-            EndGame, // [Winner]
-            ChatMessage // [Message]
-        }
-
-        public delegate void ConnectionTimeoutDelegate();
-        public event ConnectionTimeoutDelegate? OnConnectionTimeout;
-
-        public delegate void OnConnectionSuccessDelegate();
-        public event OnConnectionSuccessDelegate? OnConnectionSuccess;
-
-        public delegate void ClientConnectedDelegate();
-        public event ClientConnectedDelegate? OnClientConnected;
-
-        public delegate void DisconnectedDelegate();
-        public event DisconnectedDelegate? OnDisconnected;
-
-        public delegate void GameSettingsDelegate(int size, bool hitBonus, bool restrictedArea, int carrierAmount, int battleshipAmount, int cruiserAmount, int submarineAmount, int destroyerAmount);
-        public event GameSettingsDelegate? OnGameSettings;
-
-        public delegate void StartGameDelegate();
-        public event StartGameDelegate? OnStartGame;
-
-        public delegate void ShootDelegate(int x, int y);
-        public event ShootDelegate? OnShoot;
-
-        public delegate void HitDelegate(int x, int y);
-        public event HitDelegate? OnHit;
-
-        public delegate void MissDelegate(int x, int y);
-        public event MissDelegate? OnMiss;
-
-        public delegate void SunkDelegate(int x, int y);
-        public event SunkDelegate? OnSunk;
-
-        public delegate void EndGameDelegate(string winner);
-        public event EndGameDelegate? OnEndGame;
-
-        public delegate void ChatMessageDelegate(string message);
-        public event ChatMessageDelegate? OnChatMessage;
-
-        public MQTTService(string gameID, string password, string username, bool isHost)
-        {
-            client = new Mqtt();
-            client.MessageReceived += OnMessage;
-            lastPing = DateTime.Now;
-            topic = "battleship/" + gameID;
-            this.password = password;
             this.username = username;
-            IsHost = isHost;
-            IsMyTurn = isHost;
-            StartConnection();
+            mqttClient = new MqttClient(
+                new MqttOption
+                {
+                    Version = MqttVersion.MQTT_3_1_1,
+                    WillRetain = false,
+                    CleanSession = true,
+                    KeepAlive = 60
+                },
+                debug: HandleDebug
+            );
+            mqttClient.OnMessageReceived += OnReceive;
+
+            // Set Host role
+            this.isHost = isHost;
+
+            // Set game ID
+            this.gameId = gameId;
+
+            // Set key
+            this.key = key;
         }
 
-        private async void StartConnection()
+        private void HandleDebug(string log)
         {
-            await client.Connect(address, port, username);
-            if (IsHost)
+            Console.WriteLine("Debug: " + log);
+        }
+
+        public async Task Connect()
+        {
+            string sender = isHost ? "host" : "client";
+            string mqttUsername = $"{username}";
+
+            await mqttClient.Connect(address, port, mqttUsername);
+            Debug.WriteLine($"Is host {isHost}");
+            if (isHost)
             {
-                await client.Subscribe(topic + "/client/#");
-                topic += "/host";
+                string topic = $"battelship/{gameId}/client/#";
+                Debug.WriteLine($"Subscribe to {topic}");
+                await mqttClient.SubscribeAsync(topic);
             }
-            if (!IsHost)
+            if (!isHost)
             {
-                // subscribe to 
-                await client.Subscribe(topic + "/host/#");
-                topic += "/client";
-                await client.Publish(topic + "/Connect", username);
-            }
-        }
-
-        private async Task CheckPing()
-        {
-            cts = new CancellationTokenSource();
-            CancellationToken token = cts.Token;
-
-            await Task.Run(async () =>
-            {
-                Debug.WriteLine("Ping task started");
-                try
-                {
-                    DateTime lastPingSend = DateTime.Now;
-                    while (true)
-                    {
-                        if (DateTime.Now - lastPing > TimeSpan.FromSeconds(20))
-                        {
-                            Debug.WriteLine("Ping timeout");
-                            OnDisconnected?.Invoke();
-                            CloseConnection();
-                            break;
-                        }
-                        if (DateTime.Now - lastPingSend > TimeSpan.FromSeconds(5))
-                        {
-                            try
-                            {
-                                await client.Publish(topic + "/Ping", "ping");
-                                lastPingSend = DateTime.Now;
-                            }
-                            catch (IOException e)
-                            {
-                                Debug.WriteLine("Network error during ping: " + e.Message);
-                                OnDisconnected?.Invoke();
-                                CloseConnection();
-                                break;
-                            }
-                        }
-                        await Task.Delay(1000);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("Unexpected error in ping task: " + e.Message);
-                }
-            }, token);
-        }
-
-        private async Task CheckConnection()
-        {
-            await Task.Run(async () =>
-            {
-                DateTime startTime = DateTime.Now;
-                while (true)
-                {
-                    if (DateTime.Now - startTime > TimeSpan.FromSeconds(3))
-                    {
-                        Debug.WriteLine("Connection Timeout!");
-                        OnConnectionTimeout?.Invoke();
-                        CloseConnection();
-                        break;
-                    }
-                    await Task.Delay(1000);
-                }
-            });
-        }
-
-        private async void OnMessage(string topic, string message)
-        {
-            Debug.WriteLine($"Received message on topic {topic}: {message}");
-            try
-            {
-                EventType eventType = (EventType)Enum.Parse(typeof(EventType), topic.Split('/').Last());
-                Debug.WriteLine($"Event Type: {eventType}");
-                string[] values = message.Split(',');
-                Debug.WriteLine($"Values: {string.Join(", ", values)}");
-
-                switch (eventType)
-                {
-                    case EventType.Ping:
-                        lastPing = DateTime.Now;
-                        break;
-                    case EventType.Connect:
-                        Debug.WriteLine("Is Enemy Connected: " + IsOpponentConnected);
-                        if (!IsOpponentConnected)
-                        {
-                            Debug.WriteLine("Enemy connected");
-                            opponentUsername = values[0];
-                            OnClientConnected?.Invoke();
-                            await client.Publish(this.topic + "/Accept", username);
-                            CheckPing();
-                        }
-                        break;
-                    case EventType.Accept:
-                        if (!IsOpponentConnected)
-                        {
-                            opponentUsername = values[0];
-                            OnConnectionSuccess?.Invoke();
-                            CheckPing();
-                        }
-                        break;
-                    case EventType.Disconnect:
-                        OnDisconnected?.Invoke();
-                        CloseConnection();
-                        break;
-                    case EventType.GameSettings:
-                        OnGameSettings?.Invoke(int.Parse(values[0]), bool.Parse(values[1]), bool.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6]), int.Parse(values[7]));
-                        break;
-                    case EventType.Ready:
-                        isOpponentReady = true;
-                        CheckReadyState();
-                        break;
-                    case EventType.StartGame:
-                        Debug.WriteLine("I start the game: " + IsMyTurn);
-                        OnStartGame?.Invoke();
-                        break;
-                    case EventType.Shoot:
-                        OnShoot?.Invoke(int.Parse(values[0]), int.Parse(values[1]));
-                        break;
-                    case EventType.Hit:
-                        OnHit?.Invoke(int.Parse(values[0]), int.Parse(values[1]));
-                        break;
-                    case EventType.Miss:
-                        OnMiss?.Invoke(int.Parse(values[0]), int.Parse(values[1]));
-                        break;
-                    case EventType.Sunk:
-                        OnSunk?.Invoke(int.Parse(values[0]), int.Parse(values[1]));
-                        break;
-                    case EventType.EndGame:
-                        OnEndGame?.Invoke(values[0]);
-                        break;
-                    case EventType.ChatMessage:
-                        OnChatMessage?.Invoke(message);
-                        CloseConnection();
-                        break;
-                    default:
-                        break;
-                }
-            }
-            catch { }
-        }
-
-        public async void SendGameSettings(int size, bool hitBonus, bool restrictedArea, int battleshipAmount, int cruiserAmount, int submarineAmount, int destroyerAmount, int carrierAmount)
-        {
-            await client.Publish(topic + "/GameSettings", size + "," + hitBonus + "," + restrictedArea + "," + battleshipAmount + "," + cruiserAmount + "," + submarineAmount + "," + destroyerAmount + "," + carrierAmount);
-        }
-
-        public async void SendReady()
-        {
-            isReady = true;
-            await client.Publish(topic + "/Ready", "");
-            CheckReadyState();
-        }
-
-        private void CheckReadyState()
-        {
-            Debug.WriteLine($"IsReady: {isReady}, IsEnemyReady: {isOpponentReady}");
-            if (IsHost && isReady && isOpponentReady)
-            {
-                SendStartGame();
-                OnStartGame?.Invoke();
+                string topic = $"battelship/{gameId}/host/#";
+                Debug.WriteLine($"Subscribe to {topic}");
+                await mqttClient.SubscribeAsync(topic);
             }
         }
 
-        public async void SendStartGame()
+        public async Task Send(TopicCategory category, string data)
         {
-            await client.Publish(topic + "/StartGame", "");
+            Debug.WriteLine($" >>> {category} >>> {data}");
+            string? cipherText = AdvancedEncryptionStandard.Encrypt(data, key);
+            if (cipherText == null)
+                return;
+
+            string sender = isHost ? "host" : "client";
+            string topic = $"battelship/{gameId}/{sender}/{category}";
+            Debug.WriteLine($"Publish to {topic}");
+            await mqttClient.PublishAsync(topic, cipherText);
         }
 
-        public async void SendShoot(int x, int y)
+        private void OnReceive(string topic, string cipherText, QualityOfService qos, bool retain)
         {
-            Debug.WriteLine($"Shot at {x}, {y}");
-            await client.Publish(topic + "/Shoot", x + "," + y);
-        }
-
-        public async void SendHit(int x, int y)
-        {
-            Debug.WriteLine($"Hit at {x}, {y}");
-            await client.Publish(topic + "/Hit", x + "," + y);
-        }
-
-        public async void SendMiss(int x, int y)
-        {
-            Debug.WriteLine($"Miss at {x}, {y}");
-            await client.Publish(topic + "/Miss", x + "," + y);
-        }
-
-        public async void SendSunk(int x, int y)
-        {
-            Debug.WriteLine($"Sunk at {x}, {y}");
-            await client.Publish(topic + "/Sunk", x + "," + y);
-        }
-
-        public async void SendEndGame(string winner)
-        {
-            Debug.WriteLine($"EndGame: {winner}");
-            await client.Publish(topic + "/EndGame", winner);
-        }
-
-        public async void Disconnected()
-        {
-            await client.Publish(topic + "/Disconnect", "");
-            CloseConnection();
-        }
-
-        public void CloseConnection()
-        {
-            cts?.Cancel();
-            cts?.Dispose();
-            client.Disconnect();
+            string category = topic.Split('/').Last();
+            Debug.WriteLine($"Data received from category {category}");
+            TopicCategory topicCategory = TopicCategory.Get(category);
+            string? data = AdvancedEncryptionStandard.Decrypt(cipherText, key);
+            Debug.WriteLine($" <<< DataEncryption success: {data == null}");
+            if (data == null)
+                return;
+            string sender = isHost ? "client" : "host";
+            Debug.WriteLine($" >>> Receive: {sender} >>> {category} >>> {data}");
+            OnDataReceived?.Invoke(topicCategory, data);
         }
     }
 }

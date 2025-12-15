@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 
@@ -46,17 +47,18 @@ namespace Battleship.Logic
             board = new int[boardSize, boardSize];
         }
 
-        public void Show(Canvas? canvas = null)
+        public void Show(Canvas? canvas = null, bool show = false)
         {
             foreach (DragShip ship in dragShips)
             {
                 if (canvas != null)
                     ship.updateCanvas(canvas);
-                ship.Show();
+                if (show)
+                    ship.Show();
             }
         }
 
-        public ShotResult Shoot(int row, int col)
+        public ShotResult Shoot(int row, int col, bool show = false)
         {
             if (row < 0 || row >= boardSize ||
                 col < 0 || col >= boardSize)
@@ -67,10 +69,17 @@ namespace Battleship.Logic
             shots.Add((row, col));
             foreach (DragShip ship in dragShips)
             {
+                if (ship.Shots.Contains((row, col)))
+                    return ShotResult.None;
                 if (ship.Hit(row, col))
                 {
                     if (ship.IsSunk)
                     {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            if (show)
+                                ship.Show();
+                        });
                         BoardCells.BlockSurroundingCells(board, boardSize, ship);
                         return ShotResult.Sunk;
                     }
