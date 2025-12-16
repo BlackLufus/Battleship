@@ -93,6 +93,9 @@ namespace Battleship.UI.Game
             this.enemyBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, enemyDragShips);
             this.enemyBoard.Show(EnemyShipCanvas, false);
 
+            SetFriendlyUsername(exchangeHandler.Username);
+            SetEnemyUsername(exchangeHandler.EnemyUsername!);
+
             InitPlaygroundBoard(EnemyWaterGrid, EnemyCellGrid, EnemyTargetGrid, enemyCellPanel, false);
             InitPlaygroundBoard(FriendlyWaterGrid, FriendlyCellGrid, FriendlyTargetGrid, friendlyCellPanel, true);
 
@@ -103,12 +106,12 @@ namespace Battleship.UI.Game
             gameLogic.StartMultiPlayerMode();
         }
 
-        private void SetOpponentUsername(string username)
+        private void SetEnemyUsername(string username)
         {
             OpponentUsername.Content = username;
         }
 
-        private void SetMyUsername(string username)
+        private void SetFriendlyUsername(string username)
         {
             MyUsername.Content = username;
         }

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace Battleship.Logic.Network
+namespace Battleship.Logic.Network.Local
 {
     public abstract class SocketService(IPAddress ipAddress, int port)
     {

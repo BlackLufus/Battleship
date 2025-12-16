@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Battleship.Logic.Network
+namespace Battleship.Logic.Network.Local
 {
     public class ClientSocketService(string ipAddress, int port) : SocketService(IPAddress.Parse(ipAddress), port)
     {

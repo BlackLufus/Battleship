@@ -1,4 +1,4 @@
-﻿namespace Battleship.Logic.Network
+﻿namespace Battleship.Logic.Network.Local
 {
     public class LobbyServiceMessage(LobbyServiceMessage.MessageType type, string message) : SocketServiceMessage((byte)type, message)
     {

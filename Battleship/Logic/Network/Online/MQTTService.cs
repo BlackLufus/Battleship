@@ -15,62 +15,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Battleship.Logic.Network
+namespace Battleship.Logic.Network.Online
 {
-    public class TopicCategory
-    {
-        public string Value { get; private set; }
-
-        private TopicCategory(string value)
-        {
-            Value = value;
-        }
-
-        public static readonly TopicCategory PING = new TopicCategory("Ping");
-        public static readonly TopicCategory CONNECT = new TopicCategory("Connect");
-        public static readonly TopicCategory CONNACK = new TopicCategory("ConnAck");
-        public static readonly TopicCategory SETTINGS = new TopicCategory("Settings");
-        public static readonly TopicCategory SETTINGSACK = new TopicCategory("SettingsAck");
-        public static readonly TopicCategory READY = new TopicCategory("Ready");
-        public static readonly TopicCategory READYACK = new TopicCategory("ReadyAck");
-        public static readonly TopicCategory SHOOT = new TopicCategory("Shoot");
-        public static readonly TopicCategory MISS = new TopicCategory("Miss");
-        public static readonly TopicCategory HIT = new TopicCategory("Hit");
-        public static readonly TopicCategory SUNK = new TopicCategory("Sunk");
-        public static readonly TopicCategory MESSAGE = new TopicCategory("Message");
-        public static readonly TopicCategory MESSAGEACK = new TopicCategory("MessageAck");
-        public static readonly TopicCategory DISCONNECT = new TopicCategory("DISCONNECT");
-
-        public override string ToString()
-        {
-            return Value;
-        }
-
-        public static TopicCategory Get(string value)
-        {
-            return value switch
-            {
-                "Ping" => PING,
-                "Connect" => CONNECT,
-                "ConnAck" => CONNACK,
-                "Settings" => SETTINGS,
-                "SettingsAck" => SETTINGSACK,
-                "Ready" => READY,
-                "ReadyAck" => READYACK,
-                "Shoot" => SHOOT,
-                "Miss" => MISS,
-                "Hit" => HIT,
-                "Sunk" => SUNK,
-                "Message" => MESSAGE,
-                "MessageAck" => MESSAGEACK,
-                _ => throw new ArgumentException($"Unknown TopicCategory: {value}"),
-            };
-        }
-    }
-
     public class MQTTService
     {
-        public delegate void DataReceivedDelegate(TopicCategory category, string data);
+        public delegate void DataReceivedDelegate(PacketCategory category, string data);
         public event DataReceivedDelegate? OnDataReceived;
 
         private readonly string address = "broker-cn.emqx.io";
@@ -134,7 +83,7 @@ namespace Battleship.Logic.Network
             }
         }
 
-        public async Task Send(TopicCategory category, string data)
+        public async Task Send(PacketCategory category, string data)
         {
             Debug.WriteLine($" >>> {category} >>> {data}");
             string? cipherText = AdvancedEncryptionStandard.Encrypt(data, key);
@@ -151,7 +100,7 @@ namespace Battleship.Logic.Network
         {
             string category = topic.Split('/').Last();
             Debug.WriteLine($"Data received from category {category}");
-            TopicCategory topicCategory = TopicCategory.Get(category);
+            PacketCategory topicCategory = PacketCategory.Get(category);
             string? data = AdvancedEncryptionStandard.Decrypt(cipherText, key);
             Debug.WriteLine($" <<< DataEncryption success: {data == null}");
             if (data == null)
@@ -159,6 +108,11 @@ namespace Battleship.Logic.Network
             string sender = isHost ? "client" : "host";
             Debug.WriteLine($" >>> Receive: {sender} >>> {category} >>> {data}");
             OnDataReceived?.Invoke(topicCategory, data);
+        }
+
+        public async void Disconnect()
+        {
+            await mqttClient.Disconnect();
         }
     }
 }

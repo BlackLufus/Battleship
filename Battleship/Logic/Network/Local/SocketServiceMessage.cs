@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Battleship.Logic.Network
+namespace Battleship.Logic.Network.Local
 {
     public class SocketServiceMessage(byte type, string message)
     {

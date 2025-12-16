@@ -1,5 +1,6 @@
 ﻿using Battelship.Lobby;
 using Battleship.Logic.Network;
+using Battleship.Logic.Network.Local;
 using Battleship.Logic.Services;
 using Battleship.Resources.Components;
 using System;

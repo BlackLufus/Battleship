@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Battleship.Logic.Network.Online;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
-using static Battleship.Logic.Network.MQTTService;
+using static Battleship.Logic.Network.Online.MQTTService;
 
 namespace Battleship.Logic.Network
 {
@@ -58,11 +59,11 @@ namespace Battleship.Logic.Network
         private readonly MQTTService mqttService;
         public readonly bool IsHost;
 
-
+        
         private readonly string username;
         public string Username { get { return username; } }
 
-
+        
         private string? enemyUsername;
         public string? EnemyUsername { get { return enemyUsername; } }
         private int[] enemyShipData = [];
@@ -91,112 +92,110 @@ namespace Battleship.Logic.Network
 
             if (!IsHost)
                 SendConnect(username);
-
-            //await StartPinger();
         }
 
-        private async void OnDataReceived(TopicCategory category, string data)
+        private async void OnDataReceived(PacketCategory category, string data)
         {
             Debug.WriteLine($"Received message for category {category}: {data}");
-            //try
-            //{
-            string[] values = data.Split(',');
-            Debug.WriteLine($"Values: {string.Join(", ", values)}");
+            try
+            {
+                string[] values = data.Split(',');
+                Debug.WriteLine($"Values: {string.Join(", ", values)}");
 
-            if (category == TopicCategory.PING)
-            {
-                lastPingReceived = DateTime.Now;
+                if (category == PacketCategory.PING)
+                {
+                    lastPingReceived = DateTime.Now;
+                }
+                else if (category == PacketCategory.CONNECT)
+                {
+                    string enemyUsername = values[0];
+                    this.enemyUsername = enemyUsername;
+                    OnConnect?.Invoke();
+                    SendConnAck(username);
+                    await StartPinger();
+                }
+                else if (category == PacketCategory.CONNACK)
+                {
+                    string enemyUsername = values[0];
+                    this.enemyUsername = enemyUsername;
+                    OnConnectAck?.Invoke();
+                    await StartPinger();
+                }
+                else if (category == PacketCategory.SETTINGS)
+                {
+                    int size = int.Parse(values[0]);
+                    bool hitBonus = bool.Parse(values[1]);
+                    bool restrictedArea = bool.Parse(values[2]);
+                    int carrierAmount = int.Parse(values[3]);
+                    int battleshipAmount = int.Parse(values[4]);
+                    int cruiserAmount = int.Parse(values[5]);
+                    int submarineAmount = int.Parse(values[6]);
+                    int destroyerAmount = int.Parse(values[7]);
+                    OnSettings?.Invoke(size, hitBonus, restrictedArea, carrierAmount, battleshipAmount, cruiserAmount, submarineAmount, destroyerAmount);
+                    SendSettingsAck();
+                }
+                else if (category == PacketCategory.SETTINGSACK)
+                {
+                    OnSettingsAck?.Invoke();
+                }
+                else if (category == PacketCategory.READY)
+                {
+                    bool isEnemyReady = bool.Parse(values[0]);
+                    enemyShipData = Array.ConvertAll<string, int>(values.Skip(1).ToArray(), s => int.Parse(s));
+                    OnReady?.Invoke(isReady && isEnemyReady);
+                    SendReadyAck();
+                }
+                else if (category == PacketCategory.READYACK)
+                {
+                    bool isEnemyReady = bool.Parse(values[0]);
+                    OnReadyAck?.Invoke(isReady && isEnemyReady);
+                }
+                else if (category == PacketCategory.SHOOT)
+                {
+                    int row = int.Parse(values[0]);
+                    int col = int.Parse(values[1]);
+                    OnShoot?.Invoke(row, col);
+                }
+                else if (category == PacketCategory.MISS)
+                {
+                    int row = int.Parse(values[0]);
+                    int col = int.Parse(values[1]);
+                    OnMiss?.Invoke(row, col);
+                }
+                else if (category == PacketCategory.HIT)
+                {
+                    int row = int.Parse(values[0]);
+                    int col = int.Parse(values[1]);
+                    OnHit?.Invoke(row, col);
+                }
+                else if (category == PacketCategory.SUNK)
+                {
+                    int row = int.Parse(values[0]);
+                    int col = int.Parse(values[1]);
+                    OnSunk?.Invoke(row, col);
+                }
+                else if (category == PacketCategory.MESSAGE)
+                {
+                    int id = int.Parse(values[0]);
+                    string message = String.Join(" ", values.Skip(1));
+                    OnMessage?.Invoke(id, message);
+                    SendMessageAck(id);
+                }
+                else if (category == PacketCategory.MESSAGEACK)
+                {
+                    int id = int.Parse(values[0]);
+                    OnMessageAck?.Invoke(id);
+                }
+                else if (category == PacketCategory.DISCONNECT)
+                {
+                    OnDisconnect?.Invoke();
+                }
             }
-            else if (category == TopicCategory.CONNECT)
+            catch (Exception e) 
             {
-                string enemyUsername = values[0];
-                this.enemyUsername = enemyUsername;
-                OnConnect?.Invoke();
-                SendConnAck(username);
-                await StartPinger();
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
             }
-            else if (category == TopicCategory.CONNACK)
-            {
-                string enemyUsername = values[0];
-                this.enemyUsername = enemyUsername;
-                OnConnectAck?.Invoke();
-                await StartPinger();
-            }
-            else if (category == TopicCategory.SETTINGS)
-            {
-                int size = int.Parse(values[0]);
-                bool hitBonus = bool.Parse(values[1]);
-                bool restrictedArea = bool.Parse(values[2]);
-                int carrierAmount = int.Parse(values[3]);
-                int battleshipAmount = int.Parse(values[4]);
-                int cruiserAmount = int.Parse(values[5]);
-                int submarineAmount = int.Parse(values[6]);
-                int destroyerAmount = int.Parse(values[7]);
-                OnSettings?.Invoke(size, hitBonus, restrictedArea, carrierAmount, battleshipAmount, cruiserAmount, submarineAmount, destroyerAmount);
-                SendSettingsAck();
-            }
-            else if (category == TopicCategory.SETTINGSACK)
-            {
-                OnSettingsAck?.Invoke();
-            }
-            else if (category == TopicCategory.READY)
-            {
-                bool isEnemyReady = bool.Parse(values[0]);
-                enemyShipData = Array.ConvertAll<string, int>(values.Skip(1).ToArray(), s => int.Parse(s));
-                OnReady?.Invoke(isReady && isEnemyReady);
-                SendReadyAck();
-            }
-            else if (category == TopicCategory.READYACK)
-            {
-                bool isEnemyReady = bool.Parse(values[0]);
-                OnReadyAck?.Invoke(isReady && isEnemyReady);
-            }
-            else if (category == TopicCategory.SHOOT)
-            {
-                int row = int.Parse(values[0]);
-                int col = int.Parse(values[1]);
-                OnShoot?.Invoke(row, col);
-            }
-            else if (category == TopicCategory.MISS)
-            {
-                int row = int.Parse(values[0]);
-                int col = int.Parse(values[1]);
-                OnMiss?.Invoke(row, col);
-            }
-            else if (category == TopicCategory.HIT)
-            {
-                int row = int.Parse(values[0]);
-                int col = int.Parse(values[1]);
-                OnHit?.Invoke(row, col);
-            }
-            else if (category == TopicCategory.SUNK)
-            {
-                int row = int.Parse(values[0]);
-                int col = int.Parse(values[1]);
-                OnSunk?.Invoke(row, col);
-            }
-            else if (category == TopicCategory.MESSAGE)
-            {
-                int id = int.Parse(values[0]);
-                string message = String.Join(" ", values.Skip(1));
-                OnMessage?.Invoke(id, message);
-                SendMessageAck(id);
-            }
-            else if (category == TopicCategory.MESSAGEACK)
-            {
-                int id = int.Parse(values[0]);
-                OnMessageAck?.Invoke(id);
-            }
-            else if (category == TopicCategory.DISCONNECT)
-            {
-                OnDisconnect?.Invoke();
-            }
-            //}
-            //catch (Exception e) 
-            //{
-            //    Debug.WriteLine(e.Message);
-            //    Debug.WriteLine(e.StackTrace);
-            //}
         }
 
         private async Task StartPinger()
@@ -237,28 +236,28 @@ namespace Battleship.Logic.Network
 
         private async void SendPing()
         {
-            await mqttService.Send(TopicCategory.PING, "PING");
+            await mqttService.Send(PacketCategory.PING, "PING");
         }
 
         public async void SendConnect(string username)
         {
-            await mqttService.Send(TopicCategory.CONNECT, username);
+            await mqttService.Send(PacketCategory.CONNECT, username);
         }
 
         public async void SendConnAck(string username)
         {
-            await mqttService.Send(TopicCategory.CONNACK, username);
+            await mqttService.Send(PacketCategory.CONNACK, username);
         }
 
         public async void SendSettings(int size, bool hitBonus, bool restrictedArea, int carrierAmount, int battleshipAmount, int cruiserAmount, int submarineAmount, int destroyerAmount)
         {
             string data = $"{size},{hitBonus},{restrictedArea},{carrierAmount},{battleshipAmount},{cruiserAmount},{submarineAmount},{destroyerAmount}";
-            await mqttService.Send(TopicCategory.SETTINGS, data);
+            await mqttService.Send(PacketCategory.SETTINGS, data);
         }
 
         public async void SendSettingsAck()
         {
-            await mqttService.Send(TopicCategory.SETTINGSACK, "SETTINGSACK");
+            await mqttService.Send(PacketCategory.SETTINGSACK, "SETTINGSACK");
         }
 
         public async void SendReady(List<Ship> ships)
@@ -274,61 +273,67 @@ namespace Battleship.Logic.Network
             }
 
             string data = String.Join(",", dataList.ToArray());
-
-            await mqttService.Send(TopicCategory.READY, data);
+            
+            await mqttService.Send(PacketCategory.READY, data);
         }
 
         public async void SendReadyAck()
         {
             string data = $"{isReady}";
-            await mqttService.Send(TopicCategory.READYACK, data);
+            await mqttService.Send(PacketCategory.READYACK, data);
         }
 
         public async void SendShoot(int row, int col)
         {
             string data = $"{row},{col}";
-            await mqttService.Send(TopicCategory.SHOOT, data);
+            await mqttService.Send(PacketCategory.SHOOT, data);
         }
 
         public async void SendMiss(int row, int col)
         {
             string data = $"{row},{col}";
-            await mqttService.Send(TopicCategory.MISS, data);
+            await mqttService.Send(PacketCategory.MISS, data);
         }
 
         public async void SendHit(int row, int col)
         {
             string data = $"{row},{col}";
-            await mqttService.Send(TopicCategory.HIT, data);
+            await mqttService.Send(PacketCategory.HIT, data);
         }
 
         public async void SendSunk(int row, int col)
         {
             string data = $"{row},{col}";
-            await mqttService.Send(TopicCategory.SUNK, data);
+            await mqttService.Send(PacketCategory.SUNK, data);
         }
 
         public async void SendMessage(int id, string message)
         {
             string data = $"{id},{message}";
-            await mqttService.Send(TopicCategory.MESSAGE, data);
+            await mqttService.Send(PacketCategory.MESSAGE, data);
         }
 
         public async void SendMessageAck(int id)
         {
             string data = $"{id}";
-            await mqttService.Send(TopicCategory.MESSAGEACK, data);
+            await mqttService.Send(PacketCategory.MESSAGEACK, data);
         }
 
         public async void SendDisconnect()
         {
             string data = "DISCONNECT";
-            await mqttService.Send(TopicCategory.DISCONNECT, data);
+            await mqttService.Send(PacketCategory.DISCONNECT, data);
+        }
+
+        public void Disconnect()
+        {
+            mqttService.Disconnect();
+            cts?.Cancel();
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            GC.SuppressFinalize(this);
         }
     }
 }
