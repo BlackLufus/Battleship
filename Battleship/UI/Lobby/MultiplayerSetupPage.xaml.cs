@@ -32,9 +32,7 @@ namespace Battleship.Lobby
             get
             {
                 if (instance == null)
-                {
                     instance = new MultiplayerSetupPage();
-                }
                 return instance;
             }
         }

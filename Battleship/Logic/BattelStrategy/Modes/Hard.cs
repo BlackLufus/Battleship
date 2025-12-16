@@ -1,4 +1,4 @@
-﻿using Battleship.Logic.Board;
+﻿using Battleship.Logic.Game;
 using Battleship.Logic.Global;
 using System;
 using System.Collections.Generic;
@@ -118,7 +118,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
             int index = new Random().Next(0, boardLogic.Ships.FindAll(ship => !ship.IsSunk).Count);
             Ship ship = boardLogic.Ships.FindAll(ship => !ship.IsSunk)[index];
 
-            if (ship.orientation == Ship.ShipOrientation.Vertical)
+            if (ship.orientation == ShipOrientation.Vertical)
             {
                 int row = 0;
                 int col = 0;

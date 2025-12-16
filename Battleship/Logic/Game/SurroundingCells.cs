@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Battleship.Logic.Board
+namespace Battleship.Logic.Game
 {
-    public class BoardCells
+    public class SurroundingCells
     {   /// <summary>
         /// Block or unblock surrounding cells of a ship
         /// </summary>
+        /// <param name="board">The board to add blocked positions</param>
+        /// <param name="boardSize">The size of the board</param>
         /// <param name="ship">The ship to block surrounding cells for</param>
         /// <param name="add">True to block, false to unblock</param>
         public static void BlockSurroundingCells(int[,] board, int boardSize, Ship ship, bool add = true)
@@ -17,7 +19,7 @@ namespace Battleship.Logic.Board
             int len = (int)ship.type;
             int delta = add ? 1 : -1;
 
-            if (ship.orientation == Ship.ShipOrientation.Horizontal)
+            if (ship.orientation == ShipOrientation.Horizontal)
             {
                 for (int i = -1; i <= len; i++)
                 {

@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Battleship.Logic.Board
+namespace Battleship.Logic.Game
 {
     // DragShip class to hold drag information about a ship being dragged
     public class DragShip : Ship
@@ -41,6 +41,7 @@ namespace Battleship.Logic.Board
                 Source = RotateImage(new BitmapImage(new Uri("pack://application:,,,/Resources/Images/" + type.ToString().ToLower() + ".png")), 270)
             };
 
+            // Initial top offset position
             startTopOffset = type switch
             {
                 ShipType.Battleship => 10,
@@ -50,6 +51,7 @@ namespace Battleship.Logic.Board
                 _ => 0
             };
 
+            // Initial left offset position
             startLeftOffset = type switch
             {
                 ShipType.Battleship => -140,
@@ -60,42 +62,58 @@ namespace Battleship.Logic.Board
             };
         }
 
+        /// <summary>
+        /// Updates the canvas element
+        /// </summary>
+        /// <param name="canvas">The new canvas element to replace the old element</param>
         public void updateCanvas(Canvas canvas)
         {
             this.canvas.Children.Clear();
             this.canvas = canvas;
         }
 
+        /// <summary>
+        /// Shows the drag ship at the canvas element
+        /// </summary>
+        /// <param name="dragShipManager">Once this is set, a ship can be towed</param>
         public void Show(DragShipManager? dragShipManager = null)
         {
+            // Check if canvas already contains the img element
             if (!canvas.Children.Contains(img))
                 canvas.Children.Add(img);
 
+            // Procedure if drag ship manager is set
             if (dragShipManager != null)
             {
+                // Sets the object to the start position outside the canvas element
                 Place(startLeftOffset, startTopOffset);
 
+                // Add mouse left button down event
                 img.MouseLeftButtonDown += (s, e) =>
                 {
                     dragShipManager.StartDrag(this, e.GetPosition(canvas));
                 };
 
+                // Add mouse move event
                 img.MouseMove += (s, e) =>
                 {
                     if (IsDragging)
                         dragShipManager.Move(this, e.GetPosition(canvas));
                 };
 
+                // Add mouse left button up event
                 img.MouseLeftButtonUp += (s, e) =>
                 {
                     dragShipManager.EndDrag(this, e.GetPosition(canvas));
                 };
 
-                // rotate with right click
+                // Add mouse right button down event
                 img.MouseRightButtonDown += (s, e) =>
                 {
+                    // Ignore when object is not dragged by user
                     if (!IsDragging)
                         return;
+                    // Change the orientation of the object
                     Rotate(
                         orientation == ShipOrientation.Horizontal
                         ? ShipOrientation.Vertical
@@ -106,6 +124,7 @@ namespace Battleship.Logic.Board
             }
             else
             {
+                // Ohterwise the rotation is set to the ship object and placed to the exact canvas element position
                 Rotate(orientation);
                 Place();
             }

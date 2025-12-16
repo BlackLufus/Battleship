@@ -1,6 +1,5 @@
 ﻿using Battleship.Lobby;
-using Battleship.Logic.BattelStrategy;
-using Battleship.Logic.Board;
+using Battleship.Logic.Game;
 using Battleship.Logic.Global;
 using Battleship.Logic.Network;
 using Battleship.Logic.Services;
@@ -161,13 +160,13 @@ namespace Battelship.Lobby
         {
             List<DragShip> tempDragShips = [];
             for (int i = 0; i < gameSetting.BattleshipAmount; i++)
-                tempDragShips.Add(new DragShip(GameCanvas, gameSetting.CellSize, Ship.ShipType.Battleship));
+                tempDragShips.Add(new DragShip(GameCanvas, gameSetting.CellSize, ShipType.Battleship));
             for (int i = 0; i < gameSetting.CruiserAmount; i++)
-                tempDragShips.Add(new DragShip(GameCanvas, gameSetting.CellSize, Ship.ShipType.Cruiser));
+                tempDragShips.Add(new DragShip(GameCanvas, gameSetting.CellSize, ShipType.Cruiser));
             for (int i = 0; i < gameSetting.SubmarineAmount; i++)
-                tempDragShips.Add(new DragShip(GameCanvas, gameSetting.CellSize, Ship.ShipType.Submarine));
+                tempDragShips.Add(new DragShip(GameCanvas, gameSetting.CellSize, ShipType.Submarine));
             for (int i = 0; i < gameSetting.DestroyerAmount; i++)
-                tempDragShips.Add(new DragShip(GameCanvas, gameSetting.CellSize, Ship.ShipType.Destroyer));
+                tempDragShips.Add(new DragShip(GameCanvas, gameSetting.CellSize, ShipType.Destroyer));
 
             return tempDragShips;
         }
@@ -295,15 +294,15 @@ namespace Battelship.Lobby
                     var basicShipList = GetBasicShipList();
 
                     // Get ships from enemy
-                    int[] enemyShipData = exchangeHandler.EnemyShipData;
+                    int[] enemyShipData = exchangeHandler.OpponentShipData;
 
                     // Insert values to ship list
                     for (int i = 0; i < basicShipList.Count; i++)
                     {
                         Ship ship = basicShipList[i];
 
-                        ship.type = (Ship.ShipType)enemyShipData[4 * i + 0];
-                        ship.orientation = (Ship.ShipOrientation)enemyShipData[4 * i + 1];
+                        ship.type = (ShipType)enemyShipData[4 * i + 0];
+                        ship.orientation = (ShipOrientation)enemyShipData[4 * i + 1];
                         ship.row = enemyShipData[4 * i + 2];
                         ship.col = enemyShipData[4 * i + 3];
                     }

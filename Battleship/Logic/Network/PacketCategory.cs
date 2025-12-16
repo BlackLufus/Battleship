@@ -30,11 +30,21 @@ namespace Battleship.Logic.Network
         public static readonly PacketCategory MESSAGEACK = new PacketCategory("MessageAck");
         public static readonly PacketCategory DISCONNECT = new PacketCategory("DISCONNECT");
 
+        /// <summary>
+        /// Overrides the ToString method
+        /// </summary>
+        /// <returns>Returns the string of an object</returns>
         public override string ToString()
         {
             return Value;
         }
 
+        /// <summary>
+        /// Get the PacketCategory of a specific input value
+        /// </summary>
+        /// <param name="value">The value to get the category from</param>
+        /// <returns>Returns the correct packet category object</returns>
+        /// <exception cref="ArgumentException">Throw an argument exception if category does not exist</exception>
         public static PacketCategory Get(string value)
         {
             return value switch

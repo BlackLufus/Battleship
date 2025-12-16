@@ -31,14 +31,15 @@ namespace Battelship.Lobby
         private GameSetting.Mode mode;
         private static GameSettingsPage? instance;
 
+        // All possible boarder sizes stored in a list
         private List<(string, object)> sizeList = Enumerable.Range(5, 26).Select(i => ($"{i}x{i}", (object)i)).ToList();
-
         public List<(string, object)> SizeList
         {
             get { return sizeList; }
             set { sizeList = value; }
         }
 
+        // All possible difficultes stored in a list
         private List<(string, object)> difficultList = [
             ("Sehr Leicht", GameSetting.Difficult.VeryEasy),
             ("Leicht", GameSetting.Difficult.Easy),
@@ -46,7 +47,6 @@ namespace Battelship.Lobby
             ("Schwer", GameSetting.Difficult.Hard),
             ("Sehr schwer", GameSetting.Difficult.VeryHard)
         ];
-
         public List<(string, object)> DifficultList
         {
             get { return difficultList; }
@@ -87,6 +87,9 @@ namespace Battelship.Lobby
             this.DataContext = this;
         }
 
+        /// <summary>
+        /// Handle timemout event
+        /// </summary>
         private void HandleTimeout()
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -102,6 +105,9 @@ namespace Battelship.Lobby
             });
         }
 
+        /// <summary>
+        /// Handle disconnect event
+        /// </summary>
         private void HandleDisconnect()
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -117,6 +123,9 @@ namespace Battelship.Lobby
             });
         }
 
+        /// <summary>
+        /// Handle settings acknowledge event
+        /// </summary>
         private void HandleSettingsAck()
         {
             // Return if exchange handler does not exist
@@ -135,6 +144,9 @@ namespace Battelship.Lobby
             });
         }
 
+        /// <summary>
+        /// Apply settings
+        /// </summary>
         private void ApplySettings()
         {
             Debug.WriteLine("SelectedValue: " + mode);
@@ -164,6 +176,11 @@ namespace Battelship.Lobby
             ));
         }
 
+        /// <summary>
+        /// Handle back button click
+        /// </summary>
+        /// <param name="sender">The sender object</param>
+        /// <param name="e">The routed event arguments</param>
         private async void BackButton_Click(object sender, RoutedEventArgs e)
         {
             // Send Disconnect and dispose object
@@ -177,6 +194,11 @@ namespace Battelship.Lobby
             Navigation.NavigateBack();
         }
 
+        /// <summary>
+        /// Handle apply button click
+        /// </summary>
+        /// <param name="sender">The sender object</param>
+        /// <param name="e">The routed event arguments</param>
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             // Multiplayer procedure

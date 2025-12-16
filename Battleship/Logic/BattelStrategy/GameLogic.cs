@@ -1,5 +1,5 @@
 ﻿using Battleship.Logic.BattelStrategy.Modes;
-using Battleship.Logic.Board;
+using Battleship.Logic.Game;
 using Battleship.Logic.Global;
 using Battleship.Logic.Network;
 using Battleship.Logic.Services;
@@ -18,8 +18,8 @@ namespace Battleship.Logic.BattelStrategy
 {
     public enum TurnType
     {
-        MyTurn = 0,
-        EnemyTurn = 1
+        Player = 0,
+        Opponent = 1
     }
 
     public class GameLogic
@@ -28,10 +28,10 @@ namespace Battleship.Logic.BattelStrategy
         public event GameEndedEventHandler? OnGameEnded;
 
         public delegate void EnemyShotEventHandler();
-        public event EnemyShotEventHandler? OnEnemyShot;
+        public event EnemyShotEventHandler? OnShotAtOpponentBoard;
 
         public delegate void FriendlyShotEventHandler();
-        public event FriendlyShotEventHandler? OnFriendlyShot;
+        public event FriendlyShotEventHandler? OnShotAtPlayerBoard;
 
         public delegate void TimeoutEventHandler();
         public event TimeoutEventHandler? OnTimeout;
@@ -42,10 +42,10 @@ namespace Battleship.Logic.BattelStrategy
         private readonly ExchangeHandler? exchangeHandler;
         private readonly GameSetting gameSetting;
 
-        private readonly PlaygroundBoardLogic enemyBoard;
-        private readonly PlaygroundBoardLogic friendlyBoard;
+        private readonly PlaygroundBoardLogic opponentBoard;
+        private readonly PlaygroundBoardLogic playerBoard;
 
-        public TurnType turn = TurnType.EnemyTurn;
+        public TurnType turn = TurnType.Opponent;
         private CancellationTokenSource? cts;
 
         /// <summary>
@@ -53,14 +53,14 @@ namespace Battleship.Logic.BattelStrategy
         /// </summary>
         /// <param name="exchangeHandler">The exchange handler</param>
         /// <param name="gameSetting">Game settings</param>
-        /// <param name="enemyBoard">The enemey board</param>
-        /// <param name="friendlyBoard">The friendly board</param>
-        public GameLogic(GameSetting gameSetting, PlaygroundBoardLogic enemyBoard, PlaygroundBoardLogic friendlyBoard)
+        /// <param name="opponentBoard">The enemey board</param>
+        /// <param name="allyBoard">The friendly board</param>
+        public GameLogic(GameSetting gameSetting, PlaygroundBoardLogic opponentBoard, PlaygroundBoardLogic playerBoard)
         {
             // Init basic variables
             this.gameSetting = gameSetting;
-            this.enemyBoard = enemyBoard;
-            this.friendlyBoard = friendlyBoard;
+            this.opponentBoard = opponentBoard;
+            this.playerBoard = playerBoard;
         }
 
         /// <summary>
@@ -68,9 +68,9 @@ namespace Battleship.Logic.BattelStrategy
         /// </summary>
         /// <param name="exchangeHandler">The exchange handler</param>
         /// <param name="gameSetting">Game settings</param>
-        /// <param name="enemyBoard">The enemey board</param>
-        /// <param name="friendlyBoard">The friendly board</param>
-        public GameLogic(ExchangeHandler exchangeHandler, GameSetting gameSetting, PlaygroundBoardLogic enemyBoard, PlaygroundBoardLogic friendlyBoard)
+        /// <param name="opponentBoard">The enemey board</param>
+        /// <param name="playerBoard">The friendly board</param>
+        public GameLogic(ExchangeHandler exchangeHandler, GameSetting gameSetting, PlaygroundBoardLogic opponentBoard, PlaygroundBoardLogic playerBoard)
         {
             // Init exchange handler
             this.exchangeHandler = exchangeHandler;
@@ -83,8 +83,8 @@ namespace Battleship.Logic.BattelStrategy
 
             // Init basic variables
             this.gameSetting = gameSetting;
-            this.enemyBoard = enemyBoard;
-            this.friendlyBoard = friendlyBoard;
+            this.opponentBoard = opponentBoard;
+            this.playerBoard = playerBoard;
         }
 
         /// <summary>
@@ -97,12 +97,12 @@ namespace Battleship.Logic.BattelStrategy
                 return;
 
             // Init enemy computer logic
-            GameAI enemyComputerLogic = new(gameSetting, friendlyBoard);
+            GameAI enemyComputerLogic = new(gameSetting, playerBoard);
 
             // Init friendly computer logic when mode is computer vs computer
             GameAI? friendlyComputerLogic = null;
             if (gameSetting.GameMode == GameSetting.Mode.ComputerVsComputer)
-                friendlyComputerLogic = new GameAI(gameSetting, enemyBoard);
+                friendlyComputerLogic = new GameAI(gameSetting, opponentBoard);
 
             // Init cancellation token
             cts = new CancellationTokenSource();
@@ -114,7 +114,7 @@ namespace Battleship.Logic.BattelStrategy
                 while (true)
                 {
                     // Procedure when turn is enemy turn
-                    if (this.turn == TurnType.EnemyTurn)
+                    if (this.turn == TurnType.Opponent)
                     {
                         // Delay 250 to 750 ms
                         await Task.Delay(Random.Shared.Next(250, 750));
@@ -126,21 +126,21 @@ namespace Battleship.Logic.BattelStrategy
                         });
 
                         // Update UI (friendly board)
-                        OnFriendlyShot?.Invoke();
+                        OnShotAtPlayerBoard?.Invoke();
 
                         // Change turn when hit bonus is disabled
                         if (!gameSetting.HitBonus || !hit)
-                            this.turn = TurnType.MyTurn;
+                            this.turn = TurnType.Player;
 
                         // Exit loop when all ships are sunk
-                        if (friendlyBoard.IsAllSunk())
+                        if (playerBoard.IsAllSunk())
                         {
                             OnGameEnded?.Invoke(false);
                             break;
                         }
                     }
                     // Procedure when turn is my turn
-                    else if (friendlyComputerLogic != null && this.turn == TurnType.MyTurn)
+                    else if (friendlyComputerLogic != null && this.turn == TurnType.Player)
                     {
                         // Delay 250 to 750 ms
                         await Task.Delay(Random.Shared.Next(250, 750));
@@ -152,14 +152,14 @@ namespace Battleship.Logic.BattelStrategy
                         });
 
                         // Update UI (friendly board)
-                        OnEnemyShot?.Invoke();
+                        OnShotAtOpponentBoard?.Invoke();
 
                         // Change turn when hit bonus is disabled
                         if (!gameSetting.HitBonus || !hit)
-                            this.turn = TurnType.EnemyTurn;
+                            this.turn = TurnType.Opponent;
 
                         // Exit loop when all ships are sunk
-                        if (enemyBoard.IsAllSunk())
+                        if (opponentBoard.IsAllSunk())
                         {
                             OnGameEnded?.Invoke(true);
                             break;
@@ -183,7 +183,7 @@ namespace Battleship.Logic.BattelStrategy
                 return;
 
             // Choose turn
-            turn = exchangeHandler.IsHost ? TurnType.MyTurn : TurnType.EnemyTurn;
+            turn = exchangeHandler.IsHost ? TurnType.Player : TurnType.Opponent;
         }
 
         /// <summary>
@@ -198,22 +198,22 @@ namespace Battleship.Logic.BattelStrategy
                 return;
 
             // Ignore shoot when turn is enemy turn
-            if (turn == TurnType.EnemyTurn)
+            if (turn == TurnType.Opponent)
                 return;
 
             if (exchangeHandler == null)
             {
-                ShotResult result = enemyBoard.Shoot(row, col);
+                ShotResult result = opponentBoard.Shoot(row, col);
 
                 // When result is MISS change turn tu enemy turn
                 if (!gameSetting.HitBonus || result == ShotResult.Miss)
-                    turn = TurnType.EnemyTurn;
+                    turn = TurnType.Opponent;
 
                 // Update UI
-                OnEnemyShot?.Invoke();
+                OnShotAtOpponentBoard?.Invoke();
 
                 // Close exchange handler, when all ships are sunk
-                if (enemyBoard.IsAllSunk())
+                if (opponentBoard.IsAllSunk())
                 {
                     cts?.Cancel();
                     OnGameEnded?.Invoke(true);
@@ -238,16 +238,16 @@ namespace Battleship.Logic.BattelStrategy
                 return;
 
             // Ignore Shoot when turn is my turn
-            if (turn == TurnType.MyTurn)
+            if (turn == TurnType.Player)
                 return;
 
             // Get shot result
-            ShotResult result = friendlyBoard.Shoot(row, col);
+            ShotResult result = playerBoard.Shoot(row, col);
 
             // Result is MISS
             if (result == ShotResult.Miss)
             {
-                turn = TurnType.MyTurn;
+                turn = TurnType.Player;
                 exchangeHandler.SendMiss(row, col);
             }
             // Result is HIT
@@ -262,10 +262,10 @@ namespace Battleship.Logic.BattelStrategy
             }
 
             // Update UI (friendly board)
-            OnFriendlyShot?.Invoke();
+            OnShotAtPlayerBoard?.Invoke();
 
             // Close exchange handler, when all ships are sunk
-            if (friendlyBoard.IsAllSunk())
+            if (playerBoard.IsAllSunk())
             {
                 OnGameEnded?.Invoke(false);
                 await exchangeHandler.Close();
@@ -284,13 +284,13 @@ namespace Battleship.Logic.BattelStrategy
                 return;
 
             // Change turn to enemy turn
-            turn = TurnType.EnemyTurn;
+            turn = TurnType.Opponent;
 
             // Send Miss
-            enemyBoard.Shoot(row, col);
+            opponentBoard.Shoot(row, col);
 
             // Update UI (enemy board)
-            OnEnemyShot?.Invoke();
+            OnShotAtOpponentBoard?.Invoke();
         }
 
         /// <summary>
@@ -305,10 +305,10 @@ namespace Battleship.Logic.BattelStrategy
                 return;
 
             // Semd Hit
-            enemyBoard.Shoot(row, col);
+            opponentBoard.Shoot(row, col);
 
             // Update UI (enemy board)
-            OnEnemyShot?.Invoke();
+            OnShotAtOpponentBoard?.Invoke();
         }
 
         /// <summary>
@@ -323,13 +323,13 @@ namespace Battleship.Logic.BattelStrategy
                 return;
 
             // Send Sunk
-            enemyBoard.Shoot(row, col);
+            opponentBoard.Shoot(row, col);
 
             // Update UI (enemy board)
-            OnEnemyShot?.Invoke();
+            OnShotAtOpponentBoard?.Invoke();
 
             // Close exchange handler, when all ships are sunk
-            if (enemyBoard.IsAllSunk())
+            if (opponentBoard.IsAllSunk())
             {
                 // Send Game Ended event
                 OnGameEnded?.Invoke(true);

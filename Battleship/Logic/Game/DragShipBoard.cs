@@ -1,12 +1,11 @@
 ﻿using System.Diagnostics;
-using static Battleship.Logic.Board.Ship;
 using System.Windows.Controls;
 using System.Windows;
 using System.Numerics;
 using System;
 using System.Drawing;
 
-namespace Battleship.Logic.Board
+namespace Battleship.Logic.Game
 {
     // The state of each field on the board
     public enum FieldState
@@ -46,7 +45,7 @@ namespace Battleship.Logic.Board
             {
                 if (ships.Contains(ship))
                 {
-                    BoardCells.BlockSurroundingCells(board, boardSize, ship, false);
+                    SurroundingCells.BlockSurroundingCells(board, boardSize, ship, false);
                     ships.Remove(ship);
                 }
                 currentShip = ship;
@@ -74,7 +73,7 @@ namespace Battleship.Logic.Board
             }
             else
             {
-                BoardCells.BlockSurroundingCells(board, boardSize, ship);
+                SurroundingCells.BlockSurroundingCells(board, boardSize, ship);
                 ships.Add(ship);
                 currentShip = null;
                 OnStateChangeEvent?.Invoke();
@@ -132,7 +131,7 @@ namespace Battleship.Logic.Board
                 // Is ship on a valid position?
                 if (IsValidPosition(ship))
                 {
-                    BoardCells.BlockSurroundingCells(board, boardSize, ship);
+                    SurroundingCells.BlockSurroundingCells(board, boardSize, ship);
                     ships.Add(ship);
                     iteration = 0;
                     index++;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Battleship.Logic.Board;
+using Battleship.Logic.Game;
 using Battleship.Logic.Global;
 
 namespace Battleship.Logic.BattelStrategy.Modes

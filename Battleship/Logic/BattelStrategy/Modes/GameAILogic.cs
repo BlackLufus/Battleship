@@ -1,4 +1,4 @@
-﻿using Battleship.Logic.Board;
+﻿using Battleship.Logic.Game;
 using Battleship.Logic.Global;
 using System;
 using System.Collections.Generic;
@@ -34,7 +34,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
 
         private Shot? firstShot = null;
         private Shot? lastShot = null;
-        private Ship.ShipOrientation? shipOrientation = null;
+        private ShipOrientation? shipOrientation = null;
         private Direction? direction = null;
         private List<Direction> possibleDirections = [];
 
@@ -55,11 +55,11 @@ namespace Battleship.Logic.BattelStrategy.Modes
                     {
                         if (determinedOrientation == Orientation.Vertical)
                         {
-                            shipOrientation = Ship.ShipOrientation.Vertical;
+                            shipOrientation = ShipOrientation.Vertical;
                         }
                         else if (determinedOrientation == Orientation.Horizontal)
                         {
-                            shipOrientation = Ship.ShipOrientation.Horizontal;
+                            shipOrientation = ShipOrientation.Horizontal;
                         }
                         else
                         {
@@ -130,8 +130,8 @@ namespace Battleship.Logic.BattelStrategy.Modes
                                     lastShot = new Shot(row, col);
                                     // Bestimme die Orientierung basierend auf den Schüssen
                                     shipOrientation ??= firstShot.Row == lastShot.Row
-                                        ? Ship.ShipOrientation.Horizontal
-                                        : Ship.ShipOrientation.Vertical;
+                                        ? ShipOrientation.Horizontal
+                                        : ShipOrientation.Vertical;
                                 }
                                 else
                                 {
@@ -153,14 +153,14 @@ namespace Battleship.Logic.BattelStrategy.Modes
         // Hilfsmethode zur Richtungsbestimmung
         private Direction DetermineRandomDirection()
         {
-            if (shipOrientation == Ship.ShipOrientation.Horizontal)
+            if (shipOrientation == ShipOrientation.Horizontal)
             {
                 possibleDirections = [Direction.Left, Direction.Right];
                 Direction directionHorizontal = possibleDirections[new Random().Next(0, 2)];
                 possibleDirections.Remove(directionHorizontal);
                 return directionHorizontal;
             }
-            else if (shipOrientation == Ship.ShipOrientation.Vertical)
+            else if (shipOrientation == ShipOrientation.Vertical)
             {
                 possibleDirections = [Direction.Up, Direction.Down];
                 Direction directionVertical = possibleDirections[new Random().Next(0, 2)];

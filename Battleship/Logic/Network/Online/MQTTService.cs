@@ -32,6 +32,13 @@ namespace Battleship.Logic.Network.Online
         private readonly bool isHost;
         private readonly string key;
 
+        /// <summary>
+        /// Creates an object of the mqtt service
+        /// </summary>
+        /// <param name="gameId">The game id of the game</param>
+        /// <param name="key">The key or passwort to encrypt data</param>
+        /// <param name="username">The players username</param>
+        /// <param name="isHost">An indicator to determine whether the player is the host of the game</param>
         public MQTTService(string gameId, string key, string username, bool isHost)
         {
             this.username = username;
@@ -57,14 +64,20 @@ namespace Battleship.Logic.Network.Online
             this.key = key;
         }
 
+        /// <summary>
+        /// Handle Debug messages from mqtt client
+        /// </summary>
+        /// <param name="log"></param>
         private void HandleDebug(string log)
         {
-            Console.WriteLine("Debug: " + log);
+            Debug.WriteLine("Debug: " + log);
         }
 
+        /// <summary>
+        /// Connects to the mqtt broker and subscribes either to the client or host topic
+        /// </summary>
         public async Task Connect()
         {
-            string sender = isHost ? "host" : "client";
             string mqttUsername = $"{username}";
 
             await mqttClient.Connect(address, port, mqttUsername);
@@ -83,6 +96,11 @@ namespace Battleship.Logic.Network.Online
             }
         }
 
+        /// <summary>
+        /// Send a message to the mqtt broker
+        /// </summary>
+        /// <param name="category">The category of the data</param>
+        /// <param name="data">The data to send to a specific topic</param>
         public async Task Send(PacketCategory category, string data)
         {
             Debug.WriteLine($" >>> {category} >>> {data}");
@@ -96,6 +114,13 @@ namespace Battleship.Logic.Network.Online
             await mqttClient.PublishAsync(topic, cipherText);
         }
 
+        /// <summary>
+        /// Handle received messages from mqtt broker
+        /// </summary>
+        /// <param name="topic">The topic in which the message is received</param>
+        /// <param name="cipherText">The cipher data</param>
+        /// <param name="qos">The quality of service the message is received</param>
+        /// <param name="retain">An indicator to determine whether a message was retained</param>
         private void OnReceive(string topic, string cipherText, QualityOfService qos, bool retain)
         {
             string category = topic.Split('/').Last();
@@ -110,6 +135,9 @@ namespace Battleship.Logic.Network.Online
             OnDataReceived?.Invoke(topicCategory, data);
         }
 
+        /// <summary>
+        /// Disconnects from mqtt broker
+        /// </summary>
         public async Task Disconnect()
         {
             await mqttClient.Disconnect();

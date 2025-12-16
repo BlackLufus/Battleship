@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 
-namespace Battleship.Logic.Board
+namespace Battleship.Logic.Game
 {
     public enum CellState
     {
@@ -30,23 +30,20 @@ namespace Battleship.Logic.Board
         Sunk = 3
     }
 
-    public class PlaygroundBoardLogic
+    public class PlaygroundBoardLogic(int boardSize, List<DragShip> dragShips)
     {
-        private readonly int boardSize;
-        private readonly List<DragShip> dragShips;
+        private readonly int boardSize = boardSize;
+        private readonly List<DragShip> dragShips = dragShips;
         public List<Ship> Ships => dragShips.Cast<Ship>().ToList();
 
         private readonly List<(int x, int y)> shots = [];
-        private readonly int[,] board;
+        private readonly int[,] board = new int[boardSize, boardSize];
 
-        public PlaygroundBoardLogic(int boardSize, List<DragShip> dragShips)
-        {
-            this.boardSize = boardSize;
-            this.dragShips = dragShips;
-
-            board = new int[boardSize, boardSize];
-        }
-
+        /// <summary>
+        /// Move the image object to the new canvas object an optional show it there
+        /// </summary>
+        /// <param name="canvas">The new canvas object</param>
+        /// <param name="show">Value to show the image at the new canvas</param>
         public void Show(Canvas? canvas = null, bool show = false)
         {
             foreach (DragShip ship in dragShips)
@@ -58,36 +55,60 @@ namespace Battleship.Logic.Board
             }
         }
 
+        /// <summary>
+        /// Handle shoot at a specific position
+        /// </summary>
+        /// <param name="row">Position at row</param>
+        /// <param name="col">Position at col</param>
+        /// <returns>Returns the shot result depending whether the ship was hit or not</returns>
         public ShotResult Shoot(int row, int col)
         {
+            // Return None if row and/or col is outside of the board
             if (row < 0 || row >= boardSize ||
                 col < 0 || col >= boardSize)
                 return ShotResult.None;
+
+            // Return None when the specific position is blocked or already been shot
             if (board[row, col] > 0 ||
                 shots.Contains((row, col)))
                 return ShotResult.None;
+
+            // Otherwise add the new position to shots on the board
             shots.Add((row, col));
+
+            // Iterate throught each ship to check if a ship was hit
             foreach (DragShip ship in dragShips)
             {
-                if (ship.Shots.Contains((row, col)))
-                    return ShotResult.None;
+                // Return Hit when a ship was damaged
                 if (ship.Hit(row, col))
                 {
+                    // Return Sunk when a ship has been completely destroyed
                     if (ship.IsSunk)
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
+                            // Display the ship object in canvas
                             ship.Show();
                         });
-                        BoardCells.BlockSurroundingCells(board, boardSize, ship);
+
+                        // Block surroundings cells
+                        SurroundingCells.BlockSurroundingCells(board, boardSize, ship);
+
                         return ShotResult.Sunk;
                     }
                     return ShotResult.Hit;
                 }
             }
+            // Return Miss when no ship was hit
             return ShotResult.Miss;
         }
 
+        /// <summary>
+        /// Check if the position has already been shelled.
+        /// </summary>
+        /// <param name="row">The position in row</param>
+        /// <param name="col">The position in col</param>
+        /// <returns>Returns true when position was already shot otherwise false</returns>
         public bool WasShot(int row, int col)
         {
             foreach (DragShip ship in dragShips)
@@ -100,19 +121,32 @@ namespace Battleship.Logic.Board
             return false;
         }
 
+        /// <summary>
+        /// Check if all ships are sunk
+        /// </summary>
+        /// <returns>Returns true when all ships are sunk otherwise false</returns>
         public bool IsAllSunk()
         {
             return dragShips.All(ship => ship.IsSunk);
         }
 
+        /// <summary>
+        /// Determined smallest ship size
+        /// </summary>
+        /// <returns>Return the size of the smallest still available ship</returns>
         public int DeterminedSmallestShipSize()
         {
             return dragShips.Where(ship => !ship.IsSunk).Min(ship => (int)ship.type);
         }
 
+        /// <summary>
+        /// Returns the current board state
+        /// </summary>
+        /// <returns>The board with all states (Blocked/Water/Miss/Hit/Sunk)</returns>
         public CellState[,] GetBoardState()
         {
             CellState[,] boardState = new CellState[boardSize, boardSize];
+            // Add all blocked and water informations
             for (int i = 0; i < boardSize; i++)
             {
                 for (int j = 0; j < boardSize; j++)
@@ -127,13 +161,15 @@ namespace Battleship.Logic.Board
                     }
                 }
             }
+            // Add all Miss informations
             foreach ((int, int) shot in shots)
             {
                 boardState[shot.Item1, shot.Item2] = CellState.MISS;
             }
+            // Add ships specific informations
             foreach (Ship ship in dragShips)
             {
-                if (ship.orientation == Ship.ShipOrientation.Horizontal)
+                if (ship.orientation == ShipOrientation.Horizontal)
                 {
                     for (int i = 0; i < (int)ship.type; i++)
                     {
