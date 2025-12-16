@@ -2,7 +2,7 @@
 using Battelship.Lobby;
 using Battleship.Lobby;
 using Battleship.Logic.BattelStrategy.Modes;
-using Battleship.Logic.Global;
+using Battleship.Logic.Security;
 using Mqtt.Client;
 using System;
 using System.Collections.Generic;

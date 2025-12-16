@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Battleship.Logic
+namespace Battleship.Logic.Board
 {
     public class BoardCells
     {   /// <summary>

@@ -1,6 +1,6 @@
 ﻿using Battleship.Lobby;
-using Battleship.Logic;
 using Battleship.Logic.BattelStrategy;
+using Battleship.Logic.Board;
 using Battleship.Logic.Global;
 using Battleship.Logic.Network;
 using Battleship.Logic.Services;

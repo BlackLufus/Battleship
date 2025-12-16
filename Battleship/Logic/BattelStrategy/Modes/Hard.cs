@@ -1,4 +1,5 @@
-﻿using Battleship.Logic.Global;
+﻿using Battleship.Logic.Board;
+using Battleship.Logic.Global;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

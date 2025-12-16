@@ -1,4 +1,5 @@
-﻿using Battleship.Logic.Network.Online;
+﻿using Battleship.Logic.Board;
+using Battleship.Logic.Network.Online;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

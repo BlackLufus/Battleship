@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
-using static Battleship.Logic.Ship;
+using static Battleship.Logic.Board.Ship;
 using System.Windows.Controls;
 using System.Windows;
 using System.Numerics;
 using System;
 using System.Drawing;
 
-namespace Battleship.Logic
+namespace Battleship.Logic.Board
 {
     // The state of each field on the board
     public enum FieldState

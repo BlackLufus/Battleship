@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Battleship.Logic.Global
+namespace Battleship.Logic.Security
 {
     public class AdvancedEncryptionStandard
     {

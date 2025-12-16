@@ -1,4 +1,5 @@
 ﻿using Battleship.Logic.BattelStrategy.Modes;
+using Battleship.Logic.Board;
 using Battleship.Logic.Global;
 using Battleship.Logic.Network;
 using Battleship.Logic.Services;
@@ -47,6 +48,13 @@ namespace Battleship.Logic.BattelStrategy
         public TurnType turn = TurnType.EnemyTurn;
         private CancellationTokenSource? cts;
 
+        /// <summary>
+        /// Init Game Logic
+        /// </summary>
+        /// <param name="exchangeHandler">The exchange handler</param>
+        /// <param name="gameSetting">Game settings</param>
+        /// <param name="enemyBoard">The enemey board</param>
+        /// <param name="friendlyBoard">The friendly board</param>
         public GameLogic(GameSetting gameSetting, PlaygroundBoardLogic enemyBoard, PlaygroundBoardLogic friendlyBoard)
         {
             // Init basic variables
@@ -55,6 +63,13 @@ namespace Battleship.Logic.BattelStrategy
             this.friendlyBoard = friendlyBoard;
         }
 
+        /// <summary>
+        /// Init Game Logic with exchange handler
+        /// </summary>
+        /// <param name="exchangeHandler">The exchange handler</param>
+        /// <param name="gameSetting">Game settings</param>
+        /// <param name="enemyBoard">The enemey board</param>
+        /// <param name="friendlyBoard">The friendly board</param>
         public GameLogic(ExchangeHandler exchangeHandler, GameSetting gameSetting, PlaygroundBoardLogic enemyBoard, PlaygroundBoardLogic friendlyBoard)
         {
             // Init exchange handler
@@ -72,6 +87,9 @@ namespace Battleship.Logic.BattelStrategy
             this.friendlyBoard = friendlyBoard;
         }
 
+        /// <summary>
+        /// Start singleplayer mode
+        /// </summary>
         public async void StartSinglePlayerMode()
         {
             // Ignore when exchange handler is not null
@@ -99,7 +117,7 @@ namespace Battleship.Logic.BattelStrategy
                     if (this.turn == TurnType.EnemyTurn)
                     {
                         // Delay 250 to 750 ms
-                        //await Task.Delay(Random.Shared.Next(250, 750));
+                        await Task.Delay(Random.Shared.Next(250, 750));
 
                         // Select next shoot and return hit
                         bool hit = await Task.Run(() =>
@@ -125,7 +143,7 @@ namespace Battleship.Logic.BattelStrategy
                     else if (friendlyComputerLogic != null && this.turn == TurnType.MyTurn)
                     {
                         // Delay 250 to 750 ms
-                        //await Task.Delay(Random.Shared.Next(250, 750));
+                        await Task.Delay(Random.Shared.Next(250, 750));
 
                         // Select next shoot and return hit
                         bool hit = await Task.Run(() =>
@@ -155,6 +173,9 @@ namespace Battleship.Logic.BattelStrategy
             }, token);
         }
 
+        /// <summary>
+        /// Start multiplayer mode
+        /// </summary>
         public void StartMultiPlayerMode()
         {
             // Ignore when exchange handler is null
@@ -165,6 +186,11 @@ namespace Battleship.Logic.BattelStrategy
             turn = exchangeHandler.IsHost ? TurnType.MyTurn : TurnType.EnemyTurn;
         }
 
+        /// <summary>
+        /// Handle shoot to enemy board
+        /// </summary>
+        /// <param name="row">Row position</param>
+        /// <param name="col">Col poisition</param>
         public void Shoot(int row, int col)
         {
             // Ignore shoot when gamemode is computer vs computer
@@ -180,7 +206,7 @@ namespace Battleship.Logic.BattelStrategy
                 ShotResult result = enemyBoard.Shoot(row, col);
 
                 // When result is MISS change turn tu enemy turn
-                if (result == ShotResult.Miss)
+                if (!gameSetting.HitBonus || result == ShotResult.Miss)
                     turn = TurnType.EnemyTurn;
 
                 // Update UI
@@ -200,6 +226,11 @@ namespace Battleship.Logic.BattelStrategy
             }
         }
 
+        /// <summary>
+        /// Handle incoming shoot from enemy (to friendly board)
+        /// </summary>
+        /// <param name="row">Row position</param>
+        /// <param name="col">Col poisition</param>
         private async void HandleShoot(int row, int col)
         {
             // Ignore when exchange handler is null
@@ -241,6 +272,11 @@ namespace Battleship.Logic.BattelStrategy
             }
         }
 
+        /// <summary>
+        /// Handle miss result from enemy
+        /// </summary>
+        /// <param name="row">Row position</param>
+        /// <param name="col">Col poisition</param>
         private void HandleMiss(int row, int col)
         {
             // Ignore when exchange handler is null
@@ -257,6 +293,11 @@ namespace Battleship.Logic.BattelStrategy
             OnEnemyShot?.Invoke();
         }
 
+        /// <summary>
+        /// Handle hit result from enemy
+        /// </summary>
+        /// <param name="row">Row position</param>
+        /// <param name="col">Col poisition</param>
         private void HandleHit(int row, int col)
         {
             // Ignore when exchange handler is null
@@ -270,6 +311,11 @@ namespace Battleship.Logic.BattelStrategy
             OnEnemyShot?.Invoke();
         }
 
+        /// <summary>
+        /// Handel sunk result from enemy board
+        /// </summary>
+        /// <param name="row">Row position</param>
+        /// <param name="col">Col poisition</param>
         private async void HandleSunk(int row, int col)
         {
             // Ignore when exchange handler is null
@@ -293,6 +339,9 @@ namespace Battleship.Logic.BattelStrategy
             }
         }
 
+        /// <summary>
+        /// Handle timout event
+        /// </summary>
         private async void HandleTimeout()
         {
             // Close exchange handler
@@ -303,6 +352,9 @@ namespace Battleship.Logic.BattelStrategy
             OnTimeout?.Invoke();
         }
 
+        /// <summary>
+        /// Handle disconnect event
+        /// </summary>
         private async void HandleDisconnect()
         {
             // Close exchange handler

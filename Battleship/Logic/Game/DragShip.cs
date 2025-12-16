@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Battleship.Logic
+namespace Battleship.Logic.Board
 {
     // DragShip class to hold drag information about a ship being dragged
     public class DragShip : Ship
