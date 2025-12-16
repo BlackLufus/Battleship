@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -101,6 +102,25 @@ namespace Battleship.UI.Game
             SetPlayerUsername(exchangeHandler.PlayerUsername);
             SetOpponentUsername(exchangeHandler.OpponentUsername!);
 
+            int id = 0;
+            SendMessageButton.OnSend += (string message) =>
+            {
+                exchangeHandler.SendMessage(id++, message);
+                AddMessage(exchangeHandler.PlayerUsername, message);
+            };
+            exchangeHandler.OnMessage += (int id, string message) => {
+                AddMessage(exchangeHandler.OpponentUsername!, message);
+                Debug.WriteLine("===================================");
+                Debug.WriteLine($" >>> Nachricht ({id}): {message}");
+                Debug.WriteLine("===================================");
+            };
+            exchangeHandler.OnMessageAck += (int id) =>
+            {
+                Debug.WriteLine("===================================");
+                Debug.WriteLine($" >>> Nachricht mit der id {id} versendet");
+                Debug.WriteLine("===================================");
+            };
+
             InitPlaygroundBoard(EnemyWaterGrid, EnemyCellGrid, EnemyTargetGrid, opponentCellPanel, false);
             InitPlaygroundBoard(FriendlyWaterGrid, FriendlyCellGrid, FriendlyTargetGrid, playerCellPanel, true);
 
@@ -111,6 +131,69 @@ namespace Battleship.UI.Game
             gameLogic.OnTimeout += HandleTimout;
             gameLogic.OnDisconnect += HandleDisconnet;
             gameLogic.StartMultiPlayerMode();
+        }
+
+        private void AddMessage(string username, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Grid grid = new Grid()
+                {
+                    Background = new BrushConverter().ConvertFrom("#777") as Brush,
+                    Height = 20,
+                    Margin = new Thickness(0)
+                };
+                var first = new ColumnDefinition()
+                {
+                    Width = new GridLength(5)
+                };
+                grid.ColumnDefinitions.Add(first);
+                var second = new ColumnDefinition()
+                {
+                    Width = GridLength.Auto
+                };
+                grid.ColumnDefinitions.Add(second);
+                var third = new ColumnDefinition()
+                {
+                    Width = new GridLength(5)
+                };
+                grid.ColumnDefinitions.Add(third);
+                var fourth = new ColumnDefinition()
+                {
+                    Width = GridLength.Auto
+                };
+                grid.ColumnDefinitions.Add(fourth);
+
+                Label usernameLabel = new Label()
+                {
+                    Content = username,
+                    Foreground = Brushes.White,
+                    Padding = new Thickness(0)
+                };
+                grid.Children.Add(usernameLabel);
+                Grid.SetColumn(usernameLabel, 1);
+
+                Label seperatorLabel = new Label()
+                {
+                    Content = ":",
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Foreground = Brushes.White,
+                    Padding = new Thickness(0)
+                };
+                grid.Children.Add(seperatorLabel);
+                Grid.SetColumn(seperatorLabel, 2);
+
+                Label messageLabel = new Label()
+                {
+                    Content = message,
+                    Foreground = Brushes.White,
+                    Padding = new Thickness(0)
+                };
+                grid.Children.Add(messageLabel);
+                Grid.SetColumn(messageLabel, 3);
+
+                MessageContainer.Children.Add(grid);
+            });
         }
 
         /// <summary>

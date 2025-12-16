@@ -83,7 +83,7 @@
                                             </Button.Style>
                                         </Button>
                                         <Button Grid.Column="4"
-                                                Click="DeleteButton_Click">
+                                                Click="SendButton_Click">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Template">

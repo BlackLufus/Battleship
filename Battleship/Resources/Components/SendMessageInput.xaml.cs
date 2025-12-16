@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Battleship.Logic.Network;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,9 @@ namespace Battleship.Resources.Components
     /// </summary>
     public partial class SendMessageInput : UserControl
     {
+        public delegate void SendDelegate(string message);
+        public event SendDelegate? OnSend;
+
         private bool isEmpty = false;
         private TextBox? inputField;
         public SendMessageInput()
@@ -114,6 +118,11 @@ namespace Battleship.Resources.Components
         {
             inputField!.Text = "";
             CheckInputContent(inputField, false);
+        }
+
+        private void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            OnSend?.Invoke(inputField!.Text);
         }
     }
 }
