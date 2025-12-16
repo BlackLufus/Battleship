@@ -183,6 +183,7 @@ namespace Battelship.Lobby
             {
                 Debug.WriteLine("Delete");
                 GameCanvas.Children.Remove(dragShip.img);
+                dragShip.Dispose();
             }
             dragShips.Clear();
             Update();
@@ -246,8 +247,15 @@ namespace Battelship.Lobby
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Timeout", "Dein Gegner antwortet nicht mehr.");
-                Navigation.NavigateAndClear(new MenuPage());
+                // Dispose exchange handler
+                exchangeHandler?.Close();
+
+                // Show dialog to inform user
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Timeout", "Dein Gegner antwortet nicht mehr.", (Dialog.Result result) =>
+                {
+                    // Navigate back to previous page
+                    Navigation.NavigateAndClear(new MenuPage());
+                });
             });
         }
 
@@ -255,27 +263,41 @@ namespace Battelship.Lobby
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Spiel zu Ende", "Dein Gegner hat das Spiel verlassen");
-                Navigation.NavigateAndClear(new MenuPage());
+                // Dispose exchange handler
+                exchangeHandler?.Close();
+
+                // Show dialog to inform user
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Spiel zu Ende", "Dein Gegner hat das Spiel verlassen", (Dialog.Result result) =>
+                {
+                    // Navigate back to previous page
+                    Navigation.NavigateAndClear(new MenuPage());
+                });
             });
         }
 
         private void HandleReadyState(bool readyToStart)
         {
+            // Return if exchange handler does not exist
             if (exchangeHandler == null)
                 return;
 
             if (readyToStart)
             {
-                exchangeHandler.OnTimeout -= HandleTimeout;
-                exchangeHandler.OnDisconnect -= HandleDisconnect;
-                exchangeHandler.OnReady -= HandleReadyState;
-                exchangeHandler.OnReadyAck -= HandleReadyState;
-
                 Application.Current.Dispatcher.Invoke(() =>
                 {
+                    // Remove all handlers
+                    exchangeHandler.OnTimeout -= HandleTimeout;
+                    exchangeHandler.OnDisconnect -= HandleDisconnect;
+                    exchangeHandler.OnReady -= HandleReadyState;
+                    exchangeHandler.OnReadyAck -= HandleReadyState;
+
+                    // Get all basic ship as list
                     var basicShipList = GetBasicShipList();
+
+                    // Get ships from enemy
                     int[] enemyShipData = exchangeHandler.EnemyShipData;
+
+                    // Insert values to ship list
                     for (int i = 0; i < basicShipList.Count; i++)
                     {
                         Ship ship = basicShipList[i];
@@ -285,14 +307,11 @@ namespace Battelship.Lobby
                         ship.row = enemyShipData[4 * i + 2];
                         ship.col = enemyShipData[4 * i + 3];
                     }
+
+                    // Navigate to Game page
                     Navigation.RegisterPage(new GamePage(exchangeHandler, gameSetting, dragShips, basicShipList));
                 });
             }
-        }
-
-        private void HandleEnemyShipsData(int[] data)
-        {
-
         }
 
         /// <summary>
@@ -303,23 +322,29 @@ namespace Battelship.Lobby
         private void FinishButton_Click(object sender, RoutedEventArgs e)
         {
             List<Ship> friendlyShips = dragShips.Cast<Ship>().ToList();
-            Debug.WriteLine("FinishButton clicked");
-            Debug.WriteLine("exchangeHandler: " + exchangeHandler);
+
             if (exchangeHandler != null)
             {
+                // Show dialog to inform user
                 Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Warte auf Gegner", "Warte bis der Gegner fertig ist");
+
+                // Send ready state with all ships
                 exchangeHandler.SendReady(friendlyShips);
             }
             else
             {
                 DragShipBoard enemyBattleField = new DragShipBoard(gameSetting.BoardSize);
+
+                // Get all basic ship as list
                 var basicShipList = GetBasicShipList();
 
+                // Variable to store state whether randomization successful or not
                 bool isRandomizedSucceed;
                 do
                     isRandomizedSucceed = enemyBattleField.Randomize(basicShipList.Cast<Ship>().ToList());
                 while (!isRandomizedSucceed);
 
+                // Navigate to Game page
                 Navigation.RegisterPage(new GamePage(gameSetting, dragShips, basicShipList));
             }
         }
@@ -357,7 +382,10 @@ namespace Battelship.Lobby
         /// <param name="e">The RoutedEventArgs</param>
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
+            // Reset 
             Reset();
+
+            // Set ship to side bar
             InitShips();
         }
 
@@ -368,6 +396,7 @@ namespace Battelship.Lobby
         /// <param name="e">The RoutedEventArgs</param>
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
+            // Navigate back to previous page
             Navigation.NavigateBack();
         }
 
@@ -376,8 +405,16 @@ namespace Battelship.Lobby
         /// </summary>
         /// <param name="sender">The sender object</param>
         /// <param name="e">The RoutedEventArgs</param>
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        private async void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            if (exchangeHandler != null)
+            {
+                // Send Disconnect
+                await exchangeHandler.SendDisconnect();
+                await exchangeHandler.Close();
+            }
+
+            // Navigate to Menu page
             Navigation.NavigateAndClear(new MenuPage());
         }
     }

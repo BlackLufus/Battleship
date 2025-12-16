@@ -118,12 +118,16 @@ namespace Battelship.Lobby
 
         private void HandleSettingsAck()
         {
+            // Return if exchange handler does not exist
+            if (exchangeHandler == null)
+                return;
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // Remove all handlers
-                exchangeHandler!.OnSettingsAck -= HandleSettingsAck;
-                exchangeHandler!.OnTimeout -= HandleTimeout;
-                exchangeHandler!.OnDisconnect -= HandleDisconnect;
+                exchangeHandler.OnSettingsAck -= HandleSettingsAck;
+                exchangeHandler.OnTimeout -= HandleTimeout;
+                exchangeHandler.OnDisconnect -= HandleDisconnect;
 
                 // Apply settings
                 ApplySettings();
