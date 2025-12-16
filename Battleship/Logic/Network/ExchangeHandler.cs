@@ -11,7 +11,7 @@ using static Battleship.Logic.Network.Online.MQTTService;
 
 namespace Battleship.Logic.Network
 {
-    public class ExchangeHandler : IDisposable
+    public class ExchangeHandler
     {
         public delegate void TimeoutDelegate();
         public event TimeoutDelegate? OnTimeout;
@@ -59,11 +59,11 @@ namespace Battleship.Logic.Network
         private readonly MQTTService mqttService;
         public readonly bool IsHost;
 
-        
+
         private readonly string username;
         public string Username { get { return username; } }
 
-        
+
         private string? enemyUsername;
         public string? EnemyUsername { get { return enemyUsername; } }
         private int[] enemyShipData = [];
@@ -191,7 +191,7 @@ namespace Battleship.Logic.Network
                     OnDisconnect?.Invoke();
                 }
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
                 Debug.WriteLine(e.StackTrace);
@@ -200,6 +200,7 @@ namespace Battleship.Logic.Network
 
         private async Task StartPinger()
         {
+            return;
             cts = new CancellationTokenSource();
             CancellationToken token = cts.Token;
             lastPingReceived = DateTime.Now;
@@ -232,6 +233,8 @@ namespace Battleship.Logic.Network
                     Debug.WriteLine("Unexpected error in ping task: " + e.Message);
                 }
             }, token);
+
+            Debug.WriteLine("Ping task stopped!");
         }
 
         private async void SendPing()
@@ -273,7 +276,7 @@ namespace Battleship.Logic.Network
             }
 
             string data = String.Join(",", dataList.ToArray());
-            
+
             await mqttService.Send(PacketCategory.READY, data);
         }
 
@@ -319,21 +322,31 @@ namespace Battleship.Logic.Network
             await mqttService.Send(PacketCategory.MESSAGEACK, data);
         }
 
-        public async void SendDisconnect()
+        public async Task SendDisconnect()
         {
             string data = "DISCONNECT";
             await mqttService.Send(PacketCategory.DISCONNECT, data);
         }
 
-        public void Disconnect()
+        public async Task Close()
         {
-            mqttService.Disconnect();
+            await mqttService.Disconnect();
             cts?.Cancel();
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
+            cts?.Dispose();
+            OnTimeout = null;
+            OnConnect = null;
+            OnConnectAck = null;
+            OnSettings = null;
+            OnSettingsAck = null;
+            OnReady = null;
+            OnReadyAck = null;
+            OnShoot = null;
+            OnMiss = null;
+            OnHit = null;
+            OnSunk = null;
+            OnMessage = null;
+            OnMessageAck = null;
+            OnDisconnect = null;
         }
     }
 }

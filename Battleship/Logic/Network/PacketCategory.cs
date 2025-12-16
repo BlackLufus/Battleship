@@ -52,6 +52,7 @@ namespace Battleship.Logic.Network
                 "Sunk" => SUNK,
                 "Message" => MESSAGE,
                 "MessageAck" => MESSAGEACK,
+                "DISCONNECT" => DISCONNECT,
                 _ => throw new ArgumentException($"Unknown PacketCategory: {value}"),
             };
         }

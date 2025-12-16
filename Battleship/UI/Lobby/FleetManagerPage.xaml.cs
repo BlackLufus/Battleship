@@ -53,10 +53,6 @@ namespace Battelship.Lobby
 
         public FleetManagerPage(GameSetting gameSetting, ExchangeHandler? exchangeHandler = null)
         {
-            Debug.WriteLine("\n\n==========================================");
-            Debug.WriteLine("Das ist ein test2");
-            Debug.WriteLine("==========================================\n\n");
-
             this.gameSetting = gameSetting;
             this.exchangeHandler = exchangeHandler;
 

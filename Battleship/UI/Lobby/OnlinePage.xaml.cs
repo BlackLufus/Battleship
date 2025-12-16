@@ -29,8 +29,6 @@ namespace Battleship.Lobby
         private ExchangeHandler? exchangeHandler;
         private static OnlinePage? instance;
 
-        private bool isWaiting = false;
-
         public static OnlinePage Instance
         {
             get
@@ -45,115 +43,136 @@ namespace Battleship.Lobby
             InitializeComponent();
         }
 
-        private void HandleTimeout()
+        private void HandleSettings(int size, bool hitBonus, bool restrictedArea, int carrierAmount, int battleshipAmount, int cruiserAmount, int submarineAmount, int destroyerAmount)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                ToggleButtonState();
-            });
-        }
-
-        private void HandleSettings(int size, bool hitBonus, bool restrictedArea, int carrierAmount, int battleshipAmount, int cruiserAmount, int submarineAmount, int destroyerAmount)
-        {
-            Debug.WriteLine("!!!HandleSettings!!!");
-            if (exchangeHandler != null)
-            {
-                exchangeHandler.OnSettings -= HandleSettings;
+                // Remove handler for settings
+                exchangeHandler!.OnSettings -= HandleSettings;
+                // Create game settings
                 GameSetting gameSetting = new(GameSetting.Mode.PlayerVsPlayer, size, null, hitBonus, restrictedArea, battleshipAmount, cruiserAmount, submarineAmount, destroyerAmount, carrierAmount: carrierAmount);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ToggleButtonState();
-                    Navigation.NavigateTo(new FleetManagerPage(gameSetting, exchangeHandler));
-                });
-            }
+                // Enable Settings
+                ToggleButtonState(true);
+                // Navigate to Fleet Manager page
+                Navigation.NavigateTo(new FleetManagerPage(gameSetting, exchangeHandler!));
+            });
         }
 
         private void HandleConnect()
         {
-            if (exchangeHandler != null)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                exchangeHandler.OnConnect -= HandleConnect;
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Navigation.NavigateTo(new GameSettingsPage(exchangeHandler));
-                });
-            }
+                // Enable Buttons
+                ToggleButtonState(true);
+
+                // Remove handler for Connect
+                exchangeHandler!.OnConnect -= HandleConnect;
+
+                // Navigate to Game Settings page
+                Navigation.NavigateTo(new GameSettingsPage(exchangeHandler!));
+            });
         }
 
         private void HandleConnAck()
         {
-            if (exchangeHandler != null)
-            {
-                exchangeHandler.OnConnectAck -= HandleConnAck;
-                exchangeHandler.OnSettings += HandleSettings;
-            }
+            // Remove handler for ConnAck
+            exchangeHandler!.OnConnectAck -= HandleConnAck;
+
+            // Add handler for Setting, Timeout and Disconnect
+            exchangeHandler!.OnSettings += HandleSettings;
+            exchangeHandler.OnTimeout += HandleTimeout;
+            exchangeHandler.OnDisconnect += HandleDisconnect;
         }
 
         private void HandleDisconnect()
         {
-            if (exchangeHandler != null)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                exchangeHandler.OnSettings -= HandleSettings;
+                // Close exchange handler
+                exchangeHandler?.Close();
 
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Disconnected", "The other player has disconnected");
-                    ToggleButtonState();
-                });
-            }
+                // Enable buttons
+                ToggleButtonState(true);
+
+                // Show dialog to inform user
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Disconnected", "Der Gegner hat das Spiel verlassen");
+            });
         }
 
+        private void HandleTimeout()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // Close exchange handler
+                exchangeHandler?.Close();
+
+                // Enable buttons
+                ToggleButtonState(true);
+
+                // Show dialog to inform user
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Timeout", "Der Gegner antwortet nicht mehr.");
+            });
+        }
 
         private async void PrivateGameButton_Click(object sender, RoutedEventArgs e)
         {
+            // Get gameId and key
             string gameId = GameIDInput.Text;
             string key = PasswordInput.Text;
 
+            // Check if input is correct
             if (gameId.Trim().Length == 0)
                 Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Ungültige Game ID", "Die eingegebene ID ist nicht gültig!");
 
-            // If success full create an Exchange handler object
+            // Disable buttons
+            ToggleButtonState(false);
+
+            // Create Exchange Handler object, add Connect handler and connect
             exchangeHandler = new ExchangeHandler(GameIDInput.Text, PasswordInput.Text, Variables.Username, true);
-            await exchangeHandler.Connect();
             exchangeHandler.OnConnect += HandleConnect;
+            await exchangeHandler.Connect();
         }
 
         private async void ConnectToPrivateGameButton_Click(object sender, RoutedEventArgs e)
         {
+            // Get gameId and key
             string gameId = GameIDInput.Text;
             string key = PasswordInput.Text;
 
+            // Check if input is correct
             if (gameId.Trim().Length == 0)
                 Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Ungültige Game ID", "Die eingegebene ID ist nicht gültig!");
 
+            // Disable buttons
+            ToggleButtonState(false);
+
+            // Create Exchange Handler object, add ConnAck handler and connect
             exchangeHandler = new ExchangeHandler(GameIDInput.Text, PasswordInput.Text, Variables.Username, false);
-            await exchangeHandler.Connect();
-            exchangeHandler.OnTimeout += HandleTimeout;
             exchangeHandler.OnConnectAck += HandleConnAck;
-            exchangeHandler.OnDisconnect += HandleDisconnect;
+            await exchangeHandler.Connect();
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        private async void BackButton_Click(object sender, RoutedEventArgs e)
         {
+            // Send Disconnect and dispose object
             if (exchangeHandler != null)
-                exchangeHandler.SendDisconnect();
-            ToggleButtonState();
+            {
+                await exchangeHandler.SendDisconnect();
+                await exchangeHandler.Close();
+            }
+            
+            // Enable buttons
+            ToggleButtonState(true);
+
+            // Navigate back to previous page
             Navigation.NavigateBack();
         }
 
-        private void ToggleButtonState()
+        private void ToggleButtonState(bool enable)
         {
-
-            if (isWaiting)
-            {
-                ConnectButton.IsEnabled = false;
-                PrivateGameButton.IsEnabled = false;
-            }
-            else
-            {
-                ConnectButton.IsEnabled = true;
-                PrivateGameButton.IsEnabled = true;
-            }
+            // Enable Connect and Private Game button
+            ConnectButton.IsEnabled = enable;
+            PrivateGameButton.IsEnabled = enable;
         }
     }
 }

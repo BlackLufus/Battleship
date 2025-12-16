@@ -78,6 +78,7 @@ namespace Battelship.Lobby
             this.exchangeHandler.OnDisconnect += HandleDisconnect;
             this.exchangeHandler.OnSettingsAck += HandleSettingsAck;
 
+            // Set game mode to PlayerVsPlayer
             mode = GameSetting.Mode.PlayerVsPlayer;
 
             InitializeComponent();
@@ -89,8 +90,14 @@ namespace Battelship.Lobby
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+                // Dispose exchange handler
+                exchangeHandler?.Close();
+
+                // Show dialog to inform user
                 Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Timeout", "Dein Gegner antwortet nicht mehr.");
-                Navigation.NavigateAndClear(new MenuPage());
+
+                // Navigate back to previous page
+                Navigation.NavigateBack();
             });
         }
 
@@ -98,22 +105,27 @@ namespace Battelship.Lobby
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+                // Dispose exchange handler
+                exchangeHandler?.Close();
+
+                // Show dialog to inform user
                 Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Spiel zu Ende", "Dein Gegner hat das Spiel verlassen");
-                Navigation.NavigateAndClear(new MenuPage());
+
+                // Navigate back to previous page
+                Navigation.NavigateBack();
             });
         }
 
         private void HandleSettingsAck()
         {
-            if (this.exchangeHandler == null)
-                return;
-
-            exchangeHandler.OnTimeout -= HandleTimeout;
-            exchangeHandler.OnDisconnect -= HandleDisconnect;
-            exchangeHandler.OnSettingsAck -= HandleSettingsAck;
-
             Application.Current.Dispatcher.Invoke(() =>
             {
+                // Remove all handlers
+                exchangeHandler!.OnSettingsAck -= HandleSettingsAck;
+                exchangeHandler!.OnTimeout -= HandleTimeout;
+                exchangeHandler!.OnDisconnect -= HandleDisconnect;
+
+                // Apply settings
                 ApplySettings();
             });
         }
@@ -130,7 +142,7 @@ namespace Battelship.Lobby
             Debug.WriteLine("SelectedValue: " + SubmarineAmount.Value);
             Debug.WriteLine("SelectedValue: " + DestroyerAmount.Value);
 
-            // Open fleet manager page
+            // Navigate to Fleet Manager page
             Navigation.NavigateTo(new FleetManagerPage(
                 new GameSetting(
                     mode,
@@ -147,8 +159,16 @@ namespace Battelship.Lobby
             ));
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        private async void BackButton_Click(object sender, RoutedEventArgs e)
         {
+            // Send Disconnect and dispose object
+            if (exchangeHandler != null)
+            {
+                await exchangeHandler.SendDisconnect();
+                await exchangeHandler.Close();
+            }
+
+            // Navigate back to previous page
             Navigation.NavigateBack();
         }
 
@@ -157,10 +177,8 @@ namespace Battelship.Lobby
             // Multiplayer procedure
             if (mode == GameSetting.Mode.PlayerVsPlayer)
             {
-                if (exchangeHandler == null)
-                    return;
-
-                exchangeHandler.SendSettings(
+                // Send Settings
+                exchangeHandler?.SendSettings(
                     (int)FieldSize.SelectedValue,
                     FieldHitBonus.IsChecked,
                     FieldRestricedArea.IsChecked,
@@ -170,7 +188,6 @@ namespace Battelship.Lobby
                     SubmarineAmount.Value,
                     DestroyerAmount.Value
                 );
-                return;
             }
             // Singleplayer procedure
             else
@@ -182,6 +199,7 @@ namespace Battelship.Lobby
                         mode = radio.Content.Equals("Normal") ? GameSetting.Mode.PlayerVsComputer : GameSetting.Mode.ComputerVsComputer;
                     }
                 }
+                // Apply settings
                 ApplySettings();
             }
         }

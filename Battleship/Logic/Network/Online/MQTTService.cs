@@ -110,7 +110,7 @@ namespace Battleship.Logic.Network.Online
             OnDataReceived?.Invoke(topicCategory, data);
         }
 
-        public async void Disconnect()
+        public async Task Disconnect()
         {
             await mqttClient.Disconnect();
         }
