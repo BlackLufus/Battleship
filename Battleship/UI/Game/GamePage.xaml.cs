@@ -1,7 +1,9 @@
-﻿using Battleship.Logic;
+﻿using Battleship.Lobby;
+using Battleship.Logic;
 using Battleship.Logic.BattelStrategy;
 using Battleship.Logic.Global;
 using Battleship.Logic.Network;
+using Battleship.Logic.Services;
 using Battleship.Resources.Components;
 using System;
 using System.Collections.Generic;
@@ -64,17 +66,20 @@ namespace Battleship.UI.Game
             InitializeComponent();
 
             this.friendlyBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, friednlyDragShips);
-            this.friendlyBoard.Show(FriendlyShipCanvas);
+            this.friendlyBoard.Show(FriendlyShipCanvas, true);
             this.enemyBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, enemyDragShips);
-            this.enemyBoard.Show(EnemyShipCanvas);
+            this.enemyBoard.Show(EnemyShipCanvas, false);
+
+            SetFriendlyUsername(Variables.Username);
+            SetEnemyUsername($"Computer{new Random().Next(1000, 9999)}");
 
             InitPlaygroundBoard(EnemyWaterGrid, EnemyCellGrid, EnemyTargetGrid, enemyCellPanel, false);
             InitPlaygroundBoard(FriendlyWaterGrid, FriendlyCellGrid, FriendlyTargetGrid, friendlyCellPanel, true);
 
             gameLogic = new GameLogic(gameSetting, enemyBoard, friendlyBoard);
-            gameLogic.OnEnemyShotEvent += OnEnemyShotEvent;
-            gameLogic.OnFriendlyShotEvent += OnFriendlyShotEvent;
-            gameLogic.OnGameEndedEvent += OnGameEndedEvent;
+            gameLogic.OnEnemyShot += HandleEnemyShot;
+            gameLogic.OnFriendlyShot += HandleFriendlyShot;
+            gameLogic.OnGameEnded += HandleGameEnded;
             gameLogic.StartSinglePlayerMode();
         }
 
@@ -100,9 +105,11 @@ namespace Battleship.UI.Game
             InitPlaygroundBoard(FriendlyWaterGrid, FriendlyCellGrid, FriendlyTargetGrid, friendlyCellPanel, true);
 
             gameLogic = new GameLogic(exchangeHandler, gameSetting, enemyBoard, friendlyBoard);
-            gameLogic.OnEnemyShotEvent += OnEnemyShotEvent;
-            gameLogic.OnFriendlyShotEvent += OnFriendlyShotEvent;
-            gameLogic.OnGameEndedEvent += OnGameEndedEvent;
+            gameLogic.OnEnemyShot += HandleEnemyShot;
+            gameLogic.OnFriendlyShot += HandleFriendlyShot;
+            gameLogic.OnGameEnded += HandleGameEnded;
+            gameLogic.OnTimeout += HandleTimout;
+            gameLogic.OnDisconnect += HandleDisconnet;
             gameLogic.StartMultiPlayerMode();
         }
 
@@ -186,34 +193,6 @@ namespace Battleship.UI.Game
             }
         }
 
-        private void UpdateCell(StackPanel element, CellState state)
-        {
-            if (state == CellState.HIT || state == CellState.SUNK)
-            {
-                Image image = new()
-                {
-                    Source = FireImage,
-                };
-                element.Children.Add(image);
-            }
-            else if (state == CellState.MISS)
-            {
-                Image image = new()
-                {
-                    Source = RedCrossImage,
-                };
-                element.Children.Add(image);
-            }
-            else if (state == CellState.BLOCKED && gameSetting.RestrictedArea)
-            {
-                Image image = new()
-                {
-                    Source = RestrictionImage,
-                };
-                element.Children.Add(image);
-            }
-        }
-
         private void OnMouseEnter(object sender, MouseEventArgs e)
         {
             Border cell = (Border)sender;
@@ -246,22 +225,32 @@ namespace Battleship.UI.Game
             cell.Background = Brushes.Transparent;
         }
 
-        private void OnEnemyShotEvent()
+        private void UpdateCell(StackPanel element, CellState state)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (state == CellState.HIT || state == CellState.SUNK)
             {
-                CellState[,] newCellState = enemyBoard.GetBoardState();
-                UpdateUI(newCellState, enemyCellState, enemyCellPanel);
-            });
-        }
-
-        private void OnFriendlyShotEvent()
-        {
-            Application.Current.Dispatcher.Invoke(() =>
+                Image image = new()
+                {
+                    Source = FireImage,
+                };
+                element.Children.Add(image);
+            }
+            else if (state == CellState.MISS)
             {
-                CellState[,] newCellState = friendlyBoard.GetBoardState();
-                UpdateUI(newCellState, friendlyCellState, friendlyCellPanel);
-            });
+                Image image = new()
+                {
+                    Source = RedCrossImage,
+                };
+                element.Children.Add(image);
+            }
+            else if (state == CellState.BLOCKED && gameSetting.RestrictedArea)
+            {
+                Image image = new()
+                {
+                    Source = RestrictionImage,
+                };
+                element.Children.Add(image);
+            }
         }
 
         private void UpdateUI(CellState[,] newCellState, CellState[,] currentCellState, StackPanel[,] cellPanels)
@@ -280,9 +269,66 @@ namespace Battleship.UI.Game
             }
         }
 
-        private void OnGameEndedEvent()
+        private void HandleEnemyShot()
         {
-            Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Game Over", "Das spiel ist zu ende, danke fürs Spielen");
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                CellState[,] newCellState = enemyBoard.GetBoardState();
+                UpdateUI(newCellState, enemyCellState, enemyCellPanel);
+            });
+        }
+
+        private void HandleFriendlyShot()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                CellState[,] newCellState = friendlyBoard.GetBoardState();
+                UpdateUI(newCellState, friendlyCellState, friendlyCellPanel);
+            });
+        }
+
+        private void HandleGameEnded(bool hasWon)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                string title = "Das Spiel ist zu Ende";
+                string content = hasWon
+                    ? $"Herzlichen Glückwunsch {MyUsername.Content}!\nDu hast das Spiel gewonnen."
+                    : $"Leider Verloren!\n{OpponentUsername.Content} hat das Spiel gewonnen.";
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, title, content, (Dialog.Result result) =>
+                {
+                    Debug.WriteLine($"Result clicked: {result}");
+
+                    // Navigate Menu page
+                    Navigation.RegisterPage(new LobbyMainPage(false));
+                });
+            });
+        }
+
+        private void HandleTimout()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // Show dialog to inform user
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Timeout", "Dein Gegner antwortet nicht mehr.", (Dialog.Result result) =>
+                {
+                    // Navigate Menu page
+                    Navigation.RegisterPage(new LobbyMainPage(false));
+                });
+            });
+        }
+
+        private void HandleDisconnet()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // Show dialog to inform user
+                Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Spiel zu Ende", "Dein Gegner hat das Spiel verlassen", (Dialog.Result result) =>
+                {
+                    // Navigate Menu page
+                    Navigation.RegisterPage(new LobbyMainPage(false));
+                });
+            });
         }
     }
 }

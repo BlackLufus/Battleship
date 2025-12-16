@@ -58,7 +58,7 @@ namespace Battleship.Logic
             }
         }
 
-        public ShotResult Shoot(int row, int col, bool show = false)
+        public ShotResult Shoot(int row, int col)
         {
             if (row < 0 || row >= boardSize ||
                 col < 0 || col >= boardSize)
@@ -77,8 +77,7 @@ namespace Battleship.Logic
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            if (show)
-                                ship.Show();
+                            ship.Show();
                         });
                         BoardCells.BlockSurroundingCells(board, boardSize, ship);
                         return ShotResult.Sunk;

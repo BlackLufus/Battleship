@@ -37,8 +37,8 @@ namespace Battelship.Lobby
         private readonly GameSetting gameSetting;
         private readonly DragShipBoard battleField;
 
-        private FieldState[,] cellState;
-        private StackPanel[,] cellPanels;
+        private readonly FieldState[,] cellState;
+        private readonly StackPanel[,] cellPanels;
 
         private readonly DragShipManager dragShipManager;
         private readonly List<DragShip> dragShips = [];
@@ -54,11 +54,11 @@ namespace Battelship.Lobby
         public FleetManagerPage(GameSetting gameSetting, ExchangeHandler? exchangeHandler = null)
         {
             this.gameSetting = gameSetting;
-            this.exchangeHandler = exchangeHandler;
 
             // Handle disconnection event
-            if (this.exchangeHandler != null)
+            if (exchangeHandler != null)
             {
+                this.exchangeHandler = exchangeHandler;
                 this.exchangeHandler.OnTimeout += HandleTimeout;
                 this.exchangeHandler.OnDisconnect += HandleDisconnect;
                 this.exchangeHandler.OnReady += HandleReadyState;

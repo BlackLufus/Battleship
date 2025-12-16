@@ -26,7 +26,7 @@ namespace Battelship.Lobby
     /// </summary>
     public partial class GameSettingsPage : Page
     {
-        ExchangeHandler? exchangeHandler;
+        private readonly ExchangeHandler? exchangeHandler;
 
         private GameSetting.Mode mode;
         private static GameSettingsPage? instance;
@@ -73,6 +73,7 @@ namespace Battelship.Lobby
 
         public GameSettingsPage(ExchangeHandler exchangeHandler)
         {
+            // Set exchange handler and all needed handlers
             this.exchangeHandler = exchangeHandler;
             this.exchangeHandler.OnTimeout += HandleTimeout;
             this.exchangeHandler.OnDisconnect += HandleDisconnect;

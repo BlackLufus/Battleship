@@ -68,7 +68,8 @@ namespace Battleship.Logic
 
         public void Show(DragShipManager? dragShipManager = null)
         {
-            canvas.Children.Add(img);
+            if (!canvas.Children.Contains(img))
+                canvas.Children.Add(img);
 
             if (dragShipManager != null)
             {

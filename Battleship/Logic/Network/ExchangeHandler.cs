@@ -200,7 +200,6 @@ namespace Battleship.Logic.Network
 
         private async Task StartPinger()
         {
-            return;
             cts = new CancellationTokenSource();
             CancellationToken token = cts.Token;
             lastPingReceived = DateTime.Now;
