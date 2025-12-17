@@ -16,14 +16,16 @@ namespace Battleship.Logic.BattelStrategy.Modes
         protected override Shot GetNextShot()
         {
             List<Shot> possibleShots = [];
+            var board = boardLogic.GetBoardState();
 
             // Schachbrettmuster-Felder finden, die noch nicht beschossen wurden
             for (int row = 0; row < gameSetting.BoardSize; row++)
             {
                 for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
-                    if ((row + col) % 2 == 0 && !boardLogic.WasShot(row, col)) // Gittermusterbedingung
-                    {
+                    //if ((row + col) % 2 == 0 && (board[row, col] == CellState.WATER || board[row, col] == CellState.SHIP)) // Gittermusterbedingung
+                        if ((row + col) % 2 == 0 && !boardLogic.CellWasShot(row, col)) // Gittermusterbedingung
+                        {
                         possibleShots.Add(new Shot(row, col)); // Füge das Feld zu möglichen Schüssen hinzu
                     }
                 }
@@ -35,7 +37,8 @@ namespace Battleship.Logic.BattelStrategy.Modes
                 {
                     for (int col = 0; col < gameSetting.BoardSize; col++)
                     {
-                        if (!boardLogic.WasShot(row, col))
+                        //if ((board[row, col] == CellState.WATER || board[row, col] == CellState.SHIP))
+                        if (!boardLogic.CellWasShot(row, col))
                         {
                             possibleShots.Add(new Shot(row, col)); // Füge jedes nicht beschossene Feld hinzu
                         }

@@ -117,7 +117,7 @@ namespace Battleship.Logic.BattelStrategy
                     if (this.turn == TurnType.Opponent)
                     {
                         // Delay 250 to 750 ms
-                        await Task.Delay(Random.Shared.Next(250, 750));
+                        //await Task.Delay(Random.Shared.Next(250, 750));
 
                         // Select next shoot and return hit
                         bool hit = await Task.Run(() =>
@@ -143,7 +143,7 @@ namespace Battleship.Logic.BattelStrategy
                     else if (friendlyComputerLogic != null && this.turn == TurnType.Player)
                     {
                         // Delay 250 to 750 ms
-                        await Task.Delay(Random.Shared.Next(250, 750));
+                        //await Task.Delay(Random.Shared.Next(250, 750));
 
                         // Select next shoot and return hit
                         bool hit = await Task.Run(() =>
