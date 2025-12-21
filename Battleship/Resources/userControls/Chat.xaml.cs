@@ -30,6 +30,9 @@ namespace Battleship.Resources.userControls
         private bool isEmpty = false;
         public bool IsEmpty { get { return isEmpty; } }
 
+        private readonly Brush FocusBrush = (Brush)new BrushConverter().ConvertFrom("#eee");
+
+
         public Chat()
         {
             InitializeComponent();
@@ -76,7 +79,25 @@ namespace Battleship.Resources.userControls
                     Username = username,
                     Message = message
                 };
+                bool isScrollAtEnd = ScrollView.VerticalOffset >= ScrollView.ScrollableHeight - 5;
                 MessagesContainer.Children.Add(mesage);
+                if (isScrollAtEnd)
+                    ScrollView.ScrollToEnd();
+            });
+        }
+
+        public void AddSystemMessage(string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                SystemMessage mesage = new SystemMessage()
+                {
+                    Message = message
+                };
+                bool isScrollAtEnd = ScrollView.VerticalOffset >= ScrollView.ScrollableHeight - 5;
+                MessagesContainer.Children.Add(mesage);
+                if (isScrollAtEnd)
+                    ScrollView.ScrollToEnd();
             });
         }
 
@@ -86,7 +107,7 @@ namespace Battleship.Resources.userControls
             {
                 isEmpty = false;
                 textBox.Text = "";
-                textBox.Foreground = new SolidColorBrush(Colors.Black);
+                textBox.Foreground = FocusBrush;
             }
             else if (textBox.Text == "")
             {
@@ -138,6 +159,22 @@ namespace Battleship.Resources.userControls
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ClipRect.Rect = new Rect(0, 0, RootBorder.ActualWidth - 6, RootBorder.ActualHeight - 6);
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (inputField == null)
+                    return;
+
+                if (isEmpty)
+                    return;
+
+                OnSendButtonClick?.Invoke(inputField.Text);
+
+                inputField.Text = "";
+            }
         }
     }
 }

@@ -117,7 +117,7 @@ namespace Battleship.Logic.BattelStrategy
                     if (this.turn == TurnType.Opponent)
                     {
                         // Delay 250 to 750 ms
-                        //await Task.Delay(Random.Shared.Next(250, 750));
+                        await Task.Delay(Random.Shared.Next(250, 750));
 
                         // Select next shoot and return hit
                         bool hit = await Task.Run(() =>
@@ -125,12 +125,12 @@ namespace Battleship.Logic.BattelStrategy
                             return enemyComputerLogic.NextShot();
                         });
 
-                        // Update UI (friendly board)
-                        OnShotAtPlayerBoard?.Invoke();
-
                         // Change turn when hit bonus is disabled
                         if (!gameSetting.HitBonus || !hit)
                             this.turn = TurnType.Player;
+
+                        // Update UI (friendly board)
+                        OnShotAtPlayerBoard?.Invoke();
 
                         // Exit loop when all ships are sunk
                         if (playerBoard.IsAllSunk())
@@ -143,7 +143,7 @@ namespace Battleship.Logic.BattelStrategy
                     else if (friendlyComputerLogic != null && this.turn == TurnType.Player)
                     {
                         // Delay 250 to 750 ms
-                        //await Task.Delay(Random.Shared.Next(250, 750));
+                        await Task.Delay(Random.Shared.Next(250, 750));
 
                         // Select next shoot and return hit
                         bool hit = await Task.Run(() =>
@@ -151,12 +151,12 @@ namespace Battleship.Logic.BattelStrategy
                             return friendlyComputerLogic.NextShot();
                         });
 
-                        // Update UI (friendly board)
-                        OnShotAtOpponentBoard?.Invoke();
-
                         // Change turn when hit bonus is disabled
                         if (!gameSetting.HitBonus || !hit)
                             this.turn = TurnType.Opponent;
+
+                        // Update UI (friendly board)
+                        OnShotAtOpponentBoard?.Invoke();
 
                         // Exit loop when all ships are sunk
                         if (opponentBoard.IsAllSunk())

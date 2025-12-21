@@ -28,7 +28,14 @@
                                        RadiusX="8"
                                        RadiusY="8" />
                 </Grid.Clip>
-                <ScrollViewer Grid.Row="0" VerticalAlignment="Stretch" Margin="0" Padding="0" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer 
+                    Grid.Row="0" 
+                    x:Name="ScrollView"
+                    VerticalAlignment="Stretch" 
+                    Margin="0" 
+                    Padding="0" 
+                    VerticalContentAlignment="Top" 
+                    VerticalScrollBarVisibility="Auto">
                     <StackPanel x:Name="MessagesContainer" />
                 </ScrollViewer>
                 <Border Grid.Row="1"
@@ -53,7 +60,8 @@
                              BorderThickness="0"
                              Loaded="TextBox_Loaded"
                              GotFocus="TextBox_GotFocus"
-                             LostFocus="TextBox_LostFocus"/>
+                             LostFocus="TextBox_LostFocus"
+                             KeyDown="TextBox_KeyDown"/>
                         <Button Grid.Column="1"
                             Click="DeleteButton_Click">
                             <Button.Style>

@@ -5,6 +5,7 @@ using Battleship.Logic.Global;
 using Battleship.Logic.Network;
 using Battleship.Logic.Services;
 using Battleship.Resources.Components;
+using Battleship.Resources.userControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -82,6 +83,9 @@ namespace Battleship.UI.Game
             gameLogic.OnShotAtPlayerBoard += HandleShotAtPlayerBoard;
             gameLogic.OnGameEnded += HandleGameEnded;
             gameLogic.StartSinglePlayerMode();
+
+            string whoIsTurn = gameLogic.turn == TurnType.Player ? "Du bist am Zug!" : $"{OpponentUsername.Content} ist am Zug!";
+            Chat.AddSystemMessage($"Die Schlacht beginnt. Alle Schiffe in Position! {whoIsTurn}");
         }
 
         public GamePage(ExchangeHandler exchangeHandler, GameSetting gameSetting, List<DragShip> playerDragShips, List<DragShip> opponentDragShips)
@@ -103,6 +107,7 @@ namespace Battleship.UI.Game
             SetOpponentUsername(exchangeHandler.OpponentUsername!);
 
             int id = 0;
+
             Chat.OnSendButtonClick += (string message) =>
             {
                 exchangeHandler.SendMessage(id++, message);
@@ -132,6 +137,9 @@ namespace Battleship.UI.Game
             gameLogic.OnTimeout += HandleTimout;
             gameLogic.OnDisconnect += HandleDisconnet;
             gameLogic.StartMultiPlayerMode();
+
+            string whoIsTurn = gameLogic.turn == TurnType.Player ? "Du bist am Zug!" : $"{OpponentUsername.Content} ist am Zug!";
+            Chat.AddSystemMessage($"Die Schlacht beginnt. Alle Schiffe in Position! {whoIsTurn}");
         }
 
         /// <summary>
@@ -360,6 +368,8 @@ namespace Battleship.UI.Game
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+                if (gameLogic.turn == TurnType.Opponent)
+                    Chat.AddSystemMessage($"{OpponentUsername.Content} ist am Zug!");
                 CellState[,] newCellState = opponentBoard.GetBoardState();
                 UpdateUI(newCellState, opponentCellState, opponentCellPanel);
             });
@@ -372,6 +382,8 @@ namespace Battleship.UI.Game
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+                if (gameLogic.turn == TurnType.Player)
+                    Chat.AddSystemMessage("Du bist am Zug!");
                 CellState[,] newCellState = playerBoard.GetBoardState();
                 UpdateUI(newCellState, playerCellState, playerCellPanel);
             });
@@ -389,6 +401,7 @@ namespace Battleship.UI.Game
                 string content = hasWon
                     ? $"Herzlichen Glückwunsch {PlayerUsername.Content}!\nDu hast das Spiel gewonnen."
                     : $"Leider Verloren!\n{OpponentUsername.Content} hat das Spiel gewonnen.";
+                Chat.AddSystemMessage(content.Replace("\n", " "));
                 Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, title, content, (Dialog.Result result) =>
                 {
                     Debug.WriteLine($"Result clicked: {result}");
@@ -406,6 +419,7 @@ namespace Battleship.UI.Game
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+                Chat.AddMessage("System", "Dein Gegner antwortet nicht mehr.");
                 // Show dialog to inform user
                 Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Timeout", "Dein Gegner antwortet nicht mehr.", (Dialog.Result result) =>
                 {
@@ -422,6 +436,8 @@ namespace Battleship.UI.Game
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+                Chat.AddMessage("System", "Dein Gegner hat das Spiel verlassen.");
+
                 // Show dialog to inform user
                 Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Spiel zu Ende", "Dein Gegner hat das Spiel verlassen", (Dialog.Result result) =>
                 {
