@@ -42,6 +42,11 @@ namespace Battleship.Logic.BattelStrategy.Modes
 
         public abstract bool NextShot();
 
+        /// <summary>
+        /// Determine the next shoot
+        /// </summary>
+        /// <param name="nextShotFunction"></param>
+        /// <returns></returns>
         protected bool DeterminedNextShot(Func<Shot> nextShotFunction)
         {
             do
@@ -150,7 +155,10 @@ namespace Battleship.Logic.BattelStrategy.Modes
             while (true);
         }
 
-        // Hilfsmethode zur Richtungsbestimmung
+        /// <summary>
+        /// Auxiliary method for determining direction
+        /// </summary>
+        /// <returns>The selected direction</returns>
         private Direction DetermineRandomDirection()
         {
             if (shipOrientation == ShipOrientation.Horizontal)
@@ -176,6 +184,9 @@ namespace Battleship.Logic.BattelStrategy.Modes
             }
         }
 
+        /// <summary>
+        /// Change the current direction
+        /// </summary>
         private void ChangeDirection()
         {
             if (shipOrientation != null)
@@ -194,6 +205,9 @@ namespace Battleship.Logic.BattelStrategy.Modes
             lastShot = null;
         }
 
+        /// <summary>
+        /// Reset all variables
+        /// </summary>
         private void ResetVariables()
         {
             firstShot = null;
@@ -203,77 +217,86 @@ namespace Battleship.Logic.BattelStrategy.Modes
             possibleDirections = [Direction.Left, Direction.Up, Direction.Right, Direction.Down];
         }
 
-        protected Orientation DetermineShipOrientation(int row, int col, int i = 0)
+        /// <summary>
+        /// Determine ship orientations matching the ship size
+        /// </summary>
+        /// <param name="row">The position in row</param>
+        /// <param name="col">The position in col</param>
+        /// <param name="shipSize">The size of the ship to check</param>
+        /// <returns>Returns the dimension corresponding to the ship size.</returns>
+        protected Orientation DetermineShipOrientation(int row, int col, int shipSize = 0)
         {
+            // Ignore if difficult is easy
             if (gameSetting.GameDifficult == GameSetting.Difficult.Easy)
-            {
                 return Orientation.Both;
-            }
+
+            // Row or col is outside the board size
             if (row < 0 || row >= gameSetting.BoardSize || col < 0 || col >= gameSetting.BoardSize)
-            {
-                //Debug.WriteLine("Field is out of bounds");
                 return Orientation.None;
-            }
 
-            // Wenn das Feld Wasser oder Schiff ist, mache weiter
-            if (boardLogic.WasShot(row, col))
-            {
-                //Debug.WriteLine("Field is not water or ship");
+            // Cell is was not shot yet
+            if (boardLogic.CellWasShot(row, col))
                 return Orientation.None;
-            }
 
-            int shipSize = i != 0 ? i : boardLogic.DeterminedSmallestShipSize();
+            // Determine the smallest still available ship
+            shipSize = shipSize > 0 ? shipSize : boardLogic.DeterminedSmallestShipSize();
 
-            int vertical = CheckDirection(row + 1, col, 1, 0) + CheckDirection(row - 1, col, -1, 0) + 1;
-            int horizontal = CheckDirection(row, col + 1, 0, 1) + CheckDirection(row, col - 1, 0, -1) + 1;
+            // Determine the vertical and horizontal dimensions
+            int vertical = CalculateDirectionalDimension(row + 1, col, 1, 0) + CalculateDirectionalDimension(row - 1, col, -1, 0) + 1;
+            int horizontal = CalculateDirectionalDimension(row, col + 1, 0, 1) + CalculateDirectionalDimension(row, col - 1, 0, -1) + 1;
 
             /*Debug.WriteLine("Horizontal: " + horizontal);
             Debug.WriteLine("Vertical: " + vertical);
             Debug.WriteLine("ShipSize: " + shipSize);*/
 
+            // Return Both if both the horizontal and vertical dimensions match the ship size.
             if (horizontal >= shipSize && vertical >= shipSize)
-            {
                 return Orientation.Both;
-            }
+            // Return Horizontal if horizontal dimensions match the ship size
             else if (horizontal >= shipSize)
-            {
                 return Orientation.Horizontal;
-            }
+            // Return Vertical vertical dimensions match the ship size
             else if (vertical >= shipSize)
-            {
                 return Orientation.Vertical;
-            }
+            // Return None if none dimensions match the ship size
             else
-            {
                 return Orientation.None;
-            }
         }
 
-        private int CheckDirection(int row, int col, int rowStep, int colStep)
+        /// <summary>
+        /// Calculate the directional dimension
+        /// </summary>
+        /// <param name="row">Start position in row</param>
+        /// <param name="col">Start position in col</param>
+        /// <param name="rowStep">Step size in row direction</param>
+        /// <param name="colStep">Step size in col direction</param>
+        /// <returns>The dimension in the specific direction</returns>
+        private int CalculateDirectionalDimension(int row, int col, int rowStep, int colStep)
         {
+            // Counter with steps until the cell at position tempRow|tempCol has been shot or cell is out of boundaries
             int count = 0;
 
+            // Variables in current cell
             int i = 0;
-            int newRow = row + rowStep * i;
-            int newCol = col + colStep * i;
+            int tempRow = row + rowStep * i;
+            int tempCol = col + colStep * i;
 
-            while (newRow >= 0 && newRow < gameSetting.BoardSize && newCol >= 0 && newCol < gameSetting.BoardSize)
+            while (tempRow >= 0 && tempRow < gameSetting.BoardSize && tempCol >= 0 && tempCol < gameSetting.BoardSize)
             {
-                // Wenn das Feld Wasser oder Schiff ist, zähle es
-                if (!boardLogic.WasShot(newRow, newCol))
-                {
+                // Increment count if the cell has not yet been shot at.
+                if (!boardLogic.CellWasShot(tempRow, tempCol))
                     count++;
-                }
+                // Otherwise break the loop
                 else
-                {
                     break;
-                }
 
+                // Increment index
                 i++;
-                newRow = row + rowStep * i;
-                newCol = col + colStep * i;
+                tempRow = row + rowStep * i;
+                tempCol = col + colStep * i;
             }
 
+            // Return counter
             return count;
         }
     }

@@ -3,35 +3,32 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Battleship.UI.Game" xmlns:components="clr-namespace:Battleship.Resources.Components"
+      xmlns:local="clr-namespace:Battleship.UI.Game" 
+      xmlns:components="clr-namespace:Battleship.Resources.Components"
+      xmlns:userControl="clr-namespace:Battleship.Resources.userControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="GamePage">
 
     <Grid>
         <Image Source="pack://application:,,,/Resources/Images/background1.jpg"
-       Stretch="UniformToFill"
-       HorizontalAlignment="Center"
-       VerticalAlignment="Center"
-       Panel.ZIndex="-1"/>
+               Stretch="UniformToFill"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Panel.ZIndex="-1"/>
         <Viewbox>
-            <Border Background="#8222" Padding="0 10 0 0" CornerRadius="40">
-                <Grid Margin="50 0" Width="720">
+            <Border Background="#8222" Padding="0">
+                <Grid Margin="50 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="720" />
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="50" />
+                        <RowDefinition Height="*" />
                         <RowDefinition Height="380" />
                         <RowDefinition Height="140" />
                         <RowDefinition Height="30" />
                     </Grid.RowDefinitions>
-                    <Border Grid.Row="0" Width="720" Background="Blue" CornerRadius="10">
-                        <StackPanel Orientation="Horizontal" Margin="5 0">
-                            <Border Background="Red" Width="100" Height="40" CornerRadius="8" Margin="5 0"/>
-                            <Border Background="Red" Width="100" Height="40" CornerRadius="8" Margin="5 0"/>
-                            <Border Background="Red" Width="100" Height="40" CornerRadius="8" Margin="5 0"/>
-                            <Border Background="Red" Width="100" Height="40" CornerRadius="8" Margin="5 0"/>
-                            <Border Background="Red" Width="100" Height="40" CornerRadius="8" Margin="5 0"/>
-                        </StackPanel>
-                    </Border>
+                    <userControl:MenuBar Grid.Row="0" />
                     <Grid Grid.Row="1" HorizontalAlignment="Center">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="20"/>
@@ -42,7 +39,13 @@
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="320" />
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Row="1" Grid.Column="0" Height="340" Width="310" Background="#888" CornerRadius="10" ClipToBounds="True" HorizontalAlignment="Right">
+                        <Border Grid.Row="1" 
+                                Grid.Column="0" 
+                                Height="340" 
+                                Width="310" 
+                                Background="#252525" 
+                                CornerRadius="10" 
+                                HorizontalAlignment="Right">
                             <StackPanel Height="340" Width="300">
                                 <Grid Height="35">
                                     <Grid.ColumnDefinitions>
@@ -62,6 +65,11 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="300" />
                                         </Grid.RowDefinitions>
+                                        <Grid.Clip>
+                                            <RectangleGeometry Rect="0, 0, 300, 300" 
+                                                               RadiusX="6"
+                                                               RadiusY="6" />
+                                        </Grid.Clip>
                                         <Grid x:Name="EnemyWaterGrid" Background="#FF002684">
                                             <!-- Enemy Level 1: Water Grid -->
                                         </Grid>
@@ -97,7 +105,13 @@
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        <Border Grid.Row="1" Grid.Column="2" Height="340" Width="310" Background="#888" CornerRadius="10" ClipToBounds="True" HorizontalAlignment="Left">
+                        <Border Grid.Row="1" 
+                                Grid.Column="2" 
+                                Height="340" 
+                                Width="310" 
+                                Background="#252525" 
+                                CornerRadius="12" 
+                                HorizontalAlignment="Left">
                             <StackPanel Height="340" Width="300">
                                 <Grid Height="35">
                                     <Grid.ColumnDefinitions>
@@ -107,7 +121,7 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Column="1" Content="Dein Feld:" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
-                                    <Label Grid.Column="3" x:Name="MyUsername" Content="Spieler 2" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
+                                    <Label Grid.Column="3" x:Name="PlayerUsername" Content="Spieler 2" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" />
                                 </Grid>
                                 <Grid VerticalAlignment="Center">
                                     <Grid Grid.Column="1" HorizontalAlignment="Center" ClipToBounds="True" VerticalAlignment="Center" SnapsToDevicePixels="True">
@@ -117,6 +131,11 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="300" />
                                         </Grid.RowDefinitions>
+                                        <Grid.Clip>
+                                            <RectangleGeometry Rect="0, 0, 300, 300" 
+                                                               RadiusX="6"
+                                                               RadiusY="6" />
+                                        </Grid.Clip>
                                         <Grid x:Name="FriendlyWaterGrid" Background="#FF002684">
                                             <!-- Enemy Level 1: Water Grid -->
                                         </Grid>
@@ -153,34 +172,9 @@
                             </StackPanel>
                         </Border>
                     </Grid>
-                    <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="720" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="1" Background="#000" CornerRadius="10">
-                            <Grid Background="Gray" Height="130" Width="710">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="20" />
-                                </Grid.RowDefinitions>
-                                <Grid.Clip>
-                                    <RectangleGeometry Rect="0, 0, 710, 130" RadiusX="5" RadiusY="5" />
-                                </Grid.Clip>
-                                <ScrollViewer Grid.Row="0" VerticalAlignment="Stretch" Margin="0" Padding="0" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto">
-                                    <StackPanel x:Name="MessageContainer" />
-                                </ScrollViewer>
-                                <components:SendMessageInput x:Name="SendMessageButton" Grid.Row="1" Height="20" Width="Auto" FontSize="10" />
-                            </Grid>
-                        </Border>
-                        <Border Grid.Column="1" Background="Black" HorizontalAlignment="Center" VerticalAlignment="Top" Height="Auto" Width="Auto" Margin="0 -13 0 0">
-                            <Border.CornerRadius>
-                                <CornerRadius TopLeft="10" TopRight="10" BottomRight="0" BottomLeft="0" />
-                            </Border.CornerRadius>
-                            <Label Content="Chat" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="20 0" />
-                        </Border>
-                    </Grid>
+                    <!-- Chat (Input and Output) -->
+                    <userControl:Chat Grid.Row="2" x:Name="Chat" />
+                    <!-- Extras -->
                     <Grid Grid.Row="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />

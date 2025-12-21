@@ -103,13 +103,14 @@ namespace Battleship.UI.Game
             SetOpponentUsername(exchangeHandler.OpponentUsername!);
 
             int id = 0;
-            SendMessageButton.OnSend += (string message) =>
+            Chat.OnSendButtonClick += (string message) =>
             {
                 exchangeHandler.SendMessage(id++, message);
-                AddMessage(exchangeHandler.PlayerUsername, message);
+                Chat.AddMessage(exchangeHandler.PlayerUsername, message);
             };
-            exchangeHandler.OnMessage += (int id, string message) => {
-                AddMessage(exchangeHandler.OpponentUsername!, message);
+            exchangeHandler.OnMessage += (int id, string message) =>
+            {
+                Chat.AddMessage(exchangeHandler.OpponentUsername!, message);
                 Debug.WriteLine("===================================");
                 Debug.WriteLine($" >>> Nachricht ({id}): {message}");
                 Debug.WriteLine("===================================");
@@ -133,69 +134,6 @@ namespace Battleship.UI.Game
             gameLogic.StartMultiPlayerMode();
         }
 
-        private void AddMessage(string username, string message)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Grid grid = new Grid()
-                {
-                    Background = new BrushConverter().ConvertFrom("#777") as Brush,
-                    Height = 20,
-                    Margin = new Thickness(0)
-                };
-                var first = new ColumnDefinition()
-                {
-                    Width = new GridLength(5)
-                };
-                grid.ColumnDefinitions.Add(first);
-                var second = new ColumnDefinition()
-                {
-                    Width = GridLength.Auto
-                };
-                grid.ColumnDefinitions.Add(second);
-                var third = new ColumnDefinition()
-                {
-                    Width = new GridLength(5)
-                };
-                grid.ColumnDefinitions.Add(third);
-                var fourth = new ColumnDefinition()
-                {
-                    Width = GridLength.Auto
-                };
-                grid.ColumnDefinitions.Add(fourth);
-
-                Label usernameLabel = new Label()
-                {
-                    Content = username,
-                    Foreground = Brushes.White,
-                    Padding = new Thickness(0)
-                };
-                grid.Children.Add(usernameLabel);
-                Grid.SetColumn(usernameLabel, 1);
-
-                Label seperatorLabel = new Label()
-                {
-                    Content = ":",
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    Foreground = Brushes.White,
-                    Padding = new Thickness(0)
-                };
-                grid.Children.Add(seperatorLabel);
-                Grid.SetColumn(seperatorLabel, 2);
-
-                Label messageLabel = new Label()
-                {
-                    Content = message,
-                    Foreground = Brushes.White,
-                    Padding = new Thickness(0)
-                };
-                grid.Children.Add(messageLabel);
-                Grid.SetColumn(messageLabel, 3);
-
-                MessageContainer.Children.Add(grid);
-            });
-        }
-
         /// <summary>
         /// Sets the opponent username
         /// </summary>
@@ -211,7 +149,7 @@ namespace Battleship.UI.Game
         /// <param name="username">The username to set</param>
         private void SetPlayerUsername(string username)
         {
-            MyUsername.Content = username;
+            PlayerUsername.Content = username;
         }
 
         /// <summary>
@@ -449,7 +387,7 @@ namespace Battleship.UI.Game
             {
                 string title = "Das Spiel ist zu Ende";
                 string content = hasWon
-                    ? $"Herzlichen Glückwunsch {MyUsername.Content}!\nDu hast das Spiel gewonnen."
+                    ? $"Herzlichen Glückwunsch {PlayerUsername.Content}!\nDu hast das Spiel gewonnen."
                     : $"Leider Verloren!\n{OpponentUsername.Content} hat das Spiel gewonnen.";
                 Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, title, content, (Dialog.Result result) =>
                 {

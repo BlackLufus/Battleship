@@ -104,20 +104,17 @@ namespace Battleship.Logic.Game
         }
 
         /// <summary>
-        /// Check if the position has already been shelled.
+        /// Check if the position has already been shot.
         /// </summary>
         /// <param name="row">The position in row</param>
         /// <param name="col">The position in col</param>
         /// <returns>Returns true when position was already shot otherwise false</returns>
-        public bool WasShot(int row, int col)
+        public bool CellWasShot(int row, int col)
         {
-            foreach (DragShip ship in dragShips)
-            {
-                if (ship.Shots.Contains((row, col)))
-                {
-                    return true;
-                }
-            }
+            if (board[row, col] > 0)
+                return true;
+            if (shots.Contains((row, col)))
+                return true;
             return false;
         }
 

@@ -29,14 +29,6 @@ namespace Battleship.Logic.BattelStrategy.Modes
         private void InitializeProbability()
         {
             probability = new int[gameSetting.BoardSize, gameSetting.BoardSize];
-
-            for (int row = 0; row < gameSetting.BoardSize; row++)
-            {
-                for (int col = 0; col < gameSetting.BoardSize; col++)
-                {
-                    probability[row, col] = 0;
-                }
-            }
         }
 
         private void DetermineProbability()
@@ -45,7 +37,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
             {
                 for (int col = 0; col < gameSetting.BoardSize; col++)
                 {
-                    if (!boardLogic.WasShot(row, col))
+                    if (!boardLogic.CellWasShot(row, col))
                     {
                         foreach (var ship in boardLogic.Ships)
                         {
@@ -53,56 +45,41 @@ namespace Battleship.Logic.BattelStrategy.Modes
                             {
                                 Orientation orientation = DetermineShipOrientation(row, col, (int)ship.type);
 
-                                if (orientation != Orientation.None)
+                                if (orientation == Orientation.Horizontal || orientation == Orientation.Both)
                                 {
-                                    if (orientation == Orientation.Both)
+                                    if (col + (int)ship.type - 1 < gameSetting.BoardSize)
                                     {
-                                        probability![row, col]--;
-                                    }
-                                    if (orientation == Orientation.Horizontal || orientation == Orientation.Both)
-                                    {
-                                        if (col + (int)ship.type - 1 < gameSetting.BoardSize)
+                                        for (int i = 0; i < (int)ship.type; i++)
                                         {
-                                            for (int i = 0; i < (int)ship.type; i++)
-                                            {
-                                                if (!boardLogic.WasShot(row, col + i))
-                                                {
-                                                    probability![row, col + i]++;
-                                                }
-                                            }
-                                        }
-                                        if (col - (int)ship.type + 1 >= 0)
-                                        {
-                                            for (int i = 0; i < (int)ship.type; i++)
-                                            {
-                                                if (!boardLogic.WasShot(row, col - i))
-                                                {
-                                                    probability![row, col - i]++;
-                                                }
-                                            }
+                                            if (!boardLogic.CellWasShot(row, col + i))
+                                                probability![row, col + i]++;
                                         }
                                     }
-                                    if (orientation == Orientation.Vertical || orientation == Orientation.Both)
+                                    if (col - (int)ship.type + 1 >= 0)
                                     {
-                                        if (row + (int)ship.type - 1 < gameSetting.BoardSize)
+                                        for (int i = 0; i < (int)ship.type; i++)
                                         {
-                                            for (int i = 0; i < (int)ship.type; i++)
-                                            {
-                                                if (!boardLogic.WasShot(row + i, col))
-                                                {
-                                                    probability![row + i, col]++;
-                                                }
-                                            }
+                                            if (!boardLogic.CellWasShot(row, col - i))
+                                                probability![row, col - i]++;
                                         }
-                                        if (row - (int)ship.type + 1 >= 0)
+                                    }
+                                }
+                                if (orientation == Orientation.Vertical || orientation == Orientation.Both)
+                                {
+                                    if (row + (int)ship.type - 1 < gameSetting.BoardSize)
+                                    {
+                                        for (int i = 0; i < (int)ship.type; i++)
                                         {
-                                            for (int i = 0; i < (int)ship.type; i++)
-                                            {
-                                                if (!boardLogic.WasShot(row - i, col))
-                                                {
-                                                    probability![row - i, col]++;
-                                                }
-                                            }
+                                            if (!boardLogic.CellWasShot(row + i, col))
+                                                probability![row + i, col]++;
+                                        }
+                                    }
+                                    if (row - (int)ship.type + 1 >= 0)
+                                    {
+                                        for (int i = 0; i < (int)ship.type; i++)
+                                        {
+                                            if (!boardLogic.CellWasShot(row - i, col))
+                                                probability![row - i, col]++;
                                         }
                                     }
                                 }
@@ -127,7 +104,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
                     row = new Random().Next(ship.row, ship.row + (int)ship.type - 1);
                     col = ship.col;
                 }
-                while (boardLogic.WasShot(row, col));
+                while (boardLogic.CellWasShot(row, col));
                 return new Shot(row, col);
             }
             else
@@ -139,13 +116,14 @@ namespace Battleship.Logic.BattelStrategy.Modes
                     row = ship.row;
                     col = new Random().Next(ship.col, ship.col + (int)ship.type - 1);
                 }
-                while (boardLogic.WasShot(row, col));
+                while (boardLogic.CellWasShot(row, col));
                 return new Shot(row, col);
             }
         }
         protected override Shot GetNextShot()
         {
-            Debug.WriteLine("Hard: GetNextShot (claivoantAbilities: " + claivoyantAbilities + " nextClaivoyantShot: " + nextClaivoyantShot + ")");
+            //Debug.WriteLine("Hard: GetNextShot (claivoantAbilities: " + claivoyantAbilities + " nextClaivoyantShot: " + nextClaivoyantShot + ")");
+
             if (claivoyantAbilities && nextClaivoyantShot == 0)
             {
                 nextClaivoyantShot = new Random().Next(3, 5);
@@ -154,7 +132,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
             else if (claivoyantAbilities) nextClaivoyantShot--;
             InitializeProbability();
             DetermineProbability();
-            Dump();
+            //Dump();
             int max = 0;
             List<Shot> maxShots = [];
 
@@ -180,7 +158,7 @@ namespace Battleship.Logic.BattelStrategy.Modes
             {
                 throw new InvalidOperationException("Es gibt keine möglichen Schüsse.");
             }
-            maxShots.ForEach(shot => Debug.WriteLine("Hard: GetNextShot: Möglicher Schuss: " + shot.Row + " " + shot.Col));
+            //maxShots.ForEach(shot => Debug.WriteLine("Hard: GetNextShot: Möglicher Schuss: " + shot.Row + " " + shot.Col));
             // Wähle zufällig einen der besten Schüsse
             return maxShots[new Random().Next(0, maxShots.Count)];
         }
