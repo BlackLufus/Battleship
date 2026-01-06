@@ -1,6 +1,5 @@
 ﻿using Battelship.Lobby;
 using Battleship.Logic.Network;
-using Battleship.Logic.Network.Local;
 using Battleship.Logic.Services;
 using Battleship.Resources.Components;
 using System;
@@ -59,8 +58,6 @@ namespace Battleship.Lobby
             }
             else
             {
-                HostSocketService hostSocketService = new HostSocketService(AddressInput.Text, int.Parse(PortInput.Text));
-                hostSocketService.Start();
                 Navigation.NavigateTo(new GameSettingsPage());
             }
         }

@@ -1,5 +1,4 @@
 ﻿using Battleship.Logic.Game;
-using Battleship.Logic.Network.Online;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +8,6 @@ using System.Net;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
-using static Battleship.Logic.Network.Online.MQTTService;
 
 namespace Battleship.Logic.Network
 {

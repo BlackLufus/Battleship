@@ -1,5 +1,4 @@
-﻿using Battleship.Logic.Network.Local;
-using Mqtt.Client;
+﻿using Mqtt.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Battleship.Logic.Network.Online
+namespace Battleship.Logic.Network
 {
     public class TCPService
     {
@@ -29,7 +28,7 @@ namespace Battleship.Logic.Network.Online
 
         private readonly bool isHost;
 
-        private CancellationTokenSource cts = new CancellationTokenSource();
+        private CancellationTokenSource? cts;
 
         /// <summary>
         /// Creates an object of the tcp service
@@ -39,9 +38,9 @@ namespace Battleship.Logic.Network.Online
         /// <param name="isHost">An indicator to determine whether the player is the host of the game</param>
         public TCPService(IPAddress ipAddress, int port, bool isHost)
         {
-            this.endPoint = new(isHost ? IPAddress.Any : ipAddress, port);
+            endPoint = new(isHost ? IPAddress.Any : ipAddress, port);
             if (isHost)
-                this.tcpListener = new TcpListener(endPoint);
+                tcpListener = new TcpListener(endPoint);
             else
                 tcpClient = new TcpClient();
 
@@ -64,8 +63,16 @@ namespace Battleship.Logic.Network.Online
                 Debug.WriteLine("Host: Waiting for connection");
                 if (isHost)
                 {
-                    tcpListener!.Start();
-                    tcpClient = await tcpListener.AcceptTcpClientAsync();
+                    try
+                    {
+                        tcpListener!.Start();
+                        tcpClient = await tcpListener.AcceptTcpClientAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Network error: {ex.Message}");
+                        return;
+                    }
                 }
                 else
                 {
@@ -166,7 +173,7 @@ namespace Battleship.Logic.Network.Online
         public void Disconnect()
         {
             Debug.WriteLine("\n >>> TCP Service: Connection close!");
-            cts.Cancel();
+            cts?.Cancel();
             
             stream?.Close();
             stream = null;

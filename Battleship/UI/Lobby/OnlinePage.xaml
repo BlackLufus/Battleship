@@ -42,7 +42,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal">
                             <RadioButton x:Name="PublicRadioButton" GroupName="GameMode" Style="{StaticResource RadioButtonStyle}" Content="Öffentlich"  FontSize="24" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White" IsChecked="True" Click="OnlineModusClick" />
-                            <RadioButton x:Name="PrivateRadioButton" GroupName="GameMode" Style="{StaticResource RadioButtonStyle}" Content="Privat" FontSize="24" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White"  Click="OnlineModusClick" />
+                            <RadioButton x:Name="PrivateRadioButton" GroupName="GameMode" Style="{StaticResource RadioButtonStyle}" Content="Lokal" FontSize="24" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White"  Click="OnlineModusClick" />
                         </StackPanel>
                         <!-- Public settings over mqtt broker -->
                         <Grid Grid.Row="2" 
@@ -67,7 +67,7 @@
                                 </Grid.ColumnDefinitions>
                                 <components:Input Grid.Column="0" x:Name="GameId" Placeholder="z.B. Game_0815" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxChars="16" />
                             </Grid>
-                            <Label Grid.Row="4" Grid.Column="0" Content="Password (16 Zeichen!)" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#EEE" />
+                            <Label Grid.Row="4" Grid.Column="0" Content="Password" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#EEE" />
                             <Grid Grid.Row="6" Grid.Column="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />

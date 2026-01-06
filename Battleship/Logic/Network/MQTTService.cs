@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Battleship.Logic.Network.Online
+namespace Battleship.Logic.Network
 {
     public class MQTTService
     {
