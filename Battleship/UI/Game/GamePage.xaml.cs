@@ -419,7 +419,7 @@ namespace Battleship.UI.Game
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Chat.AddMessage("System", "Dein Gegner antwortet nicht mehr.");
+                Chat.AddSystemMessage("Dein Gegner antwortet nicht mehr.");
                 // Show dialog to inform user
                 Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Timeout", "Dein Gegner antwortet nicht mehr.", (Dialog.Result result) =>
                 {
@@ -436,7 +436,7 @@ namespace Battleship.UI.Game
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Chat.AddMessage("System", "Dein Gegner hat das Spiel verlassen.");
+                Chat.AddSystemMessage("Dein Gegner hat das Spiel verlassen.");
 
                 // Show dialog to inform user
                 Dialog.Show(Dialog.DialogType.Info, Dialog.ButtonType.Ok, "Spiel zu Ende", "Dein Gegner hat das Spiel verlassen", (Dialog.Result result) =>

@@ -7,7 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -114,41 +116,140 @@ namespace Battleship.Lobby
             });
         }
 
-        private async void PrivateGameButton_Click(object sender, RoutedEventArgs e)
+        private void ToggleButtonState(bool enable)
         {
-            // Get gameId and key
-            string gameId = GameIDInput.Text;
-            string key = PasswordInput.Text;
+            // Enable Connect and Private Game button
+            ConnectButton.IsEnabled = enable;
+            PrivateGameButton.IsEnabled = enable;
+        }
 
-            // Check if input is correct
-            if (gameId.Trim().Length == 0)
-                Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Ungültige Game ID", "Die eingegebene ID ist nicht gültig!");
+        private void OnlineModusClick(object sender, RoutedEventArgs e)
+        {
+            if (PublicRadioButton == null)
+                return;
+
+            if (PublicRadioButton.IsChecked == true)
+            {
+                PublicSettings.Visibility = Visibility.Visible;
+                PrivateSettings.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                PublicSettings.Visibility = Visibility.Hidden;
+                PrivateSettings.Visibility = Visibility.Visible;
+            }
+        }
+
+        private bool IsGameIdValid(string input, out string gameId)
+        {
+            Match match = Regex.Match(input, @"^[a-zA-Z0-9_-]{1,16}$");
+
+            if (!match.Success)
+                Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Ungültige Spiel-ID", "Die angegebene Spiel-ID ist ungültig!\nEs sind folgenden Zweichen erlaubt: ^[a-zA-Z0-9_-]{1,16}$");
+
+            gameId = input;
+
+            return match.Success;
+        }
+
+        private bool IsPasswordValid(string input, out string password)
+        {
+            Match match = Regex.Match(input, @"^[a-zA-Z0-9]{16}$");
+
+            if (!match.Success)
+                Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Ungültiges Passwort", "Das angegebene Passwort muss exakt 16 Zeichen enthalten!\nEs sind folgenden Zweichen erlaubt: ^[a-zA-Z0-9]{16,16}$");
+
+            password = input;
+
+            return match.Success;
+        }
+
+        private bool IsIpAddressValid(string input, out IPAddress? ipAddress)
+        {
+            Match match = Regex.Match(input, @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
+            
+            if (!match.Success)
+                Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Ungültige IP Adresse", "Die angegebene IP Adresse ist ungültig!\nEs sind folgenden Zweichen erlaubt: \\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b");
+
+            
+            ipAddress = match.Success ? IPAddress.Parse(input) : null;
+
+            return match.Success;
+        }
+
+        private bool IsPortValid(string input, out int port)
+        {
+             bool Success = int.TryParse(input, out port)
+                            && port >= 1024
+                            && port <= 65535;
+
+            if (!Success)
+                Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Ungültiger Port", "Der angegebene Port muss zwischen 1024 und 65535 liegen!");
+
+            return Success;
+        }
+
+        private async void ConnectButtonClick(object sender, RoutedEventArgs e)
+        {
+            // Create Exchange Handler object, add Connect handler and connect
+            if (PublicRadioButton.IsChecked == true)
+            {
+                if (!IsGameIdValid(GameId.Text, out string gameId))
+                    return;
+
+                if (!IsPasswordValid(Password.Text, out string password))
+                    return;
+
+                exchangeHandler = new ExchangeHandler(gameId, password, Variables.Username, false);
+            }
+            else
+            {
+                if (!IsIpAddressValid(IPAddressInput.Text, out IPAddress? ipAddress))
+                    return;
+
+                if (!IsPortValid(PortInput.Text, out int port))
+                    return;
+
+                exchangeHandler = new ExchangeHandler(ipAddress!, port, Variables.Username, false);
+            }
 
             // Disable buttons
             ToggleButtonState(false);
 
-            // Create Exchange Handler object, add Connect handler and connect
-            exchangeHandler = new ExchangeHandler(GameIDInput.Text, PasswordInput.Text, Variables.Username, true);
-            exchangeHandler.OnConnect += HandleConnect;
+            // Add ConnAck handler and connect
+            exchangeHandler.OnConnectAck += HandleConnAck;
             await exchangeHandler.Connect();
         }
 
-        private async void ConnectToPrivateGameButton_Click(object sender, RoutedEventArgs e)
+        private async void PrivateGameButton_Click(object sender, RoutedEventArgs e)
         {
-            // Get gameId and key
-            string gameId = GameIDInput.Text;
-            string key = PasswordInput.Text;
+            // Create Exchange Handler object, add Connect handler and connect
+            if (PublicRadioButton.IsChecked == true)
+            {
+                if (!IsGameIdValid(GameId.Text, out string gameId))
+                    return;
 
-            // Check if input is correct
-            if (gameId.Trim().Length == 0)
-                Dialog.Show(Dialog.DialogType.Error, Dialog.ButtonType.Ok, "Ungültige Game ID", "Die eingegebene ID ist nicht gültig!");
+                if (!IsPasswordValid(Password.Text, out string password))
+                    return;
+
+                exchangeHandler = new ExchangeHandler(gameId, password, Variables.Username, true);
+            }
+            else
+            {
+                if (!IsIpAddressValid(IPAddressInput.Text, out IPAddress? ipAddress))
+                    return;
+
+                if (!IsPortValid(PortInput.Text, out int port))
+                    return;
+
+                exchangeHandler = new ExchangeHandler(ipAddress!, port, Variables.Username, true);
+            }
 
             // Disable buttons
             ToggleButtonState(false);
 
-            // Create Exchange Handler object, add ConnAck handler and connect
-            exchangeHandler = new ExchangeHandler(GameIDInput.Text, PasswordInput.Text, Variables.Username, false);
-            exchangeHandler.OnConnectAck += HandleConnAck;
+            // Add ConnAck handler and connect
+            exchangeHandler.OnConnect += HandleConnect;
             await exchangeHandler.Connect();
         }
 
@@ -160,19 +261,12 @@ namespace Battleship.Lobby
                 await exchangeHandler.SendDisconnect();
                 await exchangeHandler.Close();
             }
-            
+
             // Enable buttons
             ToggleButtonState(true);
 
             // Navigate back to previous page
             Navigation.NavigateBack();
-        }
-
-        private void ToggleButtonState(bool enable)
-        {
-            // Enable Connect and Private Game button
-            ConnectButton.IsEnabled = enable;
-            PrivateGameButton.IsEnabled = enable;
         }
     }
 }

@@ -34,29 +34,78 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
-                            <RowDefinition Height="10" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="20" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="10" />
+                            <RowDefinition Height="5" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.Column="0" Content="Wähle eine Spiel-ID" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#EEE" />
-                        <Grid Grid.Row="2" Grid.Column="0">
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <RadioButton x:Name="PublicRadioButton" GroupName="GameMode" Style="{StaticResource RadioButtonStyle}" Content="Öffentlich"  FontSize="24" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White" IsChecked="True" Click="OnlineModusClick" />
+                            <RadioButton x:Name="PrivateRadioButton" GroupName="GameMode" Style="{StaticResource RadioButtonStyle}" Content="Privat" FontSize="24" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White"  Click="OnlineModusClick" />
+                        </StackPanel>
+                        <!-- Public settings over mqtt broker -->
+                        <Grid Grid.Row="2" 
+                              Visibility="Visible"
+                              x:Name="PublicSettings">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <components:Input Grid.Column="0" x:Name="GameIDInput" Placeholder="Game_0815" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                            <Label Grid.Row="0" Grid.Column="0" Content="Spiel-ID" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#EEE" />
+                            <Grid Grid.Row="2" Grid.Column="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <components:Input Grid.Column="0" x:Name="GameId" Placeholder="z.B. Game_0815" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxChars="16" />
+                            </Grid>
+                            <Label Grid.Row="4" Grid.Column="0" Content="Password (16 Zeichen!)" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#EEE" />
+                            <Grid Grid.Row="6" Grid.Column="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <components:Input Grid.Column="0" x:Name="Password" Placeholder="z.b. abcdefghijklmnop" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxChars="16" />
+                            </Grid>
                         </Grid>
-                        <Label Grid.Row="4" Grid.Column="0" Content="Wähle einen Password" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#EEE" />
-                        <Grid Grid.Row="6" Grid.Column="0">
+                        
+                        <!-- Private settigs over a direct tcp connection -->
+                        <Grid Grid.Row="2" 
+                              Visibility="Hidden"
+                              x:Name="PrivateSettings">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <components:Input Grid.Column="0" x:Name="PasswordInput" Placeholder="Password" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                            <Label Grid.Row="0" Grid.Column="0" Content="IP Addresse" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#EEE" />
+                            <Grid Grid.Row="2" Grid.Column="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <components:Input Grid.Column="0" x:Name="IPAddressInput" Placeholder="z.B. 192.168.x.x" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxChars="15" />
+                            </Grid>
+                            <Label Grid.Row="4" Grid.Column="0" Content="Port" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#EEE" />
+                            <Grid Grid.Row="6" Grid.Column="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <components:Input Grid.Column="0" x:Name="PortInput" Placeholder="z.B. 5000" FontSize="24" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxChars="5" />
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Border>
@@ -68,7 +117,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" x:Name="ConnectButton" Content="Verbinden" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ConnectToPrivateGameButton_Click"/>
+                <Button Grid.Column="0" x:Name="ConnectButton" Content="Verbinden" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ConnectButtonClick"/>
                 <Button Grid.Column="1" x:Name="PrivateGameButton" Content="Spiel Erstellen" HorizontalAlignment="Center" VerticalAlignment="Center" Click="PrivateGameButton_Click"/>
                 <Button Grid.Column="2" Content="Zurück" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BackButton_Click"/>
             </Grid>

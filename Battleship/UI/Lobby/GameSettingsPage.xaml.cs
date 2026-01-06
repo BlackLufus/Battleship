@@ -32,7 +32,7 @@ namespace Battelship.Lobby
         private static GameSettingsPage? instance;
 
         // All possible boarder sizes stored in a list
-        private List<(string, object)> sizeList = Enumerable.Range(5, 26).Select(i => ($"{i}x{i}", (object)i)).ToList();
+        private List<(string, object)> sizeList = Enumerable.Range(5, 96).Select(i => ($"{i}x{i}", (object)i)).ToList();
         public List<(string, object)> SizeList
         {
             get { return sizeList; }

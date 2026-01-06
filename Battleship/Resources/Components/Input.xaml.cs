@@ -25,6 +25,9 @@ namespace Battleship.Resources.Components
         private bool isEmpty = false;
         public bool IsEmpty => isEmpty;
         private TextBox? inputField;
+
+        private string currentInput = "";
+
         public Input()
         {
             InitializeComponent();
@@ -76,6 +79,21 @@ namespace Battleship.Resources.Components
             set => SetValue(FontSizeProperty, value);
         }
 
+        public static readonly DependencyProperty MaxCharsProperty =
+            DependencyProperty.Register(
+                "MaxChars",
+                typeof(int),
+                typeof(Input),
+                new PropertyMetadata(-1)
+            );
+
+        // CLR-Wrapper für das DependencyProperty
+        public int MaxChars
+        {
+            get => (int)GetValue(MaxCharsProperty);
+            set => SetValue(MaxCharsProperty, value);
+        }
+
         private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
 
@@ -117,6 +135,32 @@ namespace Battleship.Resources.Components
         {
             inputField!.Text = "";
             CheckInputContent(inputField, false);
+        }
+
+        private void InputField_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Ignore if input field is null
+            if (inputField == null)
+                return;
+
+            // Ignore if element is not on focus
+            if (isEmpty)
+                return;
+
+            // Get input
+            string input = inputField.Text;
+
+            // Check if element exceed max chars
+            if (MaxChars > -1 && input.Length > MaxChars)
+            {
+                int selectionStart = inputField.SelectionStart - 1;
+                inputField.Text = currentInput;
+                inputField.Select(selectionStart, 0);
+            }
+            else
+            {
+                currentInput = inputField.Text;
+            }
         }
     }
 }
