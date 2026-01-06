@@ -10,18 +10,15 @@ using System.Threading.Tasks;
 
 namespace Battleship.Logic.Network
 {
-    public class TCPService
+    public class TCPService : ITransportService
     {
-        public delegate void ConnectionEstablishDelegate();
-        public event ConnectionEstablishDelegate? OnConnectionEstablish;
-
         public delegate void DisconnectDelegate();
         public event DisconnectDelegate? OnDisconnect;
 
         public delegate void DataReceivedDelegate(PacketCategory category, string data);
         public event DataReceivedDelegate? OnDataReceived;
 
-        protected readonly IPEndPoint endPoint;
+        private readonly IPEndPoint endPoint;
         private TcpClient? tcpClient;
         private readonly TcpListener? tcpListener;
         private NetworkStream? stream;
@@ -38,7 +35,7 @@ namespace Battleship.Logic.Network
         /// <param name="isHost">An indicator to determine whether the player is the host of the game</param>
         public TCPService(IPAddress ipAddress, int port, bool isHost)
         {
-            endPoint = new(isHost ? IPAddress.Any : ipAddress, port);
+            endPoint = new(isHost ? IPAddress.Any : ipAddress, port); 
             if (isHost)
                 tcpListener = new TcpListener(endPoint);
             else
@@ -50,7 +47,7 @@ namespace Battleship.Logic.Network
         /// <summary>
         /// Connects to the tcp socket
         /// </summary>
-        public async Task Connect()
+        public async Task Connect(Action callback)
         {
             // Create cancellation token source
             cts = new CancellationTokenSource();
@@ -82,7 +79,6 @@ namespace Battleship.Logic.Network
                         {
 
                             await tcpClient!.ConnectAsync(endPoint);
-                            OnConnectionEstablish?.Invoke();
                             break;
                         }
                         catch (Exception ex)
@@ -95,6 +91,9 @@ namespace Battleship.Logic.Network
 
                 // Set stream
                 stream = tcpClient.GetStream();
+
+                // If connection was successful, invoke callback
+                callback?.Invoke();
 
                 while (!token.IsCancellationRequested)
                 {
@@ -170,7 +169,7 @@ namespace Battleship.Logic.Network
         /// <summary>
         /// Disconnects from socket
         /// </summary>
-        public void Disconnect()
+        public async Task Disconnect()
         {
             Debug.WriteLine("\n >>> TCP Service: Connection close!");
             cts?.Cancel();

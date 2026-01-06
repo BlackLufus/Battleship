@@ -17,7 +17,7 @@ using System.Windows;
 
 namespace Battleship.Logic.Network
 {
-    public class MQTTService
+    public class MQTTService : ITransportService
     {
         public delegate void DataReceivedDelegate(PacketCategory category, string data);
         public event DataReceivedDelegate? OnDataReceived;
@@ -76,7 +76,7 @@ namespace Battleship.Logic.Network
         /// <summary>
         /// Connects to the mqtt broker and subscribes either to the client or host topic
         /// </summary>
-        public async Task Connect()
+        public async Task Connect(Action callback)
         {
             string mqttUsername = $"{username}";
 
@@ -94,6 +94,9 @@ namespace Battleship.Logic.Network
                 Debug.WriteLine($"Subscribe to {topic}");
                 await mqttClient.SubscribeAsync(topic);
             }
+
+            // If connection was successful, invoke callback
+            callback?.Invoke();
         }
 
         /// <summary>

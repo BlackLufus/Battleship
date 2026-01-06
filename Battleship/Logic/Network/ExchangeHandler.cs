@@ -55,9 +55,7 @@ namespace Battleship.Logic.Network
         public delegate void DisconnectDelegate();
         public event DisconnectDelegate? OnDisconnect;
 
-
-        private readonly MQTTService? mqttService;
-        private readonly TCPService? tcpService;
+        private readonly ITransportService service;
         public readonly bool IsHost;
 
 
@@ -80,8 +78,9 @@ namespace Battleship.Logic.Network
         public ExchangeHandler(string gameId, string password, string playerUsername, bool isHost)
         {
             Debug.WriteLine($"Exchange handler IsHost: {isHost}");
-            this.mqttService = new MQTTService(gameId, password, playerUsername, isHost);
-            this.mqttService.OnDataReceived += OnDataReceived;
+            var mqttService = new MQTTService(gameId, password, playerUsername, isHost);
+            mqttService.OnDataReceived += OnDataReceived;
+            this.service = mqttService;
             this.playerUsername = playerUsername;
             this.IsHost = isHost;
         }
@@ -89,11 +88,10 @@ namespace Battleship.Logic.Network
         public ExchangeHandler(IPAddress ipAddress, int port, string playerUsername, bool isHost)
         {
             Debug.WriteLine($"Exchange handler IsHost: {isHost}");
-            this.tcpService = new TCPService(ipAddress, port, isHost);
-            this.tcpService.OnDataReceived += OnDataReceived;
-            this.tcpService.OnDisconnect += HandleDisconnect;
-            if (!isHost)
-                this.tcpService.OnConnectionEstablish += OnConnectionEstablish;
+            var tcpService = new TCPService(ipAddress, port, isHost);
+            tcpService.OnDataReceived += OnDataReceived;
+            tcpService.OnDisconnect += HandleDisconnect;
+            this.service = tcpService;
             this.playerUsername = playerUsername;
             this.IsHost = isHost;
         }
@@ -104,32 +102,20 @@ namespace Battleship.Logic.Network
             await Close();
         }
 
-        private async void OnConnectionEstablish()
-        {
-            await Task.Delay(250);
-            SendConnect(playerUsername);
-            this.tcpService!.OnConnectionEstablish -= OnConnectionEstablish;
-        }
-
         /// <summary>
         /// Start connection to service
         /// </summary>
         /// <returns>Task</returns>
         public async Task Connect()
         {
-            if (mqttService != null)
+            await service.Connect(() =>
             {
-                await mqttService.Connect();
-
-                Debug.WriteLine("\n >>> Connected! Send Connect Packet");
-
                 if (!IsHost)
+                {
+                    Debug.WriteLine("\n >>> Connected! Send Connect Packet");
                     SendConnect(playerUsername);
-            }
-            else if (tcpService != null)
-                await tcpService.Connect();
-            else
-                throw new Exception("Exchange Handler: There is no service selected!");
+                }
+            });
         }
 
         /// <summary>
@@ -299,10 +285,7 @@ namespace Battleship.Logic.Network
         /// </summary>
         private async void SendPing()
         {
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.PING, "PING");
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.PING, "PING");
+            await service.Send(PacketCategory.PING, "PING");
         }
 
         /// <summary>
@@ -311,10 +294,7 @@ namespace Battleship.Logic.Network
         /// <param name="username">The own selected username</param>
         public async void SendConnect(string username)
         {
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.CONNECT, username);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.CONNECT, username);
+            await service.Send(PacketCategory.CONNECT, username);
         }
 
         /// <summary>
@@ -323,10 +303,7 @@ namespace Battleship.Logic.Network
         /// <param name="username">The own selected username</param>
         public async void SendConnAck(string username)
         {
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.CONNACK, username);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.CONNACK, username);
+            await service.Send(PacketCategory.CONNACK, username);
         }
 
         /// <summary>
@@ -343,10 +320,7 @@ namespace Battleship.Logic.Network
         public async void SendSettings(int boardSize, bool hitBonus, bool restrictedArea, int carrierAmount, int battleshipAmount, int cruiserAmount, int submarineAmount, int destroyerAmount)
         {
             string data = $"{boardSize},{hitBonus},{restrictedArea},{carrierAmount},{battleshipAmount},{cruiserAmount},{submarineAmount},{destroyerAmount}";
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.SETTINGS, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.SETTINGS, data);
+            await service.Send(PacketCategory.SETTINGS, data);
         }
 
         /// <summary>
@@ -354,10 +328,7 @@ namespace Battleship.Logic.Network
         /// </summary>
         public async void SendSettingsAck()
         {
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.SETTINGSACK, "SETTINGSACK");
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.SETTINGSACK, "SETTINGSACK");
+            await service.Send(PacketCategory.SETTINGSACK, "SETTINGSACK");
         }
 
         /// <summary>
@@ -378,10 +349,7 @@ namespace Battleship.Logic.Network
 
             string data = String.Join(",", dataList.ToArray());
 
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.READY, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.READY, data);
+            await service.Send(PacketCategory.READY, data);
         }
 
         /// <summary>
@@ -390,10 +358,7 @@ namespace Battleship.Logic.Network
         public async void SendReadyAck()
         {
             string data = $"{isReady}";
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.READYACK, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.READYACK, data);
+            await service.Send(PacketCategory.READYACK, data);
         }
 
         /// <summary>
@@ -404,10 +369,7 @@ namespace Battleship.Logic.Network
         public async void SendShoot(int row, int col)
         {
             string data = $"{row},{col}";
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.SHOOT, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.SHOOT, data);
+            await service.Send(PacketCategory.SHOOT, data);
         }
 
         /// <summary>
@@ -418,10 +380,7 @@ namespace Battleship.Logic.Network
         public async void SendMiss(int row, int col)
         {
             string data = $"{row},{col}";
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.MISS, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.MISS, data);
+            await service.Send(PacketCategory.MISS, data);
         }
 
         /// <summary>
@@ -432,10 +391,7 @@ namespace Battleship.Logic.Network
         public async void SendHit(int row, int col)
         {
             string data = $"{row},{col}";
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.HIT, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.HIT, data);
+            await service.Send(PacketCategory.HIT, data);
         }
 
         /// <summary>
@@ -446,10 +402,7 @@ namespace Battleship.Logic.Network
         public async void SendSunk(int row, int col)
         {
             string data = $"{row},{col}";
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.SUNK, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.SUNK, data);
+            await service.Send(PacketCategory.SUNK, data);
         }
 
         /// <summary>
@@ -460,10 +413,7 @@ namespace Battleship.Logic.Network
         public async void SendMessage(int id, string message)
         {
             string data = $"{id},{message}";
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.MESSAGE, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.MESSAGE, data);
+            await service.Send(PacketCategory.MESSAGE, data);
         }
 
         /// <summary>
@@ -473,10 +423,7 @@ namespace Battleship.Logic.Network
         public async void SendMessageAck(int id)
         {
             string data = $"{id}";
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.MESSAGEACK, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.MESSAGEACK, data);
+            await service.Send(PacketCategory.MESSAGEACK, data);
         }
 
         /// <summary>
@@ -486,10 +433,7 @@ namespace Battleship.Logic.Network
         public async Task SendDisconnect()
         {
             string data = "DISCONNECT";
-            if (mqttService != null)
-                await mqttService.Send(PacketCategory.DISCONNECT, data);
-            else if (tcpService != null)
-                await tcpService.Send(PacketCategory.DISCONNECT, data);
+            await service.Send(PacketCategory.DISCONNECT, data);
         }
 
 
@@ -499,10 +443,7 @@ namespace Battleship.Logic.Network
         /// <returns>Task</returns>
         public async Task Close()
         {
-            if (mqttService != null)
-                await mqttService.Disconnect();
-            else if (tcpService != null)
-                tcpService.Disconnect();
+            await service.Disconnect();
             cts?.Cancel();
             OnTimeout = null;
             OnConnect = null;
