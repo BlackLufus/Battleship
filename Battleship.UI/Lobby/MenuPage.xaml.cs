@@ -18,7 +18,7 @@ namespace Battleship.UI.Lobby
 
         private void SingelPlayerButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
-           Navigation.NavigateTo(GameSettingsPage.Instance);
+            Navigation.NavigateTo(GameSettingsPage.Instance);
             Debug.WriteLine("DuosButton clicked");
         }
 

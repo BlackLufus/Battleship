@@ -1,51 +1,52 @@
-﻿<Page x:Class="Battleship.UI.Lobby.GeneralSettingsPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Battleship.UI.Lobby"
+﻿<Page
+  x:Class="Battleship.UI.Lobby.GeneralSettingsPage"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:Battleship.UI.Lobby"
   mc:Ignorable="d"
   d:DesignHeight="450"
   d:DesignWidth="800"
   Title="GeneralSettings"
 >
-    <Grid x:Name="container">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50px" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="50px" />
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="65" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="10" />
-                <RowDefinition Height="50" />
-            </Grid.RowDefinitions>
-            <TextBlock
+  <Grid x:Name="container">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="50px" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="50px" />
+    </Grid.ColumnDefinitions>
+    <Grid Grid.Column="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="65" />
+        <RowDefinition Height="30" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="10" />
+        <RowDefinition Height="50" />
+      </Grid.RowDefinitions>
+      <TextBlock
         Grid.Row="0"
         Text="Allgemeine Einstellungen"
         FontSize="38"
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
       />
-            <Border Grid.Row="1" Background="#222222" CornerRadius="2" Margin="0 8 0 18" />
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="20" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="50" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50" />
-                    <RowDefinition Height="50" />
-                    <RowDefinition Height="50" />
-                    <RowDefinition Height="50" />
-                </Grid.RowDefinitions>
-                <TextBlock
+      <Border Grid.Row="1" Background="#222222" CornerRadius="2" Margin="0 8 0 18" />
+      <Grid Grid.Row="2">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="50" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="20" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="50" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="50" />
+          <RowDefinition Height="50" />
+          <RowDefinition Height="50" />
+          <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <TextBlock
           Grid.Row="0"
           Grid.Column="1"
           Text="Sprache:"
@@ -54,7 +55,7 @@
           VerticalAlignment="Center"
           Foreground="White"
         />
-                <ComboBox
+        <ComboBox
           Grid.Row="0"
           Grid.Column="3"
           x:Name="LanguageComboBox"
@@ -63,7 +64,7 @@
           VerticalAlignment="Center"
           Width="200"
         />
-                <TextBlock
+        <TextBlock
           Grid.Row="1"
           Grid.Column="1"
           Text="Dunkelmodus:"
@@ -72,7 +73,7 @@
           VerticalAlignment="Center"
           Foreground="White"
         />
-                <Button
+        <Button
           Grid.Row="1"
           Grid.Column="3"
           x:Name="DarkModeButton"
@@ -82,7 +83,7 @@
           VerticalAlignment="Center"
           Width="200"
         />
-                <TextBlock
+        <TextBlock
           Grid.Row="2"
           Grid.Column="1"
           Text="Musik:"
@@ -91,7 +92,7 @@
           VerticalAlignment="Center"
           Foreground="White"
         />
-                <Slider
+        <Slider
           Grid.Row="2"
           Grid.Column="3"
           x:Name="MusicSlider"
@@ -99,7 +100,7 @@
           VerticalAlignment="Center"
           Width="200"
         />
-                <TextBlock
+        <TextBlock
           Grid.Row="3"
           Grid.Column="1"
           Text="Sound Effekte:"
@@ -108,7 +109,7 @@
           VerticalAlignment="Center"
           Foreground="White"
         />
-                <Slider
+        <Slider
           Grid.Row="3"
           Grid.Column="3"
           x:Name="SoundEffectsSlider"
@@ -116,13 +117,13 @@
           VerticalAlignment="Center"
           Width="200"
         />
-            </Grid>
-            <Grid Grid.Row="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button
+      </Grid>
+      <Grid Grid.Row="4">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Button
           Grid.Column="0"
           x:Name="ResetSettingsButton"
           Content="Zurücksetzen"
@@ -131,7 +132,7 @@
           HorizontalAlignment="Center"
           VerticalAlignment="Center"
         />
-                <Button
+        <Button
           Grid.Column="2"
           x:Name="BackButton"
           Content="Zurück"
@@ -141,7 +142,7 @@
           VerticalAlignment="Center"
           Click="BackButton_Click"
         />
-            </Grid>
-        </Grid>
+      </Grid>
     </Grid>
+  </Grid>
 </Page>

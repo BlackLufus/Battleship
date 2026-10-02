@@ -14,26 +14,26 @@
   MinHeight="550"
   MinWidth="900"
 >
-    <Grid>
-        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
-        <Grid x:Name="DialogContainer" Background="#8000" Visibility="Collapsed">
-            <Viewbox>
-                <Grid Width="900" Height="550">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid
+  <Grid>
+    <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
+    <Grid x:Name="DialogContainer" Background="#8000" Visibility="Collapsed">
+      <Viewbox>
+        <Grid Width="900" Height="550">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid
             Grid.Row="0"
             Grid.Column="0"
             Name="DialogGrid"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
           ></Grid>
-                </Grid>
-            </Viewbox>
         </Grid>
+      </Viewbox>
     </Grid>
+  </Grid>
 </Window>

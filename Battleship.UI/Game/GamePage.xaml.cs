@@ -4,11 +4,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Battleship.UI.Lobby;
 using Battleship.Core.BattelStrategy;
+using Battleship.Core.BattelStrategy.Modes;
 using Battleship.Core.Game;
 using Battleship.Core.Global;
 using Battleship.Core.Network;
+using Battleship.UI.Lobby;
 using Battleship.UI.Navi;
 using Battleship.UI.Resources.Components;
 using Battleship.UI.Resources.userControls;
@@ -65,10 +66,24 @@ namespace Battleship.UI.Game
 
             InitializeComponent();
 
-            this.playerBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, playerDragShips);
-            this.playerBoard.Show(FriendlyShipCanvas, true);
-            this.opponentBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, opponentDragShips);
-            this.opponentBoard.Show(EnemyShipCanvas, false);
+            this.playerBoard = new PlaygroundBoardLogic(
+                gameSetting.BoardSize,
+                [.. playerDragShips.Cast<Ship>()]
+            );
+            foreach (DragShip ship in playerDragShips)
+            {
+                if (FriendlyShipCanvas != null)
+                    ship.updateCanvas(FriendlyShipCanvas);
+                ship.Show();
+            }
+            this.opponentBoard = new PlaygroundBoardLogic(
+                gameSetting.BoardSize,
+                [.. opponentDragShips.Cast<Ship>()]
+            );
+            foreach (DragShip dragShip in opponentDragShips)
+            {
+                dragShip.updateCanvas(EnemyShipCanvas);
+            }
 
             SetPlayerUsername(Variables.Username);
             SetOpponentUsername($"Computer{new Random().Next(1000, 9999)}");
@@ -116,10 +131,24 @@ namespace Battleship.UI.Game
 
             InitializeComponent();
 
-            this.playerBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, playerDragShips);
-            this.playerBoard.Show(FriendlyShipCanvas, true);
-            this.opponentBoard = new PlaygroundBoardLogic(gameSetting.BoardSize, opponentDragShips);
-            this.opponentBoard.Show(EnemyShipCanvas, false);
+            this.playerBoard = new PlaygroundBoardLogic(
+                gameSetting.BoardSize,
+                [.. playerDragShips.Cast<Ship>()]
+            );
+            foreach (DragShip ship in playerDragShips)
+            {
+                if (FriendlyShipCanvas != null)
+                    ship.updateCanvas(FriendlyShipCanvas);
+                ship.Show();
+            }
+            this.opponentBoard = new PlaygroundBoardLogic(
+                gameSetting.BoardSize,
+                [.. opponentDragShips.Cast<Ship>()]
+            );
+            foreach (DragShip dragShip in opponentDragShips)
+            {
+                dragShip.updateCanvas(EnemyShipCanvas);
+            }
 
             SetPlayerUsername(exchangeHandler.PlayerUsername);
             SetOpponentUsername(exchangeHandler.OpponentUsername!);

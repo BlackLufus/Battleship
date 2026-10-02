@@ -5,11 +5,11 @@ using System.Windows.Input;
 namespace Battleship.Core.Game
 {
     // Simple drag and drop handler for ships
-    public class DragShipManager(double cellSize, DragShipBoard battleField)
+    public class DragShipManager(double cellSize, ShipBoard battleField)
     {
         // Variables provided by class constructor
         private readonly double cellSize = cellSize;
-        private readonly DragShipBoard battleField = battleField;
+        private readonly ShipBoard battleField = battleField;
 
         // Represents the number of updates send per second or the number of frames are rendered per second
         private readonly int fps = 120;

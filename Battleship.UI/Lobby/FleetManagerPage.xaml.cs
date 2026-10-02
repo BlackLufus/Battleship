@@ -15,13 +15,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
-using Battleship.UI.Lobby;
 using Battleship.Core.Game;
 using Battleship.Core.Global;
 using Battleship.Core.Network;
+using Battleship.UI.Game;
+using Battleship.UI.Lobby;
 using Battleship.UI.Navi;
 using Battleship.UI.Resources.Components;
-using Battleship.UI.Game;
 
 namespace Battelship.UI.Lobby
 {
@@ -33,7 +33,7 @@ namespace Battelship.UI.Lobby
         private readonly ExchangeHandler? exchangeHandler;
 
         private readonly GameSetting gameSetting;
-        private readonly DragShipBoard battleField;
+        private readonly ShipBoard battleField;
 
         private readonly FieldState[,] cellState;
         private readonly StackPanel[,] cellPanels;
@@ -77,7 +77,7 @@ namespace Battelship.UI.Lobby
             }
 
             // Initialize Battlefield
-            this.battleField = new DragShipBoard(gameSetting.BoardSize);
+            this.battleField = new ShipBoard(gameSetting.BoardSize);
             battleField.OnStateChangeEvent += Update;
 
             // Initialize DragShipManager
@@ -352,7 +352,7 @@ namespace Battelship.UI.Lobby
             }
             else
             {
-                DragShipBoard enemyBattleField = new DragShipBoard(gameSetting.BoardSize);
+                ShipBoard enemyBattleField = new ShipBoard(gameSetting.BoardSize);
 
                 // Get all basic ship as list
                 var basicShipList = GetBasicShipList();

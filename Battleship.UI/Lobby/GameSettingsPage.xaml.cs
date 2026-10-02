@@ -1,9 +1,4 @@
-﻿using Battelship.UI.Lobby;
-using Battleship.Core.Global;
-using Battleship.Core.Network;
-using Battleship.UI.Navi;
-using Battleship.UI.Resources.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -18,6 +13,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Battelship.UI.Lobby;
+using Battleship.Core.Global;
+using Battleship.Core.Network;
+using Battleship.UI.Navi;
+using Battleship.UI.Resources.Components;
 
 namespace Battleship.UI.Lobby
 {

@@ -1,8 +1,8 @@
-﻿using Battleship.Core.Services;
+﻿using System.Windows;
+using Battleship.Core.Services;
 using Battleship.UI.Lobby;
 using Battleship.UI.Navi;
 using Battleship.UI.Resources.Components;
-using System.Windows;
 
 namespace Battleship.UI
 {
