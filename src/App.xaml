@@ -1,0 +1,196 @@
+﻿<Application
+  x:Class="Battelship.App"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:local="clr-namespace:Battelship"
+  StartupUri="MainWindow.xaml"
+>
+  <Application.Resources>
+    <Style TargetType="Image">
+      <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
+    </Style>
+
+    <Style x:Key="MainWindowButtonStyle" TargetType="Button">
+      <Setter Property="Background" Value="{x:Null}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border
+              Name="border"
+              BorderThickness="0"
+              Background="{TemplateBinding Background}"
+              RenderTransformOrigin="0.5,0.5"
+            >
+              <!-- Mittig transformieren -->
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <!-- Füge eine RenderTransform hinzu, um später darauf zuzugreifen -->
+              <Border.RenderTransform>
+                <ScaleTransform ScaleX="1" ScaleY="1" />
+              </Border.RenderTransform>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="border" Property="RenderTransform">
+                  <Setter.Value>
+                    <ScaleTransform ScaleX="0.9" ScaleY="0.9" />
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="MainMenuButton" TargetType="Button">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}" CornerRadius="10">
+              <Grid>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="90" />
+                  <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <Image
+                  Grid.Row="0"
+                  x:Name="NormalIcon"
+                  Source="./Resources/Images/multiplayer.png"
+                  Margin="7"
+                />
+                <TextBlock
+                  Grid.Row="1"
+                  FontSize="20"
+                  FontWeight="Bold"
+                  HorizontalAlignment="Center"
+                  Text="Multiplayer"
+                />
+              </Grid>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="RadioButton">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <!-- Bild für nicht ausgewählt -->
+              <Image
+                Grid.Column="0"
+                x:Name="NormalIcon"
+                Source="./Resources/Images/Radiobutton/radio.png"
+                Width="24"
+                Height="24"
+              />
+              <!-- Bild für Hover-Zustand -->
+              <Image
+                Grid.Column="0"
+                x:Name="HoverIcon"
+                Source="./Resources/Images/Radiobutton/radio-hover.png"
+                Width="24"
+                Height="24"
+                Visibility="Collapsed"
+              />
+              <!-- Bild für ausgewählt -->
+              <Image
+                Grid.Column="0"
+                x:Name="SelectedIcon"
+                Source="./Resources/Images/Radiobutton/selected-radio.png"
+                Width="24"
+                Height="24"
+                Visibility="Collapsed"
+              />
+              <!-- Bild für ausgewählt und Hover -->
+              <Image
+                Grid.Column="0"
+                x:Name="SelectedHoverIcon"
+                Source="./Resources/Images/Radiobutton/selected-radio-hover.png"
+                Width="24"
+                Height="24"
+                Visibility="Collapsed"
+              />
+
+              <!-- Text für RadioButton -->
+              <TextBlock
+                Grid.Column="1"
+                x:Name="RadioButtonText"
+                Text="{TemplateBinding Content}"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+              />
+            </Grid>
+            <ControlTemplate.Triggers>
+              <!-- Trigger für MouseOver -->
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="NormalIcon" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="HoverIcon" Property="Visibility" Value="Visible" />
+              </Trigger>
+              <!-- Trigger für ausgewählt -->
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="NormalIcon" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="HoverIcon" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="SelectedIcon" Property="Visibility" Value="Visible" />
+              </Trigger>
+              <!-- Trigger für ausgewählt und MouseOver -->
+              <MultiTrigger>
+                <MultiTrigger.Conditions>
+                  <Condition Property="IsMouseOver" Value="True" />
+                  <Condition Property="IsChecked" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="SelectedIcon" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="SelectedHoverIcon" Property="Visibility" Value="Visible" />
+              </MultiTrigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style TargetType="Button">
+      <Setter Property="Width" Value="200" />
+      <Setter Property="Height" Value="35" />
+      <Setter Property="Background" Value="White" />
+      <Setter Property="Foreground" Value="Black" />
+      <Setter Property="BorderBrush" Value="DarkGray" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="FontSize" Value="20" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border
+              Background="{TemplateBinding Background}"
+              BorderBrush="{TemplateBinding BorderBrush}"
+              BorderThickness="{TemplateBinding BorderThickness}"
+              CornerRadius="8"
+            >
+              <!-- Hier wird die Rundung eingestellt -->
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <MultiTrigger>
+                <MultiTrigger.Conditions>
+                  <Condition Property="IsMouseOver" Value="True" />
+                  <Condition Property="IsMouseCaptured" Value="False" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="#FFB0FFFF" />
+              </MultiTrigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#FFD0FFFF" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Application.Resources>
+</Application>

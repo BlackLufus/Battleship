@@ -1,0 +1,354 @@
+﻿<Page
+  x:Class="Battelship.Lobby.GameSettingsPage"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:Battelship.Lobby"
+  xmlns:component="clr-namespace:Battleship.Resources.Components"
+  mc:Ignorable="d"
+  d:DesignHeight="450"
+  d:DesignWidth="800"
+  Title="GameSettings"
+>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="50px" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="50px" />
+    </Grid.ColumnDefinitions>
+    <Grid Grid.Column="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="65" />
+        <RowDefinition Height="30" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="10" />
+        <RowDefinition Height="50" />
+      </Grid.RowDefinitions>
+      <TextBlock
+        Grid.Row="0"
+        Text="Spieleinstellungen"
+        FontSize="38"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Foreground="White"
+      />
+      <Border
+        Grid.Row="2"
+        Background="Transparent"
+        CornerRadius="10"
+        BorderBrush="Black"
+        BorderThickness="3"
+      >
+        <Border.Effect>
+          <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="Black" Opacity="0.5" />
+        </Border.Effect>
+      </Border>
+      <Grid Grid.Row="2" Margin="3 3 3 3">
+        <Grid.Clip>
+          <RectangleGeometry Rect="0,0,674,264" RadiusX="10" RadiusY="10" />
+        </Grid.Clip>
+        <ScrollViewer
+          Grid.Row="2"
+          HorizontalScrollBarVisibility="Auto"
+          VerticalScrollBarVisibility="Auto"
+        >
+          <StackPanel>
+            <Grid Grid.Row="1">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="10" />
+              </Grid.RowDefinitions>
+              <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="260" />
+                  <ColumnDefinition Width="300" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                  Grid.Column="1"
+                  Text="Spielmodus: "
+                  FontSize="24"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Foreground="White"
+                />
+                <Grid Grid.Column="2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <GroupBox Grid.Column="0" x:Name="GameModeGroup">
+                    <StackPanel Orientation="Horizontal">
+                      <RadioButton
+                        GroupName="GameMode"
+                        Style="{StaticResource RadioButtonStyle}"
+                        Content="Normal"
+                        FontSize="24"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Foreground="White"
+                        IsChecked="True"
+                      />
+                      <RadioButton
+                        GroupName="GameMode"
+                        Style="{StaticResource RadioButtonStyle}"
+                        Content="Computer"
+                        FontSize="24"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Foreground="White"
+                      />
+                    </StackPanel>
+                  </GroupBox>
+                </Grid>
+              </Grid>
+              <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="260" />
+                  <ColumnDefinition Width="300" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                  Grid.Column="1"
+                  Text="Spielfeldgröße: "
+                  FontSize="24"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Foreground="White"
+                />
+                <Grid Grid.Column="2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <!--<Button Grid.Column="0" Width="30" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock Text="-" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
+                                    </Button>
+                                    <TextBlock Grid.Column="1" Text="10x10" Width="160" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Background="White" />
+                                    <Button Grid.Column="2" Width="30" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <TextBlock Text="+" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
+                                    </Button>-->
+                  <component:Selector
+                    x:Name="FieldSize"
+                    Width="260"
+                    Items="{Binding SizeList}"
+                    Index="5"
+                  />
+                </Grid>
+              </Grid>
+              <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="260" />
+                  <ColumnDefinition Width="300" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                  Grid.Column="1"
+                  Text="Schwierigkeitsgrad: "
+                  FontSize="24"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Foreground="White"
+                />
+                <Grid Grid.Column="2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <!--<Button Grid.Column="0" Width="30" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock Text="-" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
+                                    </Button>
+                                    <TextBlock Grid.Column="1" Text="10x10" Width="160" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Background="White" />
+                                    <Button Grid.Column="2" Width="30"  HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <TextBlock Text="+" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Height="37" />
+                                    </Button>-->
+                  <component:Selector
+                    x:Name="FieldDifficult"
+                    Width="260"
+                    Items="{Binding DifficultList}"
+                    Index="2"
+                  />
+                </Grid>
+              </Grid>
+              <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="260" />
+                  <ColumnDefinition Width="300" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                  Grid.Column="1"
+                  Text="Trefferbonus: "
+                  FontSize="24"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Foreground="White"
+                />
+                <Grid Grid.Column="2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <!--<Button Grid.Column="0" Width="260" Content="On/Off" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
+                  <component:Switch x:Name="FieldHitBonus" Width="260" />
+                </Grid>
+              </Grid>
+              <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="260" />
+                  <ColumnDefinition Width="300" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                  Grid.Column="1"
+                  Text="Gesperrte Bereiche: "
+                  FontSize="24"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Foreground="White"
+                />
+                <Grid Grid.Column="2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <!--<Button Grid.Column="0" Width="260" Content="On/Off" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
+                  <component:Switch x:Name="FieldRestricedArea" Width="260" />
+                </Grid>
+              </Grid>
+              <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="260" />
+                  <ColumnDefinition Width="300" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                  Grid.Column="1"
+                  Text="Anzahl der 2er Schiffe: "
+                  FontSize="24"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Foreground="White"
+                />
+                <Grid Grid.Column="2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <component:SliderButton
+                    x:Name="BattleshipAmount"
+                    Width="260"
+                    MinValue="0"
+                    MaxValue="10"
+                    StartValue="4"
+                  />
+                </Grid>
+              </Grid>
+              <Grid Grid.Row="6">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="260" />
+                  <ColumnDefinition Width="300" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                  Grid.Column="1"
+                  Text="Anzahl der 3er Schiffe: "
+                  FontSize="24"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Foreground="White"
+                />
+                <Grid Grid.Column="2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <component:SliderButton
+                    x:Name="CruiserAmount"
+                    Width="260"
+                    MinValue="0"
+                    MaxValue="10"
+                    StartValue="3"
+                  />
+                </Grid>
+              </Grid>
+              <Grid Grid.Row="7">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="260" />
+                  <ColumnDefinition Width="300" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                  Grid.Column="1"
+                  Text="Anzahl der 4er Schiffe: "
+                  FontSize="24"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Foreground="White"
+                />
+                <Grid Grid.Column="2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <component:SliderButton
+                    x:Name="SubmarineAmount"
+                    Width="260"
+                    MinValue="0"
+                    MaxValue="10"
+                    StartValue="2"
+                  />
+                </Grid>
+              </Grid>
+              <Grid Grid.Row="8">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="260" />
+                  <ColumnDefinition Width="300" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                  Grid.Column="1"
+                  Text="Anzahl der 5er Schiffe: "
+                  FontSize="24"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Foreground="White"
+                />
+                <Grid Grid.Column="2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <component:SliderButton
+                    x:Name="DestroyerAmount"
+                    Width="260"
+                    MinValue="0"
+                    MaxValue="10"
+                    StartValue="1"
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+      <Grid Grid.Row="4">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="0" Content="Bestätigen" Click="ApplyButton_Click" />
+        <Button Grid.Column="1" Content="Zurück" Click="BackButton_Click" />
+      </Grid>
+    </Grid>
+  </Grid>
+</Page>
