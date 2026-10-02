@@ -12,7 +12,7 @@ namespace Battleship.Core.Game
     }
 
     // Represents the battlefield where ships are placed
-    public class ShipBoard(int boardSize)
+    public class PlacementGrid(int boardSize)
     {
         // Event on board state changed
         public delegate void OnStateChangeEventHandler();

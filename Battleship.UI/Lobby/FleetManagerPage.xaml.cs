@@ -33,7 +33,7 @@ namespace Battelship.UI.Lobby
         private readonly ExchangeHandler? exchangeHandler;
 
         private readonly GameSetting gameSetting;
-        private readonly ShipBoard battleField;
+        private readonly PlacementGrid battleField;
 
         private readonly FieldState[,] cellState;
         private readonly StackPanel[,] cellPanels;
@@ -77,7 +77,7 @@ namespace Battelship.UI.Lobby
             }
 
             // Initialize Battlefield
-            this.battleField = new ShipBoard(gameSetting.BoardSize);
+            this.battleField = new PlacementGrid(gameSetting.BoardSize);
             battleField.OnStateChangeEvent += Update;
 
             // Initialize DragShipManager
@@ -352,7 +352,7 @@ namespace Battelship.UI.Lobby
             }
             else
             {
-                ShipBoard enemyBattleField = new ShipBoard(gameSetting.BoardSize);
+                PlacementGrid enemyBattleField = new PlacementGrid(gameSetting.BoardSize);
 
                 // Get all basic ship as list
                 var basicShipList = GetBasicShipList();
