@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Battleship.Core\Battleship.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\adjustment.png" />
+    <Resource Include="Resources\Images\background1.jpg" />
+    <Resource Include="Resources\Images\background2.jpg" />
+    <Resource Include="Resources\Images\battleship.png" />
+    <Resource Include="Resources\Images\Components\accept.png" />
+    <Resource Include="Resources\Images\Components\delete-hover.png" />
+    <Resource Include="Resources\Images\Components\delete.png" />
+    <Resource Include="Resources\Images\Components\left-arrow.png" />
+    <Resource Include="Resources\Images\Components\minus.png" />
+    <Resource Include="Resources\Images\Components\plus.png" />
+    <Resource Include="Resources\Images\Components\right-arrow.png" />
+    <Resource Include="Resources\Images\Components\send-active.png" />
+    <Resource Include="Resources\Images\Components\send-hover.png" />
+    <Resource Include="Resources\Images\Components\send.png" />
+    <Resource Include="Resources\Images\cross.png" />
+    <Resource Include="Resources\Images\cruiser.png" />
+    <Resource Include="Resources\Images\destroyer.png" />
+    <Resource Include="Resources\Images\fire.png" />
+    <Resource Include="Resources\Images\load-file.png" />
+    <Resource Include="Resources\Images\multiplayer.png" />
+    <Resource Include="Resources\Images\online.png" />
+    <Resource Include="Resources\Images\Radiobutton\radio-hover-focus.png" />
+    <Resource Include="Resources\Images\Radiobutton\radio-hover.png" />
+    <Resource Include="Resources\Images\Radiobutton\radio.png" />
+    <Resource Include="Resources\Images\Radiobutton\selected-radio-hover-focus.png" />
+    <Resource Include="Resources\Images\Radiobutton\selected-radio-hover.png" />
+    <Resource Include="Resources\Images\Radiobutton\selected-radio.png" />
+    <Resource Include="Resources\Images\red-cross.png" />
+    <Resource Include="Resources\Images\restricted.png" />
+    <Resource Include="Resources\Images\restriction.png" />
+    <Resource Include="Resources\Images\settings.png" />
+    <Resource Include="Resources\Images\singelplayer.png" />
+    <Resource Include="Resources\Images\submarine.png" />
+    <Resource Include="Resources\Images\target.png" />
+    <Resource Include="Resources\Images\water-field.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\userControls\Chat.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Resources\userControls\chatComponents\SystemMessage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Resources\userControls\chatComponents\UserMessage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Resources\userControls\MenuBar.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Resources\Components\MenuButton.xaml">
+      <CustomToolNamespace>Components</CustomToolNamespace>
+    </Page>
+  </ItemGroup>
+
+</Project>
