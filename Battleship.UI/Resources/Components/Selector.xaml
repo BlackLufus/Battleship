@@ -1,152 +1,92 @@
-﻿<UserControl
-  x:Class="Battleship.UI.Resources.Components.Selector"
-  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:local="clr-namespace:Battleship.UI.Resources.Components"
-  mc:Ignorable="d"
->
-  <CheckBox x:Name="SelectorComponent" IsChecked="True">
-    <CheckBox.Style>
-      <Style TargetType="CheckBox">
-        <Setter Property="Template">
-          <Setter.Value>
-            <ControlTemplate TargetType="CheckBox">
-              <Border
-                Background="White"
-                BorderBrush="DarkGray"
-                BorderThickness="2"
-                Height="35"
-                CornerRadius="8"
-              >
-                <Grid x:Name="backgroundStackPanel">
-                  <Grid Grid.Column="3" Width="150" Height="26">
-                    <!-- Hintergrund (Schalter Basis) -->
-                    <Border x:Name="Switch" CornerRadius="13" Background="#2196F3" />
-
-                    <!-- TextBox für die Anzeige des Status (ON/OFF) -->
-                    <Label
-                      Grid.Column="1"
-                      x:Name="StatusText"
-                      HorizontalAlignment="Center"
-                      Content="OFF"
-                      Padding="0"
-                      Background="Transparent"
-                      BorderThickness="0"
-                      VerticalAlignment="Center"
-                      HorizontalContentAlignment="Center"
-                      FontSize="20"
-                      FontWeight="Bold"
-                    />
-
-                    <!-- Der Toggle selbst (bewegbares Element) -->
-                    <Border
-                      x:Name="Toggle"
-                      Height="22"
-                      Width="22"
-                      Background="White"
-                      CornerRadius="20"
-                      HorizontalAlignment="Left"
-                    >
-                      <Border.RenderTransform>
-                        <TranslateTransform x:Name="TogglePosition">
-                          <TranslateTransform.X>3</TranslateTransform.X>
-                        </TranslateTransform>
-                      </Border.RenderTransform>
-                    </Border>
-                  </Grid>
-                </Grid>
-              </Border>
-
-              <!-- Triggers für Animation bei Check -->
-              <ControlTemplate.Triggers>
-                <!-- Trigger für Checked Zustand -->
-                <Trigger Property="IsChecked" Value="True">
-                  <!-- Bewege den Toggle nach rechts -->
-                  <Trigger.EnterActions>
-                    <BeginStoryboard>
-                      <Storyboard>
-                        <DoubleAnimation
-                          Storyboard.TargetName="TogglePosition"
-                          Storyboard.TargetProperty="X"
-                          To="126"
-                          Duration="0:0:0.5"
-                        />
-                        <!-- Animation für die Hintergrundfarbe -->
-                        <ColorAnimation
-                          Storyboard.TargetName="Switch"
-                          Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                          To="#2196F3"
-                          Duration="0:0:0.5"
-                        />
-
-                        <!-- Animation für die Breite -->
-                        <DoubleAnimation
-                          Storyboard.TargetName="Toggle"
-                          Storyboard.TargetProperty="Width"
-                          To="22"
-                          Duration="0:0:0.5"
-                        />
-
-                        <!-- Animation für die Höhe -->
-                        <DoubleAnimation
-                          Storyboard.TargetName="Toggle"
-                          Storyboard.TargetProperty="Height"
-                          To="22"
-                          Duration="0:0:0.5"
-                        />
-                      </Storyboard>
-                    </BeginStoryboard>
-                  </Trigger.EnterActions>
-                  <Trigger.ExitActions>
-                    <BeginStoryboard>
-                      <Storyboard>
-                        <DoubleAnimation
-                          Storyboard.TargetName="TogglePosition"
-                          Storyboard.TargetProperty="X"
-                          To="3"
-                          Duration="0:0:0.5"
-                        />
-                        <!-- Animation für die Hintergrundfarbe -->
-                        <ColorAnimation
-                          Storyboard.TargetName="Switch"
-                          Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                          To="Gray"
-                          Duration="0:0:0.5"
-                        />
-
-                        <!-- Animation für die Breite -->
-                        <DoubleAnimation
-                          Storyboard.TargetName="Toggle"
-                          Storyboard.TargetProperty="Width"
-                          To="20"
-                          Duration="0:0:0.5"
-                        />
-
-                        <!-- Animation für die Höhe -->
-                        <DoubleAnimation
-                          Storyboard.TargetName="Toggle"
-                          Storyboard.TargetProperty="Height"
-                          To="20"
-                          Duration="0:0:0.5"
-                        />
-                      </Storyboard>
-                    </BeginStoryboard>
-                  </Trigger.ExitActions>
-
-                  <Setter TargetName="StatusText" Property="Content" Value="Ein" />
-                </Trigger>
-
-                <!-- Trigger für Unchecked Zustand -->
-                <Trigger Property="IsChecked" Value="False">
-                  <Setter TargetName="StatusText" Property="Content" Value="Aus" />
-                </Trigger>
-              </ControlTemplate.Triggers>
-            </ControlTemplate>
-          </Setter.Value>
-        </Setter>
-      </Style>
-    </CheckBox.Style>
-  </CheckBox>
+﻿<UserControl x:Class="Battleship.UI.Resources.Components.Selector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Battleship.UI.Resources.Components"
+             mc:Ignorable="d">
+    <Button>
+        <Button.Style>
+            <Style TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Border Background="White"
+                                    BorderThickness="2"
+                                    BorderBrush="DarkGray"
+                                    CornerRadius="8"
+                                    Height="35">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="5" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="1" 
+                                            Click="LeftArrow_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border VerticalAlignment="Stretch">
+                                                                <Image Source="pack://application:,,,/Resources/Images/Components/left-arrow.png"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Opacity" Value="0.6" />
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter Property="Opacity" Value="0.4" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <TextBox Grid.Column="2" 
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Text="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type local:Selector}}}"
+                                             FontSize="20"
+                                             FontWeight="Bold"
+                                             Loaded="TextBox_Loaded"/>
+                                    <Button Grid.Column="3"
+                                            Click="RightArrow_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border VerticalAlignment="Stretch">
+                                                                <Image Source="pack://application:,,,/Resources/Images/Components/right-arrow.png"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Opacity" Value="0.6" />
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter Property="Opacity" Value="0.4" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Button.Style>
+    </Button>
 </UserControl>
